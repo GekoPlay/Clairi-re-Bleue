@@ -10,11 +10,11 @@ Projet Camping avec possibilité de naviguer entre les pages, possibilités de s
 ________________________________________________________________
                     Soit par FileZilla 
 ________________________________________________________________
-Hôte : 51.68.91.213
-Protocole : SFTP
-Port : 22
-Utilisateur : info7
-mdp : 9rB
+  Hôte : 51.68.91.213
+  Protocole : SFTP
+  Port : 22
+  Utilisateur : info7
+  mdp : 9rB
 
 
 ________________________________________________________________
