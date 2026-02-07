@@ -1,0 +1,208 @@
+* {
+    margin: 0;
+    padding: 0;
+}
+
+
+.bebas-neue-regular {
+  font-family: "Bebas Neue", sans-serif;
+  font-weight: 400;
+  font-style: normal;
+}
+html {
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    margin:0;
+    padding: 0;
+    display: flex;
+    height: 100vh;
+    
+}
+#sur-box{
+    background-color: #f2e9e4;
+    width: 100%;
+    flex: 0.5;
+    border-radius: 0 0 20px 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+}
+
+.cote{
+    display: flex;
+    width: 100%;
+    gap: 4%;
+    flex: 6;
+}
+
+#left{
+    display: none;
+    flex: 1;
+    background-color: #4a4e69;
+    flex-direction: column;
+    padding: 0 4%;
+}
+
+ul{
+    width: 100%;
+    height: 50%;
+    background-color: beige;
+    display: flex;
+    flex-direction: column;
+}
+
+ul li{
+    flex: 1;
+    width: 100%;
+    text-align: end;
+    list-style: none;
+}
+
+li:nth-child(odd){
+    background-color: blue;
+}
+
+ul li a{
+    width: 100%;
+}
+
+.box{
+    height: 100vh;
+    
+}
+
+/* .ombre-box{
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.534);
+} */
+
+.min-box{
+    display: flex;
+    flex-direction: column;
+    gap: 4%;
+}
+.min-box:nth-child(1){
+    flex: 4;
+}
+
+.min-box:nth-child(2){
+    flex: 2;
+}
+
+.nano-box{
+    background-color: #f2e9e4;
+    flex: 1;
+    border-radius: 20px;
+    display: flex;
+    padding: 15px;
+    gap: 20px;
+}
+#right {
+   flex: 4;
+   flex-direction: column;
+   background-color: #c9ada7;
+   padding: 0 2% 2%;
+   gap: 4%;
+    box-sizing: border-box;
+    display: flex;
+   
+}
+
+.min-box:nth-child(2) .nano-box:nth-child(2){
+    background-color: #4a4e69;
+}
+#presentation img{
+    width: 150px;
+    height: 150px;
+
+}
+
+.membre-item{
+    background-color: #9a8c98;
+    padding-left: 7%;
+    width: 100%;
+    height: 20%;
+    margin: 0;
+    display: flex;
+    align-items: center;
+    justify-content: left;
+    gap: 2%;
+
+}
+
+#membres{
+    gap: 0;
+    flex-direction: column;
+    padding: 0;
+    overflow: hidden;
+}
+
+img{
+    background-color: #4a4e69;
+    border-radius: 50%;
+    border: none;
+}
+
+#membres img{
+    width: 40px;
+    height: 40px;
+}
+
+.last{
+    justify-content: center;
+    padding: 0;
+    color: white;
+    background-color: #4a4e69;
+    border-radius: 0 0 20px 20px;
+    transition: 0.5s;
+}
+.last:hover{
+        background-color: #2a2d3b;
+        transition: 0.5s;
+
+}
+
+#donnees_div_pres{
+    flex: 4;
+    background-color: #9a8c98;
+    display: flex;
+    flex-direction: column;
+        font-family: "Bebas Neue", sans-serif;
+        position: relative;
+
+}
+#donnees_div_pres img{
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 60px;
+    height: 60px;
+}
+
+#donnees_div_pres #nom{
+    font-size: 3em;
+
+}
+.nouveau{
+    padding: 0;
+}
+.nouveau input{
+    background: transparent;
+flex: 1;    color: aliceblue;
+    border: none;
+    height: 100%;
+}
+
+input{
+    color: white;
+    text-align: center;
+}
+
+input::placeholder {
+    color: white;
+    opacity: 1; /* Optionnel : assure que la couleur n'est pas atténuée par le navigateur */
+    text-align: center;
+}
