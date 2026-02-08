@@ -187,7 +187,7 @@ elseif ($action == "inscription_user_by_idFamille"){
 
 
 function membres_famille_byId ($id,$conn){
-    $sql = "SELECT * from utilisateurs WHERE id_famille = '$id'";
+    $sql = "SELECT * FROM utilisateurs WHERE id_famille = '$id' ";
     $res = mysqli_query($conn,$sql);
     if($res){
        return mysqli_fetch_all($res, MYSQLI_ASSOC);
