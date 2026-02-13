@@ -26,6 +26,19 @@ body {
     height: 100vh;
     
 }
+
+#autre_membres{
+    background-color: aqua;
+    left: 50%;
+    position: absolute;
+    top: 0px;
+    transform: translate(-50%,-15px);
+    margin: 0;
+    z-index: 3;
+    display: block; 
+    border-radius: 0px;
+
+}
 #sur-box{
     background-color: #f2e9e4;
     width: 100%;
@@ -37,6 +50,10 @@ body {
 
 }
 
+.membre-item:first-of-type{
+    border-radius: 15px 15px 0px 0px;
+}
+
 .cote{
     display: flex;
     width: 100%;
@@ -44,12 +61,13 @@ body {
     flex: 6;
 }
 
-#left{
-    display: none;
+.left{
+    display: flex;
     flex: 1;
     background-color: #4a4e69;
     flex-direction: column;
-    padding: 0 4%;
+    padding: 2% 4%;
+    box-sizing: border-box;
 }
 
 ul{
@@ -64,6 +82,7 @@ ul li{
     flex: 1;
     width: 100%;
     text-align: end;
+    
     list-style: none;
 }
 
@@ -73,11 +92,18 @@ li:nth-child(odd){
 
 ul li a{
     width: 100%;
+    font-size: 1.3em;
+    text-decoration: none;
+    
 }
 
 .box{
     height: 100vh;
     
+}
+
+.hidden {
+    display: none;
 }
 
 /* .ombre-box{
@@ -105,7 +131,7 @@ ul li a{
     padding: 15px;
     gap: 20px;
 }
-#right {
+.right {
    flex: 4;
    flex-direction: column;
    background-color: #c9ada7;
@@ -140,13 +166,16 @@ ul li a{
 
 
 }
-
+.li-nav{
+    display: flex;
+    align-items: center;
+}
 #membres{
     gap: 0;
     flex-direction: column;
     padding: 0;
     box-sizing: border-box;
-    overflow: hidden;
+    position: relative;
 }
 
 img{

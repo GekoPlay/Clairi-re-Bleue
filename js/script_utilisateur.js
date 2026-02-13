@@ -56,6 +56,9 @@ function affiche_membres(donnees) {
     sousMembre = document.getElementById("membres");
     sousMembre.innerHTML = "";
     console.log(donnees.membres);
+    if (donnees.membres.length > 5){
+        sousMembre.innerHTML = "<img id='autre_membres' src='#'>";
+    }
     if (donnees.membres && donnees.membres.length > 0) {
         donnees.membres.slice(-5).forEach(membre => {
             const blocMembre = create("div", null, sousMembre, "", "membre-item");
@@ -173,4 +176,14 @@ function create(balise, id_donnee = null, parent = null, contenu = '', nomClasse
 
 
 
+home_menu = document.getElementById("home-menu");
 
+left = document.getElementsByClassName("left")[0];
+
+
+home_menu.addEventListener("click", menu_left); // Pas de () ici
+
+function menu_left(){
+    console.log("oh hey")
+    left.classList.toggle("hidden");
+}
