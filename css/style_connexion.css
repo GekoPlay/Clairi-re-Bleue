@@ -20,6 +20,12 @@ body{
     background-color: #B56576;
 }
 
+#log{
+    text-align: center;
+    color:#FF7F50;
+    font-size: 2em;
+}
+
 
 #formulaire{
 width: 700px;

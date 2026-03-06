@@ -1,17 +1,13 @@
 
 function recup_donnee(data) {
-    // On ajoute 'return' ici pour renvoyer la promesse au code qui l'appelle
     return axios.post('../php/api.php', data)
         .then(response => {
             if (response.data.status == 'logged_in') {
-                // On met à jour la variable globale si besoin
                 ts_donnees = response.data.infos;
-                
-                // IMPORTANT : On renvoie les données pour le prochain .then()
-                return ts_donnees; 
+                    return ts_donnees; 
             } else {
                 console.log("Non connecté");
-                return null;
+                //  window.location.href = "../html/connexion.html";
             }
         });
 }
@@ -20,12 +16,18 @@ function recup_donnee(data) {
     //     //  window.location.href = "../html/connexion.html";
     // });
 
-data = { action: "connexion_session" };
+data = { action: "recuperation_session" };
+console.log (data);
 
 recup_donnee(data).then(infos => {
+    console.log("Données récupérées !");
+    console.log(infos);
+    if  (infos.session == "famille") {
+        console.log("c if");
+        affiche_membres(infos);
+    }
     affichage_donnees(infos);
-    affiche_membres(infos);
-    console.log(infos)
+    affiche_planning(infos);
 });
 
 
@@ -37,8 +39,15 @@ recup_donnee(data).then(infos => {
 
 function affichage_donnees(donnees) {
     console.log(donnees)
-    div_donnee = document.getElementById("donnees");
+
+if ('user' in donnees) {
     user = donnees['user'];
+}else if ('admin' in donnees) {
+    user = donnees['admin'];
+}else if ('membre' in donnees) {
+    user = donnees['membre'];
+}
+
     presentation = document.getElementById("presentation");
     sousPresentation = document.createElement("div");
     sousPresentation.id = "donnees_div_pres"
@@ -49,6 +58,35 @@ function affichage_donnees(donnees) {
     sousPresentation.innerHTML += `<img>`;
     presentation.appendChild(sousPresentation);
 
+
+}
+
+
+function affiche_planning(donnees) {
+    planning = document.getElementById("planning");
+    planning.innerHTML = "";
+    planning.innerHTML = "activités à venir";
+    donnees.reservations.forEach(reservation => {
+        const activiteDiv = document.createElement("div");
+        activiteDiv.classList.add("reservation-item");
+        dateSQL = reservation.date_d;
+        const dateObj = new Date(dateSQL.replace(' ', 'T'));
+        const options = { year: 'numeric', month: 'long', day: 'numeric' };
+        const dateLongueFR = dateObj.toLocaleDateString('fr-FR', options);
+        status_act = reservation.status == "0" ? "Aucune réservation" : (reservation.status == "1" ? "En attente" : "Réservé");
+        activiteDiv.innerHTML = `<p>${dateLongueFR}</p><h3>${reservation.nom_activite}</h3><p>${reservation.prix}€</p><p>${status_act}</p>`;
+        planning.appendChild(activiteDiv);
+    });
+
+    right_content = document.getElementById("bas");
+center = document.getElementsByClassName("center");
+reservation = document.getElementsByClassName("reservation-item");
+ for (let i = 0; i < reservation.length; i++) {
+    reservation[i].addEventListener("click", function() {
+        center[0].classList.toggle("translate");
+        affiche_reservation(donnees, i);
+    });
+}
 
 }
 
@@ -181,9 +219,146 @@ home_menu = document.getElementById("home-menu");
 left = document.getElementsByClassName("left")[0];
 
 
-home_menu.addEventListener("click", menu_left); // Pas de () ici
+home_menu.addEventListener("click", menu_left); // Pas de () ici2
 
 function menu_left(){
     console.log("oh hey")
-    left.classList.toggle("hidden");
+    left.classList.toggle("affiche");
 }
+
+
+let btnDeconnexion = document.getElementById("deconnexion");
+
+btnDeconnexion.addEventListener("click", function(e){
+    e.preventDefault();
+
+    let data = { action: "deconnexion" };
+    
+    recup_donnee(data).then(infos => {
+        if (infos) {
+            console.log("Déconnexion OK :", infos);
+            window.location.href = "../html/connexion.html"; // Maintenant on peut rediriger
+        } else {
+            console.log("Erreur lors de la déconnexion.");
+        }
+    });
+});
+
+function affiche_reservation(donnees, index) {
+    reservation = donnees.reservations[index];
+    right_content = document.getElementById("bas");
+    right_content.innerHTML = "";
+    right_content.innerHTML = `
+    <h2>${reservation.nom_activite}</h2>
+    <p>Prix : ${reservation.prix}€</p>
+    <p>Status : ${reservation.status}</p>
+    `;
+    console.log(reservation.status);
+if (reservation.status == "2" || reservation.status == "1") {
+        right_content.innerHTML += `<button id="btn" onclick="desinscription_activite(${index})">Se désinscrire</button> `;}
+    else if (reservation.status == "0") {
+        right_content.innerHTML += `<button id="btn" onclick="inscription_activite(${index})">S'inscrire</button> `;}
+    }
+
+
+
+
+
+
+
+function desinscription_activite(index) {
+    let data = {
+        action: "desinscription_activite",
+        id_activite: ts_donnees.reservations[index].id_activite, // Vérifie bien ce chemin
+        id_famille: ts_donnees.id_famille
+    };
+    
+    console.log(data);
+    axios.post('../php/api.php', data)
+        .then(response => {
+            if (response.data.status === "success") {
+                console.log("Désinscription réussie :", response.data);
+                
+                recup_donnee({ action: "recuperation_session" }).then(infos => {
+                    console.log("Données mises à jour après désinscription !");
+                    affiche_planning(infos);
+                    affiche_reservation(infos, index); // Recharge le bouton vers "S'inscrire"
+                });
+            } else {
+                console.log(response.data.infos);
+            }
+        })
+        .catch(error => {
+            console.error("Erreur lors de la désinscription", error);
+        });
+}
+
+
+      document.addEventListener('DOMContentLoaded', function() {
+        var calendarEl = document.getElementById('calendar');
+        var calendar = new FullCalendar.Calendar(calendarEl, {
+          initialView: 'dayGridMonth'
+        });
+        calendar.render();
+      });
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+function inscription_activite(index) {
+    data = {
+        action: "inscription_activite",
+        id_activite: ts_donnees.reservations[index].id_activite,
+        id_famille: ts_donnees.id_famille,
+        nb_membre: ts_donnees.membres.length
+    }
+    
+    console.log(data);
+   axios.post('../php/api.php', data)
+        .then(response => {
+            if (response.data.status = "success"){
+                console.log(response.data);
+                recup_donnee({ action: "recuperation_session" }).then(infos => {
+                    console.log("Données mises à jour !");
+                    console.log(infos);
+                     affiche_planning(infos);
+                     console.log(index);
+                     affiche_reservation(infos, index);
+                });
+            }else{
+                console.log(response.data.infos);
+            }
+        }
+        )
+        .catch(error => {
+            console.error("Pas reussi a le créee", error);
+        });
+}
+
+
+
+
+
+sejout = document.getElementById("sejour");
+    total = document.getElementById("total");
+
+sejout.addEventListener("mouseover", function(event) {
+    console.log("hover");
+    total.style.display = "flex";
+});
+
+sejout.addEventListener("mouseout", function(event) {
+    console.log("unhover");
+    total.style.display = "none";
+});

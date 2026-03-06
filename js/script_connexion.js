@@ -80,6 +80,9 @@ function pageInscription() {
         </div>
         </div>
 
+        <div class="label">
+        <label for="date_naissance">Date de Naisscance :</label>
+        <input type="date" id="date_naissance" name="date_naissance" required></div
         
         <div class="label">
         <label for="password">Mot de passe :</label>
@@ -99,19 +102,11 @@ function pageInscription() {
 
     notif = document.getElementById("notif");
     document.getElementById("submit").addEventListener("click", function(event) {
-        var password = document.getElementById("password").value;
-                    event.preventDefault();
-
-        var confirm_password = document.getElementById("confirm_password").value;
-        if (password !== confirm_password) {
-            document.getElementById("confirm_password").style.borderColor = "red";
-        }else{
             data = new FormData(page); // me permt de plsu simplement récup les données --> obtient un tableau pas exploitable directement
             nvl_utilisateur = Object.fromEntries(data.entries()); //retranscit en un tableau
             nvl_utilisateur.action = "inscription_famille&payeur";
             console.log(nvl_utilisateur);
             api(nvl_utilisateur);    
-        }
     });
 }
 
@@ -143,29 +138,22 @@ function MotDePasseOublie(){
 
 
 
-function api(data){
-
-    axios.post('../php/api.php',data)
-        .then(response =>{
-            console.log(response.data)
-            if(response.data.status == 'success'){
-                if (response.data.action == 'connexion_famille') {
-                    window.location.href="utilisateur.html";
-                }else{
-                    
-                    verif_mail(response.data.infos.mail)
-                }
-            }else{
-                console.log(response.data.infos);
+function api(data) {
+    console.log("Données envoyées :", data);
+    
+    axios.post('../php/api.php', data)
+        .then(response => {
+            console.log("Réponse reçue :", response.data); // Indispensable pour voir le retour du PHP
+            if (response.data.status === "success") {
+                window.location.href = "../html/utilisateur.html";
+            } else {
+                alert("Erreur : " + response.data.infos); // Affiche le message d'erreur du PHP
             }
         })
         .catch(error => {
-            console.error("erreur lors de l'envoie");
-            console.log(response.data.infos);
-        })
-    }
-
-
+            console.error("Erreur critique :", error); // Affiche si le fichier PHP est introuvable ou crash
+        });
+}
 
 
 
