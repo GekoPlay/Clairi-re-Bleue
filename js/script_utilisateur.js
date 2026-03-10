@@ -369,5 +369,13 @@ topp = document.getElementById("top");
 confirmOrder.addEventListener("click", () => {
     data = new FormData(topp); // me permt de plsu simplement récup les données --> obtient un tableau pas exploitable directement
     utilisateur_data = Object.fromEntries(data.entries()); //retranscit en un tableau
-    console.log(utilisateur_data);
+    payement.innerHTML = " mange ta grnd mere"
+});
+
+const surplus = document.getElementById("surplus");
+const previousStep = document.getElementsByName("previousStep")[0];
+previousStep.addEventListener("click", () => {
+    console.log("ahaha")
+    surplus.style.display = "none";
+
 });
