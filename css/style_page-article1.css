@@ -1,0 +1,73 @@
+/* Style spécifique à la page article */
+.article-container {
+    display: flex;
+    max-width: 1200px;
+    margin: 40px auto;
+    padding: 0 20px;
+    gap: 40px;
+}
+
+.article-content {
+    flex: 3;
+    font-family: Arial, sans-serif; /* Plus lisible pour du texte long */
+    line-height: 1.6;
+}
+
+.article-header {
+    text-align: center;
+    background: #f4f4f4;
+    padding: 60px 20px;
+}
+
+.article-header h1 {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 3rem;
+    color: #333;
+}
+
+.img-principale {
+    width: 100%;
+    height: auto;
+    border-radius: 10px;
+    margin-bottom: 20px;
+}
+
+blockquote {
+    border-left: 5px solid #2ecc71;
+    margin: 20px 0;
+    padding-left: 20px;
+    font-style: italic;
+    font-size: 1.2rem;
+    color: #555;
+}
+
+.sidebar {
+    flex: 1;
+    background: #fafafa;
+    padding: 20px;
+    border-radius: 8px;
+    height: fit-content;
+}
+
+.btn-reserve {
+    display: block;
+    background: #333;
+    color: white;
+    text-decoration: none;
+    padding: 10px;
+    text-align: center;
+    font-family: 'Bebas Neue', sans-serif;
+    margin-top: 10px;
+}
+
+.separator-icon {
+    display: block;
+    width: 30px;
+    margin: 30px auto;
+}
+
+@media (max-width: 768px) {
+    .article-container {
+        flex-direction: column;
+    }
+}
