@@ -10,21 +10,24 @@ body {
     color: #333;
     min-height: 100vh;
     overflow-x: hidden;
+    position: relative;
 }
 
-/* FOND FLOU FIXE — reste en place pendant le scroll */
+/* FOND FLOU FIXE */
 body::before {
     content: "";
-    position: fixed;        /* ← fixe, ne bouge jamais */
-    top: -5%;
-    left: -5%;
-    width: 110vw;
-    height: 110vh;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
     background-image: url('../images/fond.png');
     background-size: cover;
     background-position: center;
     filter: blur(8px);
-    z-index: -1;            /* ← derrière tout */
+    transform: scale(1.1); /* Remplace ton -5% qui cassait le flux. Étire l'image pour cacher les bords nets du flou */
+    z-index: -10; /* Assure que c'est bien tout au fond */
+    pointer-events: none; /* Empêche le fond de bloquer les clics */
 }
 
 /* NAVIGATION */
@@ -33,7 +36,7 @@ body::before {
     max-width: 1200px;
     margin: 0 auto;
     padding: 20px;
-    position: relative;     /* ← pas de transform ni filter ici */
+    position: relative;
     z-index: 10;
 }
 
@@ -79,9 +82,9 @@ nav ul li a:hover {
     cursor: pointer;
 }
 
-/* PARTAGE — directement enfant de body, fixed fonctionne */
+/* PARTAGE */
 #partage {
-    position: fixed;        /* ← reste à droite pendant le scroll */
+    position: fixed;
     right: 20px;
     top: 50%;
     transform: translateY(-50%);
@@ -108,7 +111,7 @@ nav ul li a:hover {
     background-image: url('../images/camping1.png');
     background-size: cover;
     background-position: center;
-    background-attachment: fixed;   /* ← effet parallaxe sur l'image header */
+    background-attachment: fixed; /* Attention: ça bug sur iOS (iPhone/iPad). Si ça saute, enlève cette ligne. */
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -124,7 +127,7 @@ nav ul li a:hover {
     position: absolute;
     inset: 0;
     background: rgba(0, 0, 0, 0.5);
-    z-index: 1;
+    z-index: -1; /* Corrigé pour ne pas masquer le texte */
 }
 
 .article-header h1,
@@ -152,7 +155,7 @@ nav ul li a:hover {
     height: 50px;
 }
 
-/* ARTICLE — défile par-dessus le fond fixe */
+/* ARTICLE */
 .article-container {
     display: flex;
     max-width: 1200px;
@@ -162,8 +165,8 @@ nav ul li a:hover {
     background: rgba(255, 255, 255, 0.95);
     border-radius: 10px;
     box-shadow: 0 5px 15px rgba(0,0,0,0.05);
-    position: relative;     /* ← crée un contexte d'empilement propre */
-    z-index: 1;             /* ← au-dessus du body::before */
+    position: relative;
+    z-index: 10; /* Forcé au-dessus du fond */
 }
 
 .article-content {
@@ -211,12 +214,6 @@ blockquote {
 
 .article-list li {
     margin-bottom: 10px;
-}
-
-.separator-icon {
-    display: block;
-    width: 40px;
-    margin: 50px auto;
 }
 
 /* SIDEBAR */
