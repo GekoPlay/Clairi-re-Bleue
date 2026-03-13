@@ -111,7 +111,7 @@ nav ul li a:hover {
     background-image: url('../images/camping1.png');
     background-size: cover;
     background-position: center;
-    background-attachment: fixed; /* Attention: ça bug sur iOS (iPhone/iPad). Si ça saute, enlève cette ligne. */
+    background-attachment: fixed; 
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -326,4 +326,8 @@ footer {
         transform: none;
         margin: 20px 0;
     }
+}
+
+h1{
+    color: yellow;
 }
