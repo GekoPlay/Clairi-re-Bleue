@@ -14,7 +14,7 @@ function api(data) {
         });
 }
 
-const data_recup = { action: "recuperation_donnee" };
+const data_recup = { action: "session" };
 let DonnesPack= null;
 
 

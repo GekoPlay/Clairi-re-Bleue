@@ -83,7 +83,45 @@ ORDER BY activites.id";
 }
 
 
+function recup_activites($conn){
+    $sql = "SELECT * FROM activites";
+    $stmt = mysqli_prepare($conn, $sql);
+    mysqli_stmt_execute($stmt);
 
+    $res = mysqli_stmt_get_result($stmt);
+    
+    return mysqli_fetch_all($res, MYSQLI_ASSOC);
+}
+
+function recup_reservation_order($conn){
+    $sql = "SELECT * FROM reservation_activites ORDER BY id_reservation_activite";
+    $stmt = mysqli_prepare($conn, $sql);
+    mysqli_stmt_execute($stmt);
+    $res = mysqli_stmt_get_result($stmt);
+    return mysqli_fetch_all($res, MYSQLI_ASSOC) ?: [];
+
+
+}
+
+function recup_familles($conn){
+    $sql = "SELECT * FROM familles";
+    $stmt = mysqli_prepare($conn, $sql);
+    mysqli_stmt_execute($stmt);
+    $res = mysqli_stmt_get_result($stmt);
+
+    $ts_familles = [];
+
+    while($ligne = mysqli_fetch_assoc($res)){
+        $famille = $ligne;
+        $id_payeur = $ligne['id_payeur'];
+        $id_f = $ligne['id_famille'];
+        $famille['payeur'] = recup_utilisateur_byId_payeur($id_payeur, $conn);
+        $famille['reservation'] = recup_activite_with_status($id_f, $conn);
+        $ts_familles[] = $famille; 
+    }
+    
+    return $ts_familles; // Retourne maintenant TOUTE la liste
+}
 
 
 //les variables communes à plusieurs actions
@@ -112,9 +150,15 @@ function get_full_data($conn) {
         $infos['reservations'] = recup_activite_with_status($id_famille, $conn);
         $infos['session'] = "famille";
         $infos['payeur'] = recup_utilisateur_byId_payeur($infos['id_payeur'], $conn);}
+    elseif (isset($_SESSION['admin'])) {
+        $infos['les_familles'] = recup_familles($conn);
+        $infos['session'] = "admin";
+        $infos['activites'] = recup_activites($conn);
+        $infos['file_attente_activite'] = recup_reservation_order($conn);
+
+    }
     else{
         $infos = "NoSession";
-
     }
     return $infos;
 }
@@ -124,10 +168,11 @@ function get_full_data($conn) {
 //CONNEXION
 
 
-if ($action === 'recuperation_donnee') {
+if ($action === 'session') {
 
     $msg = "Données récupérées avec succès";
     $status = "success";
+    $_SESSION['admin'] = "";
 
 }
 
@@ -298,7 +343,6 @@ elseif ($action == "inscription_user_by_idFamille") {
     }
 
  }
-
 
 
  elseif ($action === "deconnexion") {
