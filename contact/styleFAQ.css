@@ -21,7 +21,7 @@ html,body{height:100%;width:100%;overflow:hidden}
 
   #faq {
     flex: 1;
-    background-image: url('../images/feudecamp.avif');
+    background-image: url('../images/feuCamp.avif');
     background-position: center;
     background-size: cover;
     display: flex;
