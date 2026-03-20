@@ -1,5 +1,7 @@
 # Clairi-re-Bleue
 Projet Camping Clairière Bleue
+version 2
+
 
 Projet Camping avec possibilité de naviguer entre les pages, possibilités de s'inscrire à des activités, de réserver son emplacement de tentes
 

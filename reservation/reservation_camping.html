@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Réservation Camping - La Clairière Bleue</title>
+    
+    <link rel="stylesheet" href="../css/style_reservation_camping.css">
+    
+    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&display=swap" rel="stylesheet">
+</head>
+<body>
+
+    <nav>
+        <div id="logo">
+           <img src="../images/LOGO.png" alt="Logo"></a>
+        </div>
+    </nav>
+
+    <div class="container">
+        <h1>Réserver votre séjour</h1>
+
+        <div id="etape-1">
+            <h2>1. Vos critères</h2>
+            <div class="form-dates">
+                <div class="champ">
+                    <label>Arrivée :</label>
+                    <input type="date" id="date-debut">
+                </div>
+                <div class="champ">
+                    <label>Départ :</label>
+                    <input type="date" id="date-fin">
+                </div>
+                <div class="champ">
+                    <label>Personnes :</label>
+                    <input type="number" id="nb-personnes" min="1" value="2">
+                </div>
+            </div>
+            <button id="btn-voir-dispo">Voir les disponibilités</button>
+        </div>
+
+        <div id="etape-2" style="display: none;">
+            <h2>2. Choisissez vos emplacements</h2>
+            <p>Sélectionnez les emplacements sur le plan.</p>
+            
+            <div class="legende">
+                <div class="legende-item"><span class="carre libre"></span> Libre</div>
+                <div class="legende-item"><span class="carre occupe"></span> Occupé</div>
+                <div class="legende-item"><span class="carre selectionne"></span> Ma sélection</div>
+            </div>
+
+            <div id="plan-camping"></div>
+
+            <div id="actions">
+                <p>Emplacements sélectionnés : <span id="liste-places">Aucun</span></p>
+                <button id="btn-reserver" disabled>VALIDER LA RÉSERVATION</button>
+            </div>
+            
+            <button onclick="location.reload()" class="btn-retour-date">Modifier les dates</button>
+        </div>
+
+        <div style="margin-top: 50px; border-top: 1px solid #eee; padding-top: 10px;">
+            <button id="btn-reset" class="btn-admin">(Admin) Tout remettre à zéro</button>
+        </div>
+    </div>
+
+    <script src="../js/script_reservation_camping.js"></script>
+</body>
+</html>

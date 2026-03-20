@@ -1,0 +1,10 @@
+# Base de données
+DB_NAME=nmbase
+DB_ROOT_PASSWORD=password_admin
+DB_USER=nom_user
+DB_PASSWORD=password_user
+
+# Ports
+PORT_SITE=8085
+PORT_PMA=8080
+PORT_DB=3307
