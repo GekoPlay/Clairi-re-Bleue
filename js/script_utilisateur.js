@@ -2,28 +2,30 @@ function api(data) {
     return axios.post('../php/api.php', data)
         .then(response => {
             console.log(response.data);
-            if(response.data.currentDonnees.session === "famille"){
-                DonnesPack = response.data; 
-                return response.data;}
-            else if(response.data.currentDonnees.session == "admin"){
-                window.location.href = "../html/admin.html"; // Maintenant on peut rediriger
-            }else if(response.data.currentDonnees.session == "moderator"){
-                window.location.href = "../html/admin.html"; // Maintenant on peut rediriger
-            }else if(response.data.currentDonnees.session == "scrib"){
-                window.location.href = "../html/admin.html"; // Maintenant on peut rediriger
-            }else{
-                window.location.href = "../html/connexion.html"; // Maintenant on peut rediriger
+            if (response.data.currentDonnees.session === "famille") {
+                DonnesPack = response.data;
+                return response.data;
+            }
+            // else if (response.data.currentDonnees.session == "admin") {
+            //     window.location.href = "../html/admin.html"; // Maintenant on peut rediriger
+            // } else if (response.data.currentDonnees.session == "moderator") {
+            //     window.location.href = "../html/admin.html"; // Maintenant on peut rediriger
+            // } else if (response.data.currentDonnees.session == "scrib") {
+            //     window.location.href = "../html/admin.html"; // Maintenant on peut rediriger
+            // } else {
+            //     window.location.href = "../html/connexion.html"; // Maintenant on peut rediriger
 
-            }}
+            // }
+        }
         )
         .catch(error => {
             console.error("Erreur API :", error);
-            throw error; 
+            throw error;
         });
 }
 
 const data_recup = { action: "session" };
-let DonnesPack= null;
+let DonnesPack = null;
 
 
 
@@ -31,7 +33,7 @@ async function Affichage_Principal() {
     response = await api(data_recup);
     donnees = response.currentDonnees;
     if (response) {
-            affichage_donnees(donnees);
+        affichage_donnees(donnees);
     }
 }
 
@@ -48,14 +50,14 @@ function affichage_donnees(donnees) {
 
 
 
-function affichage_donnees_famille(donnees){
-    affiche_planning(donnees);
+function affichage_donnees_famille(donnees) {
+    affiche_planning(donnees.reservations);
     affiche_membres(donnees);
     affiche_payeur(donnees);
 }
 
 
-function affiche_payeur(donnees){
+function affiche_payeur(donnees) {
     payeur = donnees.payeur
     presentation = document.getElementById("presentation");
     sousPresentation = document.createElement("div");
@@ -68,106 +70,140 @@ function affiche_payeur(donnees){
     presentation.appendChild(sousPresentation);
 }
 
-function affiche_planning(donnees) {
-    chargerEvenementsDansCalendrier(donnees.reservations);
-    planning = document.getElementById("planning");
-    planning.innerHTML = "";
-    planning.innerHTML = "activités à venir";
-    donnees.reservations.forEach((reservation, index) => {
-        const activiteDiv = document.createElement("div");
-        activiteDiv.classList.add("reservation-item");
-        dateSQL = reservation.date_d;
-        const dateObj = new Date(dateSQL.replace(' ', 'T'));
-        const options = { year: 'numeric', month: 'long', day: 'numeric' };
-        const dateLongueFR = dateObj.toLocaleDateString('fr-FR', options);
-        status_act = reservation.status == "0" ? "N'a pas réservé" : (reservation.status == "1" ? "En attente" : "Réservé");
-        activiteDiv.innerHTML = `
-            <p>${dateLongueFR}</p>
-            <h3>${reservation.nom}</h3>
-            <p>${reservation.prix}€</p>
-            <p>${status_act}</p>`;
-        planning.appendChild(activiteDiv);
+function affiche_planning(reservations) {
+    // console.log("les reservaiotns");
+        // console.log(reservations);
+     const planning = document.getElementById("planning");
+     const center = document.getElementsByClassName("center")[0];
+    
+     planning.innerHTML = "<h2>Activités à venir</h2>";
+
+     if (!DonnesPack || !DonnesPack.currentDonnees) {
+         planning.innerHTML += "<p>Erreur de chargement des données utilisateur.</p>";
+         return;
+     }
+
+    const mesResas = reservations.filter(resa => {
+        return resa.id_famille == DonnesPack.currentDonnees.id_famille;
     });
 
-    //quand on clique sur une activité
-    right_content = document.getElementById("bas");
-    center = document.getElementsByClassName("center");
-    reservation = document.getElementsByClassName("reservation-item");
-    for (let i = 0; i < reservation.length; i++) {
-        reservation[i].addEventListener("click", function () {
-            center[0].classList.toggle("translate");
-            affiche_reservation(donnees, i);
-        });
+    if (mesResas.length === 0) {
+        planning.innerHTML += "<p>Aucune activité prévue pour le moment.</p>";
+        return; 
     }
 
+    mesResas.forEach((resa) => {
+        const activiteDiv = document.createElement("div");
+        activiteDiv.classList.add("reservation-item");
+
+        let status_act = resa.status == "0" ? "N'a pas réservé" : (resa.status == "1" ? "En attente" : "Réservé");
+        
+        activiteDiv.innerHTML = `
+            <h3>${resa.nom}</h3>
+            <p>Prix : ${resa.prix}€</p>
+            <p>Statut : <strong>${status_act}</strong></p>`;
+
+        activiteDiv.addEventListener("click", function () {
+            center.classList.toggle("translate");
+            affiche_reservation(resa);
+
+        });
+
+        planning.appendChild(activiteDiv);
+    });
 }
 
 
-
-function affiche_reservation(donnees, index) {
-    const reservation = donnees.reservations[index];
+function affiche_reservation(resa) {
     const right_content = document.getElementById("bas");
-
-    const resa = donnees.reservations.filter(res => res.status === 1)
-        .map((res, index) => ({...res, pos: index}))
-        .find(res => reservation.id_reservation_activite === res.id_reservation_activite)
-    console.log(resa)
+    id_resa = resa.id_reservation_activite;
+    console.log(id_resa);
 
     right_content.innerHTML = `
-        <h2>${reservation.nom}</h2>
-        <p>Prix : ${reservation.prix}€</p>
-    `;
+    <h2>${resa.nom}</h2>
+    <p>Prix : ${resa.prix}€</p>
+    ${resa.pos_fifo ? `<p>Mise en attente : ${resa.pos_fifo} position</p>` : ''}
+`;
 
-
-
-        // if(reservation.cap_act < 0){
-        // right_content.innerHTML += `<p>Liste Attente pour : ${reservation.cap_act * -1} personnes</p>`;
-        // }else{
-        // right_content.innerHTML += `<p>Capacité restante : ${reservation.cap_act}</p>`;
-        // }
-
-
-    if (reservation.status == "1" || reservation.status == "2") {
-        right_content.innerHTML += `<button onclick="gerer_action('desinscription', ${index})">Se désinscrire</button>`;
+    if (resa.status == "1" || resa.status == "2") {
+        right_content.innerHTML += `<button onclick="gerer_action('desinscription', ${id_resa})">Se désinscrire</button>`;
     } else {
         right_content.innerHTML += `
         <input type="number" name="number" id="number">
-        <button onclick="gerer_action('inscription', ${index})">S'inscrire</button>`;
+        <button onclick="gerer_action('inscription', ${resa.id})">S'inscrire</button>`;
     }
 }
+async function gerer_action() {
+    let data = {action: "inscription_activite",id_activite : 3, nb_membre : 2, id_famille : 51 }
+    
+    // const package = await api(data);
+    // console.log("jai besoin v1");
+    // console.log(package);
+
+    // data.nb_membre = 5;
+    // data.id_famille = 52;
+
+    //  const packagev2 = await api(data);
+    // console.log("jai besoin v2");
+    // console.log(packagev2);
+    
+
+    data.action = "desinscription_activite";
+    // data.id_famille = 51;
+
+    const packagev3 = await api(data);
+    console.log("jai besoin v3");
+    console.log(packagev3);
 
 
-async function gerer_action(type,index) {
-
-  
-
-    let donnesCurrent = DonnesPack.currentDonnees;
-    let donnees_activites = donnesCurrent.reservations[index];
-    let data = { action: type + "_activite"
-     };
-
-    if (type === 'inscription') {
-          let number = document.querySelector("#number");
-    nbPerson= number.value;
-        data.id_activite = donnees_activites.id;
-        data.id_famille = donnees.id_famille;
-        data.nb_membre = nbPerson;
-        data.cap_act = donnees_activites.cap_act;
-        data.nbPerson = nbPerson;
-
-
-    } else {
-
-        data.id_reservation = donnees_activites.id_reservation_activite;
-        // data.nb_membre = 5;
-        data.id_activite = donnees_activites.id;
-
-    }
-
-    const package = await await api(data);
-    affiche_planning(package.currentDonnees);
-    affiche_reservation(package.currentDonnees,index);
+    
 }
+
+gerer_action();
+//     const idFamilleActuelle = DonnesPack.currentDonnees.id_famille;
+    
+//     let data = { action: type + "_activite" };
+//     let id_activite_fixe;
+
+//     const resaAvantAction = DonnesPack.currentDonnees.reservations.find(r => 
+//         (type === 'inscription' && r.id == id_unique) || 
+//         (type === 'inscription' && r.id == id_unique) || 
+//         (type === 'desinscription' && r.id_reservation_activite == id_unique)
+//     );
+
+//     if (!resaAvantAction) {
+//         console.error("Impossible de retrouver l'activité correspondante.");
+//         return;
+//     }
+
+//     id_activite_fixe = resaAvantAction.id;
+
+//     if (type === 'inscription') {
+//         const inputNb = document.querySelector("#number");
+//         data.id_activite = id_activite_fixe; 
+//         data.nb_membre = inputNb ? inputNb.value : 1;
+//         data.id_famille = idFamilleActuelle;
+//     } else {
+//         data.id_reservation = id_unique; 
+//         data.id_activite = id_activite_fixe; 
+//     }
+
+//     const package = await api(data);
+//     const tabMaj = package.currentDonnees.reservations;
+
+//     const ReservationMisAJour = tabMaj.find(resa => 
+//         resa.id == id_activite_fixe && 
+//         resa.id_famille == idFamilleActuelle
+//     );
+
+//     if (ReservationMisAJour) {
+//         console.log("Mise à jour réussie pour :", ReservationMisAJour.nom);
+//         affiche_reservation(ReservationMisAJour);
+//     }
+    
+//     // On rafraîchit le planning (Liste centrale)
+//     affiche_planning(tabMaj);
+// }
 
 
 
@@ -240,7 +276,7 @@ function affiche_membres(donnees) {
 }
 
 
-async function nouveau_membre(data){
+async function nouveau_membre(data) {
     response = await api(data);
     affiche_membres(response.currentDonnees);
 
@@ -298,7 +334,7 @@ btnDeconnexion.addEventListener("click", function (e) {
 
 
 // 1. Déclare la variable en dehors pour qu'elle soit accessible partout
-let calendar; 
+let calendar;
 
 function chargerEvenementsDansCalendrier(reservations) {
     if (!calendar) return; // Sécurité si le calendrier n'est pas encore prêt
@@ -312,7 +348,7 @@ function chargerEvenementsDansCalendrier(reservations) {
 
         // On ajoute l'événement avec l'heure
         calendar.addEvent({
-            id: res.id, 
+            id: res.id,
             title: res.nom,
             start: dateISO,
             allDay: false, // OBLIGATOIRE pour voir l'heure
@@ -325,7 +361,7 @@ function chargerEvenementsDansCalendrier(reservations) {
 
 document.addEventListener('DOMContentLoaded', function () {
     var calendarEl = document.getElementById('calendar');
-    
+
     // 2. On assigne le calendrier à la variable globale
     calendar = new FullCalendar.Calendar(calendarEl, {
         initialView: 'dayGridMonth',
@@ -337,13 +373,13 @@ document.addEventListener('DOMContentLoaded', function () {
                 allDay: false
             }
         ],
-        eventTimeFormat: { 
+        eventTimeFormat: {
             hour: '2-digit',
             minute: '2-digit',
             hour12: false
         }
     });
-    
+
     calendar.render();
 });
 
@@ -359,20 +395,20 @@ sejout.addEventListener("mouseout", function (event) {
     total.style.display = "none";
 });
 
-sejout.addEventListener("click", () =>
-{
-let box = document.querySelector(".center");
-let right = document.querySelector(".right");
+sejout.addEventListener("click", () => {
+    let box = document.querySelector(".center");
+    let right = document.querySelector(".right");
 
-box.style.transform = "translateY(-100vh)";
-right.style.transform = "translateY(-100vh)";})
+    box.style.transform = "translateY(-100vh)";
+    right.style.transform = "translateY(-100vh)";
+})
 
 
 function formulaire_payer() {
     return new Promise((resolve, reject) => {
         payement = document.getElementById("payement"); // Assure-toi que cet ID existe
         const topp = document.getElementById("top");
-        
+
         // surplus.style.display = "flex";
         // payement.innerHTML = "";
         surplus = document.getElementById("surplus");
@@ -384,7 +420,7 @@ function formulaire_payer() {
         previousStep = document.getElementsByName("previousStep")[0];
 
 
-       confirmOrder.addEventListener("click", () => {
+        confirmOrder.addEventListener("click", () => {
             const formData = new FormData(topp);
             const utilisateur_data = Object.fromEntries(formData.entries());
 
@@ -468,7 +504,7 @@ function formulaire_payer() {
             </div>
         </div>`;
             }, 2000);
-            
+
         })
 
         previousStep.addEventListener("click", () => {

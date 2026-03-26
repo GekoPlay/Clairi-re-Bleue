@@ -59,28 +59,50 @@ function recup_activite_byId($id, $conn)
     return mysqli_fetch_assoc($res) ?: [];
 }
 
-function recup_activite_with_status($id_f, $conn)
+
+function FIFO_activite($conn){
+
+    $sql = "SELECT * FROM reservation_activites WHERE status = 1 ORDER BY id_reservation_activite";
+    $requete = mysqli_prepare($conn,$sql);
+    mysqli_stmt_execute($requete);
+    $res = mysqli_stmt_get_result($requete);
+    return mysqli_fetch_all($res, MYSQLI_ASSOC);
+}
+
+
+
+
+
+function recup_activite_with_status($id_famille, $conn)
 {
     $sql = "SELECT 
-        activites.*, 
-        reservation_activites.nb_membre,
-        reservation_activites.id_reservation_activite,
-        reservation_activites.status,
-    CASE 
-        WHEN reservation_activites.status IS NULL THEN 0 
-        ELSE reservation_activites.status
-        END AS status
+    activites.*, 
+    familles.*,
+    reservation_activites.nb_membre,
+    reservation_activites.id_reservation_activite,
+    COALESCE(reservation_activites.status, 0) AS status
 FROM activites
+CROSS JOIN familles 
 LEFT JOIN reservation_activites 
     ON reservation_activites.id_activite = activites.id 
-    AND reservation_activites.id_famille = ?
-ORDER BY activites.id";
+    AND reservation_activites.id_famille = familles.id_famille
+ORDER BY activites.id, reservation_activites.id_reservation_activite;";
 
     $stmt = mysqli_prepare($conn, $sql);
-    mysqli_stmt_bind_param($stmt, "i", $id_f);
     mysqli_stmt_execute($stmt);
     $res = mysqli_stmt_get_result($stmt);
-    return mysqli_fetch_all($res, MYSQLI_ASSOC) ?: [];
+    $tab = [];
+    $cmpt = 0;
+    while ($row = mysqli_fetch_assoc($res)){
+        if($row['status'] == 1){
+            $cmpt ++;
+            $row['pos_fifo'] = $cmpt;
+        }
+        $tab[] = $row;
+
+    }
+    
+    return $tab;
 }
 
 
@@ -116,9 +138,9 @@ function recup_familles($conn)
     while ($ligne = mysqli_fetch_assoc($res)) {
         $famille = $ligne;
         $id_payeur = $ligne['id_payeur'];
-        $id_f = $ligne['id_famille'];
+        $id_famille = $ligne['id_famille'];
         $famille['payeur'] = recup_utilisateur_byId_payeur($id_payeur, $conn);
-        $famille['reservation'] = recup_activite_with_status($id_f, $conn);
+        $famille['reservation'] = recup_activite_with_status($id_famille, $conn);
         $ts_familles[] = $famille;
     }
 
@@ -135,12 +157,149 @@ function recup_fifo_emplacements($conn)
     return mysqli_fetch_all($res, MYSQLI_ASSOC) ?: [];
 }
 
+function get_activites ($conn)
+{
+    $sql = "SELECT * FROM activites";
+    $requete = mysqli_prepare($conn,$sql);
+    mysqli_stmt_execute($requete);
+    $res = mysqli_stmt_get_result($requete);
+    return mysqli_fetch_all($res, MYSQLI_ASSOC) ?: [];
+}
+function get_familles ($conn)
+{
+    $sql = "SELECT * FROM familles";
+    $requete = mysqli_prepare($conn,$sql);
+    mysqli_stmt_execute($requete);
+    $res = mysqli_stmt_get_result($requete);
+    return mysqli_fetch_all($res, MYSQLI_ASSOC) ?: [];
+}
+function get_reservation_activites ($conn)
+{
+    $sql = "SELECT * FROM reservation_activites";
+    $requete = mysqli_prepare($conn,$sql);
+    mysqli_stmt_execute($requete);
+    $res = mysqli_stmt_get_result($requete);
+    return mysqli_fetch_all($res, MYSQLI_ASSOC) ?: [];
+}
+
+function get_files_attente_activite($conn,$id_activite){
+    $sql = "SELECT * FROM file_attente_activites WHERE id_activite = $id_activite";
+    $requete = mysqli_prepare($conn,$sql);
+    mysqli_stmt_execute($requete);
+    $res = mysqli_stmt_get_result($requete);
+    return mysqli_fetch_all($res, MYSQLI_ASSOC) ?: [];
+
+
+}
+function get_files_attente($conn)
+{
+    $sql = "SELECT * FROM file_attente_activites";
+    $requete = mysqli_prepare($conn,$sql);
+    mysqli_stmt_execute($requete);
+    $res = mysqli_stmt_get_result($requete);
+    $tab = [];
+    while ($row = mysqli_fetch_assoc($res)){
+        $id_famille = $row['id_famille'];
+        $id_activite = $row['id_activite'];
+        $row["position_fifo"] = get_position_fifo($conn,$id_famille,$id_activite);
+        $tab[] = $row;
+    }
+    return $tab;
+}
+function update_activite_cap($nbMembre,$idActivite,$conn,$signe){
+        $stmt = mysqli_prepare($conn, "UPDATE activites SET cap_act = cap_act $signe ? WHERE id = ?");
+        mysqli_stmt_bind_param($stmt, 'ii', $nbMembre, $idActivite);
+        if (mysqli_stmt_execute($stmt)) {
+            $status = "success";
+            $msg = "Activité réservée + activités MAJ";
+        } else {
+            $status = "failed";
+            $msg = "Erreur lors de l'update de l'activité";
+        }
+}
+function get_activite_by_id($conn,$id_activite){
+    $sql = "SELECT * FROM activites WHERE id = $id_activite";
+    $requete = mysqli_prepare($conn,$sql);
+    mysqli_stmt_execute($requete);
+    $res = mysqli_stmt_get_result($requete);
+    return mysqli_fetch_assoc($res);
+}
+
+function set_cap_activite($conn,$id_activite,$capaciteDeActivite){
+    $sql = "UPDATE activites SET cap_act = $capaciteDeActivite where id = $id_activite";
+    $requete = mysqli_prepare($conn,$sql);
+    mysqli_stmt_execute($requete);
+}
+
+
+
+function DeFileAReservation($conn,$id_activite){
+    $infoActivite = get_activite_by_id($conn,$id_activite);
+    $capaciteDeActivite = $infoActivite['cap_act'];
+    $sql = "SELECT * FROM file_attente_activites WHERE id_activite = $id_activite ORDER BY id_attente";
+    $requete = mysqli_prepare($conn, $sql);
+    if (mysqli_stmt_execute($requete)){
+        $res = mysqli_stmt_get_result($requete);
+        while ($row = mysqli_fetch_assoc($res)){
+            if ($row['nb_membre']<= $capaciteDeActivite){
+                //on lisncrit
+                $id_famille = $row['id_famille'];
+                $nb_membre = $row['nb_membre'];
+
+                inscription_reservation($conn,$id_famille,$id_activite,$nb_membre);
+                $capaciteDeActivite = $capaciteDeActivite - $nb_membre;
+            }else{
+                $msg = "pas inscrit ya trop";
+            }
+
+        }
+        set_cap_activite($conn,$id_activite,$capaciteDeActivite);
+    }
+}
+
+function inscription_reservation($conn,$id_famille,$id_activite,$nb_membre)
+{
+    $activite_info = get_activite_by_id($conn,$id_activite);
+    $cap_act = $activite_info['cap_act'];
+    
+    if ($nb_membre > $cap_act) {
+
+        $now = date("Y-m-d H:i:s");
+        $requete_fifo = mysqli_prepare($conn, "INSERT INTO file_attente_activites (id_famille,id_activite,nb_membre,date_inscription) VALUES (?,?,?,?)");
+        mysqli_stmt_bind_param($requete_fifo, 'iiis', $id_famille, $id_activite, $nb_membre,$now);
+        mysqli_stmt_execute($requete_fifo);
+        
+        
+        $msg = $nb_membre ." ".  $cap_act;
+        //Ajoute ici a la file attente
+
+
+
+    } else {
+        $requete = mysqli_prepare($conn, "INSERT INTO reservation_activites (id_famille,id_activite,nb_membre,status) VALUES (?,?,?,2)");
+        mysqli_stmt_bind_param($requete, 'iii', $id_famille, $id_activite, $nb_membre);
+        
+        if (mysqli_stmt_execute($requete)) {
+            $status = "success";
+            $msg = "Activité réservée";
+            update_activite_cap($nb_membre,$id_activite,$conn,"-");
+        }
+    }
+}
+
+function get_reservation_by_idf_ida($conn,$id_famille,$id_activite){
+    $sql = "SELECT * FROM reservation_activites WHERE  id_activite = $id_activite and id_famille = $id_famille";
+    $requete = mysqli_prepare($conn,$sql);
+    mysqli_stmt_execute($requete);
+    $res = mysqli_stmt_get_result($requete);
+    return mysqli_fetch_assoc($res);
+}
 
 //les variables communes à plusieurs actions
 $prenom = isset($data['prenom']) ? $data['prenom'] : '';
 $nom = isset($data['nom']) ? $data['nom'] : '';
 $mail = isset($data['mail']) ? $data['mail'] : '';
-$id_f = isset($data['id_famille']) ? $data['id_famille'] : '';
+$id_famille = isset($data['id_famille']) ? $data['id_famille'] : '';
 $adresse = isset($data['adresse']) ? $data['adresse'] : '';
 $code_postal = isset($data['code_postal']) ? $data['code_postal'] : '';
 $telephone = isset($data['telephone']) ? $data['telephone'] : '';
@@ -172,15 +331,39 @@ function select_fifo_activite($conn,$id_act){
 }
 
 
+function get_position_fifo($conn, $id_famille, $id_activite) {
+    $infosFifoAttente = get_files_attente_activite($conn, $id_activite);
+    $cmpt = 1; 
+    
+    if ($infosFifoAttente) {
+        foreach ($infosFifoAttente as $row) {
+            if ($row['id_famille'] == $id_famille) {
+                return $cmpt; 
+            }
+            $cmpt++;
+        }
+    }
+    
+    return null; 
+}
+
 function get_full_data($conn)
 {
     if (isset($_SESSION['famille'])) {
-        $id_famille = $_SESSION['famille'];
-        $infos = recup_famille_byId($id_famille, $conn);
-        $infos['membres'] = membres_famille_byId($id_famille, $conn);
-        $infos['reservations'] = recup_activite_with_status($id_famille, $conn);
-        $infos['session'] = "famille";
-        $infos['payeur'] = recup_utilisateur_byId_payeur($infos['id_payeur'], $conn);
+
+    $infos["activites"] = get_activites($conn);
+    $infos["famille"] = get_familles($conn);
+    $infos['session'] = "famille";
+    $infos['reservation'] = get_reservation_activites($conn);
+    $infos['files_attente'] = get_files_attente($conn);
+        // $id_famille = $_SESSION['famille'];
+        // $infos = recup_famille_byId($id_famille, $conn);
+        // $infos['membres'] = membres_famille_byId($id_famille, $conn);
+
+
+        // $infos['reservations'] = recup_activite_with_status($id_famille, $conn);
+        // $infos['session'] = "famille";
+        // $infos['payeur'] = recup_utilisateur_byId_payeur($infos['id_payeur'], $conn);
     } elseif (isset($_SESSION['admin'])) {
         $infos['les_familles'] = recup_familles($conn);
 
@@ -207,55 +390,91 @@ if ($action === 'session') {
 
     $msg = "Données récupérées avec succès";
     $status = "success";
+
 } elseif ($action == "desinscription_activite") {
 
+    $infosReservation = get_reservation_by_idf_ida($conn,$id_famille,$id_activite);
+    if ($infosReservation != null){
+        $nb_membre_res = $infosReservation['nb_membre'];
 
-    $query = "SELECT * FROM reservation_activites r
-    JOIN activites a ON r.id_activite = a.id
-    WHERE id_reservation_activite = ?";
+        if ($nb_membre_res > $nb_membre)
+            {
+                $sql = "UPDATE reservation_activites SET nb_membre = nb_membre - $nb_membre WHERE id_activite = $id_activite and id_famille = $id_famille";
+                $requete = mysqli_prepare($conn,$sql);
 
-    $stmtSel = mysqli_prepare($conn, $query);
-    mysqli_stmt_bind_param($stmtSel, 'i', $id_reservation);
-    mysqli_stmt_execute($stmtSel);
-    $result = mysqli_stmt_get_result($stmtSel);
-    $infos = mysqli_fetch_assoc($result);
-
-    if ($infos) {
-        $sql_del = "DELETE FROM reservation_activites WHERE id_reservation_activite = ?";
-        $stmtDel = mysqli_prepare($conn, $sql_del);
-        mysqli_stmt_bind_param($stmtDel, 'i', $id_reservation);
-        mysqli_stmt_execute($stmtDel);
-
-        //MAJ de la cap de lactivité
-        $cap_act = $infos['cap_act'] + $infos['nb_membre'];;
-
-
-        $sql_select = "SELECT id_reservation_activite, nb_membre 
-                     FROM reservation_activites 
-                     WHERE status = 1 AND id_activite = $id_activite
-                     ORDER BY id_reservation_activite";
-
-        $sql_fifo = mysqli_prepare($conn, $sql_select);
-        mysqli_stmt_execute($sql_fifo);
-        $result_fifo = mysqli_stmt_get_result($sql_fifo);
-
-        while ($row = mysqli_fetch_assoc($result_fifo)) {
-            if ($row['nb_membre'] < $cap_act) {
-                $idResAct = $row['id_reservation_activite'];
-
-                $sql_upt = "UPDATE reservation_activites set status = 2 WHERE id_reservation_activite =  $idResAct";
-                $res_upt = mysqli_prepare($conn, $sql_upt);
-                mysqli_stmt_execute($res_upt);
-                $cap_act = $cap_act - $row['nb_membre'];
             }
-        }
+        else
+             {
+                $sql = "DELETE FROM reservation_activites WHERE id_activite = $id_activite and id_famille = $id_famille";
+                $requete = mysqli_prepare($conn,$sql);
+             }
 
-        $sql_uptade_act = "UPDATE activites SET cap_act = $cap_act";
-        $stmtUpt = mysqli_prepare($conn, $sql_uptade_act);
-        mysqli_stmt_execute($stmtUpt);
-
-        $msg = select_fifo_activite($conn, $infos['id']);
+             if(mysqli_stmt_execute($requete)){
+                    update_activite_cap($nb_membre,$id_activite,$conn,"+");
+                    DeFileAReservation($conn,$id_activite);
+            }
     }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    // $query = "SELECT * FROM reservation_activites r
+    // JOIN activites a ON r.id_activite = a.id
+    // WHERE id_reservation_activite = ?";
+
+    // $stmtSel = mysqli_prepare($conn, $query);
+    // mysqli_stmt_bind_param($stmtSel, 'i', $id_reservation);
+    // mysqli_stmt_execute($stmtSel);
+    // $result = mysqli_stmt_get_result($stmtSel);
+    // $infos = mysqli_fetch_assoc($result);
+    // $id_act = $infos['id'];
+
+    // if ($infos) {
+    //     $sql_del = "DELETE FROM reservation_activites WHERE id_reservation_activite = ?";
+    //     $stmtDel = mysqli_prepare($conn, $sql_del);
+    //     mysqli_stmt_bind_param($stmtDel, 'i', $id_reservation);
+    //     mysqli_stmt_execute($stmtDel);
+
+    //     //MAJ de la cap de lactivité
+    //     $cap_act = $infos['cap_act'] + $infos['nb_membre'];;
+
+
+    //     $sql_select = "SELECT id_reservation_activite, nb_membre 
+    //                  FROM reservation_activites 
+    //                  WHERE status = 1 AND id_activite = $id_act
+    //                  ORDER BY id_reservation_activite";
+
+    //     $sql_fifo = mysqli_prepare($conn, $sql_select);
+    //     mysqli_stmt_execute($sql_fifo);
+    //     $result_fifo = mysqli_stmt_get_result($sql_fifo);
+
+    //     while ($row = mysqli_fetch_assoc($result_fifo)) {
+    //         if ($row['nb_membre'] < $cap_act) {
+    //             $idResAct = $row['id_reservation_activite'];
+
+    //             $sql_upt = "UPDATE reservation_activites set status = 2 WHERE id_reservation_activite =  $idResAct";
+    //             $res_upt = mysqli_prepare($conn, $sql_upt);
+    //             mysqli_stmt_execute($res_upt);
+    //             $cap_act = $cap_act - $row['nb_membre'];
+    //         }
+    //     }
+
+    //     $sql_uptade_act = "UPDATE activites SET cap_act = $cap_act";
+    //     $stmtUpt = mysqli_prepare($conn, $sql_uptade_act);
+    //     mysqli_stmt_execute($stmtUpt);
+
+    //     // $msg = select_fifo_activite($conn, $infos['id']);
+    // }
 
 
 
@@ -282,29 +501,11 @@ if ($action === 'session') {
 
     } elseif ($action == "inscription_activite") {
 
-    if ($nb_membre > $cap_act) {
-        $stmt = mysqli_prepare($conn, "INSERT INTO reservation_activites (id_famille,id_activite,nb_membre,status) VALUES (?,?,?,1)");
-    } else {
-        $stmt = mysqli_prepare($conn, "INSERT INTO reservation_activites (id_famille,id_activite,nb_membre,status) VALUES (?,?,?,2)");
-    }
-    mysqli_stmt_bind_param($stmt, 'iii', $id_f, $id_activite, $nb_membre);
-    if (mysqli_stmt_execute($stmt)) {
-        $status = "success";
-        $msg = "Activité réservée";
 
-        $stmt = mysqli_prepare($conn, "UPDATE activites SET cap_act = cap_act- ? WHERE id = ?");
-        mysqli_stmt_bind_param($stmt, 'ii', $nb_membre, $id_activite);
-        if (mysqli_stmt_execute($stmt)) {
-            $status = "success";
-            $msg = "Activité réservée + activités MAJ";
-        } else {
-            $status = "failed";
-            $msg = "Erreur lors de l'update de l'activité";
-        }
-    } else {
-        $status = "success";
-        $msg = "Activité réservée";
-    }
+    inscription_reservation($conn,$id_famille,$id_activite,$nb_membre);
+    
+
+
 } elseif ($action === 'connexion_famille') {
 
     $stmt = mysqli_prepare($conn, "SELECT * FROM familles WHERE mail = ?");
@@ -409,7 +610,7 @@ if ($action === 'session') {
 } elseif ($action == "inscription_user_by_idFamille") {
     $stmt = mysqli_prepare($conn, "INSERT INTO utilisateurs (nom, prenom, date_naissance, id_famille) VALUES (?, ?, ?, ?)");
 
-    mysqli_stmt_bind_param($stmt, 'sssi', $nom, $prenom, $date_naissance, $id_f);
+    mysqli_stmt_bind_param($stmt, 'sssi', $nom, $prenom, $date_naissance, $id_famille);
 
     if (mysqli_stmt_execute($stmt)) {
         $status = "success";
@@ -460,7 +661,7 @@ if ($action === 'session') {
     }
 } elseif ($action == "reservation_emplacement") {
     $stmt = mysqli_prepare($conn, "INSERT INTO reservation_emplacement (id_famille,numero_emplacement,date_debut,date_fin,status) VALUES (?,?,?,?,1)");
-    mysqli_stmt_bind_param($stmt, 'iiss', $id_f, $num_emplacement, $date_debut, $date_fin);
+    mysqli_stmt_bind_param($stmt, 'iiss', $id_famille, $num_emplacement, $date_debut, $date_fin);
     if (mysqli_stmt_execute($stmt)) {
         $status = "success";
         $msg = "Activité réservée";
@@ -484,7 +685,8 @@ $reponse = [
     "status" => $status,
     "msg" => $msg,
     "action" => $action,
-    "currentDonnees" =>  get_full_data($conn)
+    "currentDonnees" =>  get_full_data($conn),
+    "fifo" => FIFO_activite($conn)
 ];
 
 

@@ -10,4 +10,5 @@ RUN apt-get update && apt-get install -y \
 
 RUN docker-php-ext-install mysqli pdo pdo_mysql
 COPY . .
+RUN cp "$PHP_INI_DIR/php.ini-production" "$PHP_INI_DIR/php.ini"
 RUN cp db/db_connect.php.docker db/db_connect.php
