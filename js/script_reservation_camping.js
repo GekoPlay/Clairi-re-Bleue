@@ -219,23 +219,45 @@ function updateInterface() {
 const btnVoir = document.getElementById('btn-voir-dispo');
 if(btnVoir) {
     btnVoir.addEventListener('click', function() {
-        const debut = document.getElementById('date-debut').value;
-
-        if (!debut || !fin) {
+        if (mesSelections.length===0) {
             alert("Veuillez sélectionner au moins un emplacement.");
             return;
         }
+        const conteneur = document.getElementById('conteneur-calendriers');
+        conteneur.innerHTML = "";
+        mesSelections.forEach(idTente => {
+            conteneur.innerHTML += `
+                <div class="form-dates" style="border: 1px solid #ccc; padding: 15px; margin-bottom: 15px; border-radius: 8px;">
+                    <h3>Emplacement N° ${idTente}</h3>
+                    
+                    <div class="champ">
+                        <label>Date d'arrivée :</label>
+                        <input type="text" class="champ-date" id="date-debut-${idTente}">
+                    </div>
+                    
+                    <div class="champ">
+                        <label>Date de départ :</label>
+                        <input type="text" class="champ-date" id="date-fin-${idTente}">
+                    </div>
+                </div>
+            `;
+        });
+        flatpickr(".champ-date", {
+            locale: "fr",            // Pour avoir le calendrier en français
+            dateFormat: "Y-m-d",     // Le format parfait pour ton serveur PHP (Année-Mois-Jour)
+            minDate: "today"         // Bloque toutes les dates dans le passé !
+            });
         
-        document.getElementById('étpe1').style.display = 'none';
-        document.getElementById('étape2').style.display = 'block';
+        document.getElementById('etape1').style.display = 'none';
+        document.getElementById('etape2').style.display = 'block';
     });
 }
 
-const btnRetour = document.getElementById('btn-voir-dispo');
-if(btnVoir) {
-    btnVoir.addEventListener('click', function() {
-    document.getElementById('étpe2').style.display = 'none';
-    document.getElementById('étape1').style.display = 'block';
+const btnRetour = document.getElementById('retour-plan');
+if(btnRetour) {
+    btnRetour.addEventListener('click', function() {
+    document.getElementById('etape2').style.display = 'none';
+    document.getElementById('etape1').style.display = 'block';
     });
 }
 
@@ -243,19 +265,27 @@ const btnReserver = document.getElementById('btn-reserver');
 if(btnReserver) {
     btnReserver.addEventListener('click', () => {
         if (mesSelections.length > 0) {
-            
-            const dateDebut = document.getElementById('date-debut').value;
-            const dateFin = document.getElementById('date-fin').value;
-            const nbPersonnes = document.getElementById('nb-personnes').value;
 
+            let erreur = false;
             let listeReservations = mesSelections.map(idPlace => {
+                const dateDebutTente = document.getElementById(`date-debut-${idPlace}`).value;
+                const dateFinTente = document.getElementById(`date-fin-${idPlace}`).value;
+                if (dateDebutTente === "" || dateFinTente === "" || dateFinTente <= dateDebutTente) {
+                    erreur = true;
+                }
+
                 return {
                     "id_emplacement": idPlace,
-                    "nb_membre": nbPersonnes, 
-                    "date_d": dateDebut,
-                    "date_f": dateFin
+                    "nb_membre": 2, 
+                    "date_d": dateDebutTente,
+                    "date_f": dateFinTente
                 };
             });
+
+            if (erreur === true) {
+                alert("Vérifiez vos dates : tous les champs doivent être remplis et la date de départ doit être APRÈS la date d'arrivée.");
+                return; 
+            }
 
             const data = { 
                 action: "ajouter_reservation", 

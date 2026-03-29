@@ -4,7 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Réservation Camping - La Clairière Bleue</title>
-    
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+<script src="https://npmcdn.com/flatpickr/dist/l10n/fr.js"></script>
     <link rel="stylesheet" href="../css/style_reservation_camping.css">
     
     <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&display=swap" rel="stylesheet">
@@ -18,7 +20,7 @@
     </nav>
 
     <div class="container">
-        <div clas = "étape1">
+        <div id = "etape1">
         <h1>Réserver votre séjour</h1>
         
             <h2>1. Choisissez vos emplacements</h2>
@@ -35,25 +37,13 @@
             <div id="actions">
                 <p>Emplacements sélectionnés : <span id="liste-places">Aucun</span></p>
                 <button id="btn-voir-dispo">Voir les disponibilités</button>
+            </div>
         </div>
-                <div id="étape2" style="display: none;">
+                <div id="etape2" style="display: none;">
                     <h2>Nos disponibilités </h2>
-                    <div class="form-dates">
-                        <div class="champ">
-                            <label>Arrivée :</label>
-                            <input type="date" id="date-debut">
-                        </div>
-                        <div class="champ">
-                            <label>Départ :</label>
-                            <input type="date" id="date-fin">
-                        </div>
-                        <div class="champ">
-                            <label>Personnes :</label>
-                            <input type="number" id="nb-personnes" min="1" value="2">
-                        </div>
-                    </div>
+                    <div id="conteneur-calendriers"></div>
                     <button id="btn-reserver" disabled>VALIDER LA RÉSERVATION</button>
-                    <button id="retour-plan" disabled>RETOURNER AU PLAN</button>
+                    <button id="retour-plan" >RETOURNER AU PLAN</button>
                 </div>
             </div>
         <div style="margin-top: 50px; border-top: 1px solid #eee; padding-top: 10px;">
