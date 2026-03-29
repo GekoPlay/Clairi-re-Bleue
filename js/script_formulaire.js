@@ -21,7 +21,7 @@ data = {
   "date_naissance" : "1066-07-14",
   "prenom" : "Lucifer",
   "nom": "Morningstar",
-  "formule": "famille"
+  "formule": formule,
 };
 
 function recup_session(data){
