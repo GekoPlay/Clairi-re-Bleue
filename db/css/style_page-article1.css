@@ -1,0 +1,559 @@
+/* =========================================
+   0. VARIABLES CSS
+   ========================================= */
+:root {
+  --color-primary: #ff0000;
+  --color-primary-dark: #cc0000;
+  --color-bg-dark: #000000;
+  --color-text-light: #ffffff;
+  --color-text-dark: #333333;
+  --color-footer: #bee9e8;
+  --font-main: "Bebas Neue", sans-serif;
+  --font-secondary: Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif;
+  --transition-speed: 0.3s ease;
+  --nav-height: 80px;
+}
+
+/* =========================================
+   1. RESET ET GLOBALS
+   ========================================= */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  width: 100%;
+  font-size: 16px;
+  font-family: Arial, Helvetica, sans-serif;
+  background-image: url('../images/fond.png');
+  background-size: cover;
+  background-attachment: fixed;
+  background-position: center;
+  color: var(--color-text-light);
+  line-height: 1.6;
+  padding-top: var(--nav-height);
+}
+
+h1, h2, h3, a {
+  font-family: var(--font-main);
+}
+
+a {
+  text-decoration: none;
+}
+
+li {
+  list-style: none;
+}
+
+/* =========================================
+   2. TYPOGRAPHIE ET EN-TÊTES
+   ========================================= */
+h1 {
+  text-align: center;
+  margin-bottom: 0.5rem;
+  font-size: clamp(3rem, 8vw, 5rem);
+  letter-spacing: 4px;
+  color: var(--color-text-light);
+  text-shadow: 2px 2px 4px rgba(0,0,0,0.8);
+  line-height: 1.2;
+}
+
+h1 + p, h2 + p {
+  text-align: center;
+  font-size: 1rem;
+  color: #e0e0e0;
+  margin-bottom: 2rem;
+}
+
+/* =========================================
+   3. NAVIGATION
+   ========================================= */
+nav {
+  z-index: 1000;
+  padding: 0 5%;
+  width: 100%;
+  position: fixed;
+  top: 0;
+  left: 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: rgba(0, 0, 0, 0.8);
+  backdrop-filter: blur(10px);
+  height: var(--nav-height);
+}
+
+nav ul {
+  display: flex;
+  justify-content: flex-end;
+  gap: 2rem;
+  align-items: center;
+  flex: 1;
+  transition: all 0.3s ease;
+}
+
+nav li a {
+  color: var(--color-text-light);
+  font-size: 1.5rem;
+  transition: color var(--transition-speed);
+}
+
+nav li a:hover {
+  color: var(--color-primary);
+}
+
+#logo img {
+  height: 50px;
+  width: auto;
+  object-fit: contain;
+}
+
+/* ---- MENU BURGER (FIX: navigation mobile) ---- */
+.burger {
+  display: none;
+  flex-direction: column;
+  justify-content: center;
+  gap: 5px;
+  cursor: pointer;
+  padding: 5px;
+  z-index: 1100;
+  background: none;
+  border: none;
+}
+
+.burger span {
+  display: block;
+  width: 28px;
+  height: 3px;
+  background-color: var(--color-text-light);
+  border-radius: 3px;
+  transition: all 0.3s ease;
+}
+
+/* Animation burger → croix */
+.burger.open span:nth-child(1) {
+  transform: translateY(8px) rotate(45deg);
+}
+.burger.open span:nth-child(2) {
+  opacity: 0;
+}
+.burger.open span:nth-child(3) {
+  transform: translateY(-8px) rotate(-45deg);
+}
+
+/* =========================================
+   4. CONTAINERS PRINCIPAUX
+   ========================================= */
+.container {
+  backdrop-filter: blur(5px);
+  min-height: 35vh;
+  width: 100%;
+  max-width: 1400px; /* FIX: limite la largeur sur très grands écrans */
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem 5%;
+}
+
+#logo_pos {
+  width: 100%;
+  min-height: 35vh;
+  background-color: rgba(0,0,0,0.3);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.second_container,
+.third_container {
+  width: 100%;
+  display: flex;
+  background-color: var(--color-bg-dark);
+  flex-direction: column;
+  align-items: center;
+  padding: 4rem 10%;
+  gap: 1.5rem;
+}
+
+.second_container h2 {
+  font-size: clamp(2.5rem, 5vw, 4rem);
+}
+
+.third_container p {
+  font-size: 1.2rem;
+  width: 100%;
+  max-width: 900px;
+  text-align: justify;
+}
+
+.third_container img {
+  max-width: 100%;
+  height: auto;
+  object-fit: contain;
+  margin: 1rem 0;
+}
+
+/* =========================================
+   5. TITRE SPÉCIFIQUE
+   ========================================= */
+#titre {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+}
+
+#titre img {
+  width: 100%;
+  max-width: 400px;
+  height: auto;
+}
+
+#titre h1 {
+  color: var(--color-text-dark);
+  letter-spacing: 10px;
+}
+
+#titre h2 {
+  font-size: clamp(1.8rem, 4vw, 2.5rem);
+  color: var(--color-text-light);
+  background-color: blue;
+  padding: 0.5rem 1.5rem;
+  text-align: center;
+}
+
+/* =========================================
+   6. BIBLIO (Grille d'images)
+   ========================================= */
+.biblio {
+  width: 100%;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 1.5rem;
+  padding: 4rem 10%;
+  background-color: var(--color-bg-dark);
+}
+
+.img_biblio {
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  cursor: pointer;
+  overflow: hidden;
+  position: relative;
+  display: flex;
+  /* FIX: clip-path retiré — évite les zones cliquables invisibles et les débordements */
+  border-radius: 8px;
+}
+
+.img_biblio img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.4s ease;
+}
+
+.img_biblio p {
+  opacity: 0;
+  visibility: hidden;
+  position: absolute;
+  inset: 0;
+  background-color: rgba(0, 0, 0, 0.8);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.5rem;
+  color: white;
+  transition: opacity 0.3s ease, visibility 0.3s;
+  margin: 0;
+}
+
+.img_biblio:hover img {
+  transform: scale(1.1);
+}
+
+.img_biblio:hover p {
+  opacity: 1;
+  visibility: visible;
+}
+
+/* =========================================
+   7. PARAGRAPHES STANDARDS
+   ========================================= */
+.paragraphe {
+  width: 100%;
+  padding: 4rem 10%;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  background-color: rgba(0, 0, 0, 0.7);
+}
+
+.paragraphe img {
+  width: 100%;
+  max-width: 800px;
+  height: auto;
+  margin: 0 auto;
+  border-radius: 5px;
+}
+
+.paragraphe p {
+  font-size: 1.2rem;
+  max-width: 900px;
+  margin: 0 auto;
+  text-align: justify;
+}
+
+/* =========================================
+   8. FORMULES / CARTES
+   ========================================= */
+#formules {
+  width: 100%;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 2rem;
+  padding: 4rem 10%;
+  background-color: var(--color-bg-dark);
+  /* FIX: align-items center pour que la carte centrale scale sans déborder */
+  align-items: start;
+  overflow: visible;
+}
+
+.formule {
+  padding: 2.5rem 1.5rem;
+  background-color: var(--color-text-light);
+  color: var(--color-text-dark);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  border-radius: 15px;
+  position: relative;
+  transition: transform var(--transition-speed);
+}
+
+.formule:hover {
+  transform: translateY(-10px);
+}
+
+.formule h3 {
+  font-size: 2rem;
+  margin-bottom: 0.5rem;
+}
+
+.formule p {
+  font-size: 1rem;
+  text-align: center;
+  color: #555;
+  margin-bottom: 1.5rem;
+}
+
+.formule_list {
+  font-family: var(--font-secondary);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 2rem;
+  flex-grow: 1;
+}
+
+.formule a {
+  background-color: var(--color-primary);
+  border-radius: 8px;
+  padding: 0.8rem 2rem;
+  color: var(--color-text-light);
+  font-size: 1.2rem;
+  transition: background-color var(--transition-speed);
+  width: 100%;
+  max-width: 200px;
+  text-align: center;
+}
+
+.formule a:hover {
+  background-color: var(--color-primary-dark);
+}
+
+/* Carte centrale mise en avant */
+.formule:nth-child(2) {
+  background-color: var(--color-primary);
+  color: var(--color-text-light);
+  transform: scale(1.05);
+  z-index: 2;
+  box-shadow: 0 10px 25px rgba(255, 0, 0, 0.4);
+}
+
+.formule:nth-child(2):hover {
+  transform: scale(1.05) translateY(-10px);
+}
+
+.formule:nth-child(2) p {
+  color: #fff;
+}
+
+.formule:nth-child(2) a {
+  background-color: var(--color-text-light);
+  color: var(--color-primary);
+}
+
+.formule:nth-child(2) a:hover {
+  background-color: #eee;
+}
+
+#recommander {
+  position: absolute;
+  top: -15px;
+  font-size: 0.9rem;
+  background-color: var(--color-text-light);
+  color: var(--color-primary);
+  padding: 0.3rem 1.2rem;
+  border-radius: 20px;
+  border: 2px solid var(--color-primary);
+  font-weight: bold;
+}
+
+/* =========================================
+   9. INTERMEDIAIRE
+   ========================================= */
+.intermediaire {
+  height: 30vh;
+  width: 100%;
+  background-image: url('images/mirantin2.png');
+  background-position: center;
+  background-size: cover;
+  /* FIX: background-attachment: fixed retiré — ignoré sur iOS/Safari mobile,
+     causait une image étirée ou mal positionnée sur téléphone */
+  background-attachment: scroll;
+}
+
+/* =========================================
+   10. ICONES ET PARTAGE
+   ========================================= */
+#icons {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+#icons img {
+  width: 25px;
+  height: 25px;
+  object-fit: contain;
+  cursor: pointer;
+  transition: transform var(--transition-speed);
+}
+
+#icons img:hover {
+  transform: scale(1.2);
+}
+
+#partage {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  display: flex;
+  gap: 10px;
+  z-index: 100;
+  background: rgba(0,0,0,0.6);
+  padding: 10px;
+  border-radius: 30px;
+  backdrop-filter: blur(5px);
+}
+
+.icon_partage {
+  width: 30px;
+  height: 30px;
+  object-fit: contain;
+  cursor: pointer;
+  transition: transform var(--transition-speed);
+}
+
+.icon_partage:hover {
+  transform: scale(1.2);
+}
+
+/* =========================================
+   11. FOOTER
+   ========================================= */
+footer {
+  text-align: center;
+  padding: 1.5rem 5%;
+  background-color: var(--color-footer);
+  /* FIX: couleur assombrie pour meilleur contraste accessibilité (#bee9e8 + #333 = ratio trop faible) */
+  color: #1a1a1a;
+  width: 100%;
+  font-weight: bold;
+  /* FIX: min-height pour éviter un footer écrasé si contenu long */
+  min-height: 60px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+/* =========================================
+   12. RESPONSIVE
+   ========================================= */
+@media (max-width: 900px) {
+  nav {
+    padding: 1rem 5%;
+  }
+
+  /* FIX: menu burger visible, liens cachés → menu déroulant vertical */
+  .burger {
+    display: flex;
+  }
+
+  nav ul {
+    display: none;
+    position: absolute;
+    top: var(--nav-height);
+    left: 0;
+    width: 100%;
+    flex-direction: column;
+    background: rgba(0, 0, 0, 0.95);
+    padding: 1.5rem 0;
+    gap: 0;
+    align-items: center;
+  }
+
+  nav ul.open {
+    display: flex;
+  }
+
+  nav ul li {
+    width: 100%;
+    text-align: center;
+    padding: 0.8rem 0;
+    border-bottom: 1px solid rgba(255,255,255,0.08);
+  }
+
+  nav li a {
+    font-size: 1.8rem;
+  }
+
+  .second_container, .third_container, .paragraphe, .biblio, #formules {
+    padding: 3rem 5%;
+  }
+
+  /* FIX: annule le scale de la carte centrale sur mobile pour éviter le débordement */
+  .formule:nth-child(2) {
+    transform: scale(1);
+    box-shadow: 0 6px 15px rgba(255, 0, 0, 0.3);
+  }
+
+  .formule:nth-child(2):hover {
+    transform: translateY(-5px);
+  }
+}
+
+
+ 

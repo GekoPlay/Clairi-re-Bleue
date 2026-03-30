@@ -1,0 +1,80 @@
+html{
+    margin: 0;
+}
+
+body{
+    display: flex;
+    align-items: center;
+    height: 100vh;
+    box-sizing: border-box;
+    justify-content: center;
+    margin: 0;
+    margin: 0 25px;
+    gap :25px;
+    background: linear-gradient(to right,rgb(224, 158, 72),white);
+}
+
+#right_container{
+    height: 80%;
+    flex: 1;
+    border-radius: 15px;
+    box-shadow: 0 0 50px rgba(0, 0, 0, 0.37);
+    background-color: white;
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+    gap: 10px;
+
+
+}
+
+#center_container{
+     height: 80%;
+    flex: 1;
+    border-radius: 15px;
+    box-shadow: 0 0 50px rgba(0, 0, 0, 0.37);
+    background-color: white;
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+    gap: 10px;
+}
+
+#left_container{
+    height: 80%;
+    flex: 1;
+    border-radius: 15px;
+    box-shadow: 0 0 50px rgba(0, 0, 0, 0.37);
+    background-color: white;
+
+}
+
+.element_attente{
+    display: flex;
+    width: 90%;
+    justify-content: space-around;
+    border-bottom: 2px solid black ;
+    padding: 10px;
+}
+
+.Accepter{
+    background-color: rgb(0, 92, 0);
+}
+.Accepter:hover{
+    background-color: rgb(0, 170, 0);
+}
+
+.Refuser{
+    background-color: red;
+}
+.Refuser:hover{
+    background-color: rgb(134, 3, 3);
+}
+
+button{
+    padding: 20px;
+    border: none;
+    border-radius: 25px;
+    color: white;
+    transition: 1s;
+}

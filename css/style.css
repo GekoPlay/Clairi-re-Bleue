@@ -255,7 +255,9 @@ nav li a{
     display: flex;
     flex-direction: column;
 }
+#text p:first-child{
 
+}
 
 
 .container{
@@ -419,7 +421,6 @@ a{
     font-family: "Bebas Neue", sans-serif;
     
 }
-
 
 .formule_list{
     font-family: Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif;}
