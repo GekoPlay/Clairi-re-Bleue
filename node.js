@@ -23,6 +23,25 @@ const dbConfig = {
     database: 'projet_web_L2_S2'
 };
 
+const swaggerUi = require('swagger-ui-express');
+const swaggerJsdoc = require('swagger-jsdoc');
+
+const swaggerOptions = {
+  definition: {
+    openapi: '3.0.0',
+    info: {
+      title: 'Mon API - Projet L2',
+      version: '1.0.0',
+      description: 'Documentation de mon API',
+    },
+    servers: [{ url: 'http://localhost:3000' }],
+  },
+  apis: ['./node.js'], // Swagger va lire les commentaires dans ce fichier
+};
+
+const swaggerSpec = swaggerJsdoc(swaggerOptions);
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
+
 // --- FONCTIONS DE RÉCUPÉRATION ---
 
 async function get_familles() {
