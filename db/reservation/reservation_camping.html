@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Réservation Camping - La Clairière Bleue</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+<script src="https://npmcdn.com/flatpickr/dist/l10n/fr.js"></script>
+    <link rel="stylesheet" href="../css/style_reservation_camping.css">
+    
+    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&display=swap" rel="stylesheet">
+</head>
+<body>
+
+    <nav>
+        <div id="logo">
+           <a href = "../index.html"><img src="../images/LOGO.png" alt="Logo" /></a>
+        </div>
+    </nav>
+
+    <div class="container">
+        <div id = "etape1">
+        <h1>Réserver votre séjour</h1>
+        
+            <h2>1. Choisissez vos emplacements</h2>
+            <p>Sélectionnez les emplacements sur le plan.</p>
+            
+            <div class="legende">
+                <div class="legende-item"><span class="carre libre"></span> Libre</div>
+                <div class="legende-item"><span class="carre occupe"></span> Occupé</div>
+                <div class="legende-item"><span class="carre selectionne"></span> Ma sélection</div>
+            </div>
+
+            <div id="plan-camping"></div>
+
+            <div id="actions">
+                <p>Emplacements sélectionnés : <span id="liste-places">Aucun</span></p>
+                <button id="btn-voir-dispo">Voir les disponibilités</button>
+            </div>
+        </div>
+                <div id="etape2" style="display: none;">
+                    <h2>Nos disponibilités </h2>
+                    <div id="conteneur-calendriers"></div>
+                    <button id="btn-reserver" disabled>VALIDER LA RÉSERVATION</button>
+                    <button id="retour-plan" >RETOURNER AU PLAN</button>
+                </div>
+            </div>
+        <div style="margin-top: 50px; border-top: 1px solid #eee; padding-top: 10px;">
+            <button id="btn-reset" class="btn-admin">(Admin) Tout remettre à zéro</button>
+        </div>
+    </div>
+
+    <script src="../js/script_reservation_camping.js"></script>
+</body>
+</html>

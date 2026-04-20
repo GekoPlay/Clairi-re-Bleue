@@ -2,7 +2,7 @@
 
 //if (estConnecte !== 'true') {
   //  alert("Vous devez être connecté pour accéder à la réservation.");
-    // Redirige vers ta page de connexion (à adapter selon le nom de ton fichier)
+    // Redirige vers ta page de connexion 
  //   window.location.href = "connexion.html"; 
 //}
 
@@ -47,21 +47,21 @@ const positionsTentes = [
     { id: 28, top: '36%', left: '7.5%' },
     { id: 29, top: '30%', left: '10%' }
 ];
-// ---A faire : ajouter les coordonnées pour les mobilomes et les camping-cars  ---
+
 const positionsMobilome = [
-    { id: 30, top: '50%', left: '20%' },
-    { id: 31, top: '50%', left: '25%' },
-    { id: 32, top: '50%', left: '30%' },
-    { id: 33, top: '50%', left: '35%' },
-    { id: 34, top: '50%', left: '40%' },
-    { id: 35, top: '50%', left: '45%' },
-    { id: 36, top: '50%', left: '50%' },
-    { id: 37, top: '50%', left: '55%' }
+    { id: 30, top: '56%', left: '58%' },
+    { id: 31, top: '59%', left: '53%' },
+    { id: 32, top: '58.5%', left: '48%' },
+    { id: 33, top: '55.5%', left: '44%' },
+    { id: 34, top: '51.5%', left: '40.5%' },
+    { id: 35, top: '58%', left: '37%' },
+    { id: 36, top: '51%', left: '35%' },
+    { id: 37, top: '56%', left: '31.5%' }
 ];
 
 const positionsCampingcar = [
-    { id: 30, top: '50%', left: '20%' },
-    { id: 31, top: '50%', left: '25%' }
+    { id: 38, top: '79%', left: '71.5%' },
+    { id: 39, top: '75%', left: '66.75%' }
 ];
 
 const DATE_OUVERTURE_SAISON = "2026-01-01";
@@ -72,6 +72,7 @@ const DATE_FERMETURE_SAISON = "2026-12-31";
 document.addEventListener('DOMContentLoaded', function() {
     gestionDates();
     initBaseDeDonnees();
+    afficherPlan();
 });
 
 // --- 2. GESTION DES DATES ---
@@ -115,7 +116,7 @@ if (!savedData || savedData.length === 0) {
         savedData = [];
         
         // Liste des numéros qui doivent être LIBRES (les autres seront occupés)
-        const placesLibres = [1, 3, 4, 6, 7, 8, 9, 10, 11, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22];
+        const placesLibres = [1, 3, 4, 6, 7, 8, 9, 10, 11, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 25, 26, 27, 28, 30, 31, 32, 33, 35, 36, 37, 38];
 
         for (let i = 1; i <= NB_EMPLACEMENTS; i++) {
             // Si le numéro 'i' est dans la liste ci-dessus -> 'libre', sinon -> 'occupe'
@@ -137,7 +138,7 @@ if (!savedData || savedData.length === 0) {
     sauvegarder(); 
 }
 
-// --- 4. GESTION DU PLAN ---
+// --- 4. GESTION DU PLAN (AFFICHAGE) ---
 const planDiv = document.getElementById('plan-camping');
 
 function afficherPlan() {
@@ -148,16 +149,31 @@ function afficherPlan() {
         const div = document.createElement('div');
         div.classList.add('emplacement');
         
-        // C'EST ICI QUE LES COORDONNÉES SONT APPLIQUÉES
         div.style.top = place.top;
         div.style.left = place.left;
         
         div.title = "Emplacement N° " + place.id;
 
+        
+        // IDs 1 à 29 -> c'est une Tente
+        if (place.id >= 1 && place.id <= 29) {
+            div.classList.add('tente');
+        }
+        // IDs 30 à 37 -> c'est un Mobil-home
+        else if (place.id >= 30 && place.id <= 37) {
+            div.classList.add('mobilhome');
+        }
+        // IDs 38 ou 39 -> c'est un Camping-car
+        else if (place.id === 38 || place.id === 39) {
+            div.classList.add('campingcar');
+        }
+
+        // Gestion de l'état (Libre/Occupé/Sélectionné)
         let classeEtat = place.etat;
         if (mesSelections.includes(place.id)) classeEtat = 'selectionne';
         div.classList.add(classeEtat);
 
+        // Ajout du clic uniquement si libre
         if (place.etat !== 'occupe') {
             div.onclick = () => toggleSelection(place.id);
         }
@@ -203,18 +219,50 @@ function updateInterface() {
 const btnVoir = document.getElementById('btn-voir-dispo');
 if(btnVoir) {
     btnVoir.addEventListener('click', function() {
-        const debut = document.getElementById('date-debut').value;
-        const fin = document.getElementById('date-fin').value;
-
-        if (!debut || !fin) {
-            alert("Veuillez sélectionner vos dates.");
+        if (mesSelections.length===0) {
+            alert("Veuillez sélectionner au moins un emplacement.");
             return;
         }
+        const conteneur = document.getElementById('conteneur-calendriers');
+        conteneur.innerHTML = "";
+        mesSelections.forEach(idTente => {
+            conteneur.innerHTML += `
+                <div class="form-dates" style="border: 1px solid #ccc; padding: 15px; margin-bottom: 15px; border-radius: 8px;">
+                    <h3>Emplacement N° ${idTente}</h3>
+                    
+                    <div class="champ">
+                        <label>Date d'arrivée :</label>
+                        <input type="text" class="champ-date" id="date-debut-${idTente}">
+                    </div>
+                    
+                    <div class="champ">
+                        <label>Date de départ :</label>
+                        <input type="text" class="champ-date" id="date-fin-${idTente}">
+                    </div>
+
+                    <div class="champ">
+                        <label>Nomnbre de personnes :</label>
+                        <input type="number" class="nb-pers" id="nb-pers-${idTente}" min=1 max=5>
+                    </div>
+                </div>
+            `;
+        });
+        flatpickr(".champ-date", {
+            locale: "fr",            // Pour avoir le calendrier en français
+            dateFormat: "Y-m-d",     // Le format parfait pour ton serveur PHP (Année-Mois-Jour)
+            minDate: "today"         // Bloque toutes les dates dans le passé !
+            });
         
-        document.getElementById('etape-1').style.display = 'none';
-        document.getElementById('etape-2').style.display = 'block';
-        
-        afficherPlan();
+        document.getElementById('etape1').style.display = 'none';
+        document.getElementById('etape2').style.display = 'block';
+    });
+}
+
+const btnRetour = document.getElementById('retour-plan');
+if(btnRetour) {
+    btnRetour.addEventListener('click', function() {
+    document.getElementById('etape2').style.display = 'none';
+    document.getElementById('etape1').style.display = 'block';
     });
 }
 
@@ -222,16 +270,34 @@ const btnReserver = document.getElementById('btn-reserver');
 if(btnReserver) {
     btnReserver.addEventListener('click', () => {
         if (mesSelections.length > 0) {
-            
-            // 1. Au lieu de marquer "occupé", on met les choix dans un "Panier"
-            localStorage.setItem('panier_en_cours', JSON.stringify(mesSelections));
-            
-            // 2. On sauvegarde aussi les dates et les personnes pour le récapitulatif
-            localStorage.setItem('resa_debut', document.getElementById('date-debut').value);
-            localStorage.setItem('resa_fin', document.getElementById('date-fin').value);
-            
-            // 3. On redirige vers la page de paiement
-            console.log("Les emplacements " + mesSelections.join(", ") + " sont réservés pour les dates du " + localStorage.getItem('resa_debut') + " au " + localStorage.getItem('resa_fin')); 
+
+            let erreur = false;
+            let listeReservations = mesSelections.map(idPlace => {
+                const dateDebutTente = document.getElementById(`date-debut-${idPlace}`).value;
+                const dateFinTente = document.getElementById(`date-fin-${idPlace}`).value;
+                const nb_pers = document.getElementById(`nb-pers-${idPlace}`).value;
+                if (dateDebutTente === "" || dateFinTente === "" || dateFinTente <= dateDebutTente || nb_pers ==="") {
+                    erreur = true;
+                }
+
+                return {
+                    "id_emplacement": idPlace,
+                    "nb_membre": nb_pers, 
+                    "date_d": dateDebutTente,
+                    "date_f": dateFinTente
+                };
+            });
+
+            if (erreur === true) {
+                alert("Merci de remplir tous les champs. La date de départ doit être APRÈS la date d'arrivée.");
+                return; 
+            }
+
+            const data = { 
+                action: "ajouter_reservation", 
+                infos: listeReservations 
+            };
+            console.log(listeReservations);
         }
     });
 }
