@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Boutique — Camping de la Clairière Bleue</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../css/style_boutique.css">
+</head>
+<body>
+
+    <!-- NAV identique au site principal -->
+    <nav>
+        <div id="logo">
+         <div class="logo-placeholder"><img src="../images/LOGO.png" alt="Logo"></div>
+        </div>
+        <ul>
+            <li><a href="../reservation/reservation_camping.html">RESERVATION CAMPING</a></li>
+            <li><a href="../reservation/reservation_activites.html">RESERVATION ACTIVITÉS</a></li>
+            <li><a href="../contact/FAQ.html">CONTACT & FAQ</a></li>
+            <li><a href="../contact/Apropos.html">A PROPOS</a></li>
+        </ul>
+         <div id="icons">
+      <a href="html/connexion.html"><img src="images/connexion.png" alt="" class="icon"></a>
+      <a href="boutique/boutique.html"><img src="images/panier.png" alt="" class="icon"></a>
+    </div>
+    </nav>
+
+    <!-- HERO BOUTIQUE -->
+    <div class="container">
+        <div id="titre">
+            <h1>BOUTIQUE</h1>
+            <h2>CLAIRIÈRE BLEUE</h2>
+            <p class="hero-sub">Souvenirs & équipement de plein air</p>
+            <a href="#produits" class="btn-hero">VOIR LES PRODUITS</a>
+        </div>
+        <div id="partage">
+            <a href="https://www.instagram.com/"><span class="icon icon_partage"><img src="../images/INSTAGRAM.png" alt="Instagram"></span></a>
+            <a href="https://fr-fr.facebook.com/"><span class="icon icon_partage"><img src="../images/FACEBOOK.png" alt="Facebook"></span></a>
+        </div>
+    </div>
+
+   
+        <h1 id="titre-produits">TOUS LES PRODUITS</h1>
+
+        <div id="formules">
+
+            <div class="formule" data-cat="souvenirs">
+                <div class="produit-emoji">🏕️</div>
+                <h3>Mug Clairière Bleue</h3>
+                <p class="prix">12,99€</p>
+                <ul class="formule_list">
+                    <li>Céramique</li>
+                    <li>+</li>
+                    <li>Logo gravé</li>
+                    <li>+</li>
+                    <li>35 cl</li>
+                </ul>
+                <a href="#" onclick="addToCart(this, 'Mug Clairière Bleue', 12.99); return false;">AJOUTER</a>
+            </div>
+
+            <div class="formule" data-cat="equipement">
+                <div class="produit-emoji">⛺</div>
+                <h3>Kit Camping Starter</h3>
+                <p class="prix">49,99€</p>
+                <ul class="formule_list">
+                    <li>Tente 2 pers.</li>
+                    <li>+</li>
+                    <li>Lampe LED</li>
+                    <li>+</li>
+                    <li>Sac de couchage</li>
+                </ul>
+                <a href="#" onclick="addToCart(this, 'Kit Camping Starter', 49.99); return false;">AJOUTER</a>
+                <div id="recommander">Bestseller</div>
+            </div>
+
+            <div class="formule" data-cat="textile">
+                <div class="produit-emoji">👕</div>
+                <h3>T-Shirt Nature</h3>
+                <p class="prix">24,99€</p>
+                <ul class="formule_list">
+                    <li>100% coton</li>
+                    <li>+</li>
+                    <li>Brodé main</li>
+                </ul>
+                <a href="#" onclick="addToCart(this, 'T-Shirt Nature', 24.99); return false;">AJOUTER</a>
+            </div>
+
+        </div>
+
+        <div id="formules" class="formules-row2">
+
+            <div class="formule" data-cat="nourriture">
+                <div class="produit-emoji">🫙</div>
+                <h3>Confiture du Camping</h3>
+                <p class="prix">7,50€</p>
+                <ul class="formule_list">
+                    <li>Fruits locaux</li>
+                    <li>+</li>
+                    <li>Recette maison</li>
+                </ul>
+                <a href="#" onclick="addToCart(this, 'Confiture du Camping', 7.50); return false;">AJOUTER</a>
+            </div>
+
+            <div class="formule" data-cat="souvenirs">
+                <div class="produit-emoji">🧲</div>
+                <h3>Lot Magnets & Cartes</h3>
+                <p class="prix">9,99€</p>
+                <ul class="formule_list">
+                    <li>5 magnets</li>
+                    <li>+</li>
+                    <li>10 cartes postales</li>
+                </ul>
+                <a href="#" onclick="addToCart(this, 'Lot Magnets & Cartes', 9.99); return false;">AJOUTER</a>
+            </div>
+
+            <div class="formule" data-cat="equipement">
+                <div class="produit-emoji">🔦</div>
+                <h3>Lampe Frontale Pro</h3>
+                <p class="prix">19,99€</p>
+                <ul class="formule_list">
+                    <li>300 lumens</li>
+                    <li>+</li>
+                    <li>Rechargeable USB</li>
+                </ul>
+                <a href="#" onclick="addToCart(this, 'Lampe Frontale Pro', 19.99); return false;">AJOUTER</a>
+            </div>
+
+        </div>
+
+        <div class="intermediaire"></div>
+
+        <div class="third_container">
+            <p>Retrouvez tous nos produits en boutique physique à l'accueil du camping.</p>
+            <img src="../images/fleur.png" alt="" onerror="this.style.display='none'">
+            <p>Chaque achat contribue à l'entretien des espaces naturels qui nous entourent.</p>
+            <img src="../images/fleur.png" alt="" onerror="this.style.display='none'">
+            <p>Livraison disponible dans toute la France pour les commandes en ligne.</p>
+        </div>
+
+    </div>
+
+    <!-- PANIER FLOTTANT -->
+    <div id="panier-panel" class="panier-panel hidden">
+        <div class="panier-header">
+            <h3>MON PANIER</h3>
+            <button onclick="togglePanier()" class="panier-close">✕</button>
+        </div>
+        <div id="panier-items"></div>
+        <div class="panier-footer">
+            <p>Total : <strong id="panier-total">0,00€</strong></p>
+            <a href="#" class="btn-commander">COMMANDER</a>
+        </div>
+    </div>
+
+    <!-- TOAST -->
+    <div class="toast" id="toast">✓ Ajouté au panier !</div>
+
+    <!-- FOOTER -->
+    <footer>
+        <p>© 2024 Camping de la Clairière Bleue. Tous droits réservés.</p>
+    </footer>
+
+    <script>
+        let panier = [];
+        let total = 0;
+
+        // Filtre catégories
+        function filterProducts(cat) {
+            const titres = {
+                souvenirs: 'SOUVENIRS',
+                equipement: 'ÉQUIPEMENT',
+                nourriture: 'NOURRITURE',
+                textile: 'TEXTILE'
+            };
+            document.getElementById('titre-produits').textContent = titres[cat] || 'TOUS LES PRODUITS';
+            document.querySelectorAll('.formule').forEach(card => {
+                const show = card.dataset.cat === cat;
+                card.style.transition = 'opacity 0.4s, transform 0.4s';
+                card.style.opacity = show ? '1' : '0.15';
+                card.style.transform = show ? 'scale(1.04)' : 'scale(0.96)';
+            });
+            document.querySelectorAll('.img_biblio').forEach(btn => {
+                btn.style.opacity = btn.dataset.filter === cat ? '1' : '0.5';
+            });
+            document.getElementById('produits').scrollIntoView({ behavior: 'smooth' });
+        }
+
+        // Ajouter au panier
+        function addToCart(btn, nom, prix) {
+            total += prix;
+            panier.push({ nom, prix });
+            document.getElementById('cart-count').textContent = panier.length;
+
+            // Render items
+            const list = document.getElementById('panier-items');
+            list.innerHTML = panier.map(item =>
+                `<div class="panier-item"><span>${item.nom}</span><span>${item.prix.toFixed(2)}€</span></div>`
+            ).join('');
+            document.getElementById('panier-total').textContent = total.toFixed(2) + '€';
+
+            // Toast
+            const toast = document.getElementById('toast');
+            toast.classList.add('show');
+            setTimeout(() => toast.classList.remove('show'), 2000);
+
+            // Animation bouton
+            btn.textContent = '✓ AJOUTÉ';
+            btn.style.backgroundColor = 'darkred';
+            setTimeout(() => { btn.textContent = 'AJOUTER'; btn.style.backgroundColor = ''; }, 1500);
+
+            // Ouvrir le panier
+            document.getElementById('panier-panel').classList.remove('hidden');
+        }
+
+        function togglePanier() {
+            document.getElementById('panier-panel').classList.toggle('hidden');
+        }
+
+        // Ouvrir/fermer panier au clic icône
+        document.querySelector('.active-icon').addEventListener('click', function(e) {
+            e.preventDefault();
+            togglePanier();
+        });
+
+        // Scroll reveal
+        const obs = new IntersectionObserver(entries => {
+            entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
+        }, { threshold: 0.08 });
+        document.querySelectorAll('.formule').forEach(el => obs.observe(el));
+    </script>
+</body>
+</html>

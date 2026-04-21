@@ -1,12 +1,12 @@
 
 
-// // RECUP LE GET DE LA BARRE DE URL
-// const urlParams = new URLSearchParams(window.location.search);
-// formule = urlParams.get('formule');
-// console.log(formule);
+
 
 // url_pos = document.getElementById("url");
 // url_pos.innerHTML = "La formule choisie est : " + formule;
+
+const urlParams = new URLSearchParams(window.location.search);
+const formule = urlParams.get('formule');
 
 
 data = {
@@ -21,6 +21,7 @@ data = {
   "date_naissance" : "1066-07-14",
   "prenom" : "Lucifer",
   "nom": "Morningstar",
+  "formule": formule,
 };
 
 function recup_session(data){
@@ -40,3 +41,4 @@ function recup_session(data){
         })
     }
 
+recup_session(data);

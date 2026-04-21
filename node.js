@@ -23,6 +23,25 @@ const dbConfig = {
     database: 'projet_web_L2_S2'
 };
 
+const swaggerUi = require('swagger-ui-express');
+const swaggerJsdoc = require('swagger-jsdoc');
+
+const swaggerOptions = {
+  definition: {
+    openapi: '3.0.0',
+    info: {
+      title: 'Mon API - Projet L2',
+      version: '1.0.0',
+      description: 'Documentation de mon API',
+    },
+    servers: [{ url: 'http://localhost:3000' }],
+  },
+  apis: ['./node.js'],
+};
+
+const swaggerSpec = swaggerJsdoc(swaggerOptions);
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
+
 // --- FONCTIONS DE RÉCUPÉRATION ---
 
 async function get_familles() {
@@ -48,26 +67,6 @@ async function get_activites() {
         throw err;
     }
 }
-
-
-// async function fullData(id_famille) {
-
-//     try{
-//         const familles = await get_familles_byIdF(id_famille);
-//         const data_membres = await get_membres_byIdF(id_famille);
-//         const data_reservations = await get_reservations_byIdF(id_famille);
-//         const laFamille = familles[0];
-
-//         laFamille.membres = data_membres;
-//         laFamille.reservations = data_reservations;
-//         return laFamille;
-
-//         } catch (err) {
-//             throw err
-//     }
-
-// }
-
 
 async function get_familles_byIdF(id_famille) {
     try{
@@ -120,11 +119,38 @@ async function get_reservations_byIdF(id_famille) {
 }
 
 
+// --- ROUTES ---
 
+/**
+ * @swagger
+ * /api/activites:
+ *   post:
+ *     summary: Récupère toutes les activités
+ *     description: Retourne la liste complète des activités depuis la base de données.
+ *     responses:
+ *       200:
+ *         description: Liste des activités récupérée avec succès
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: string
+ *                   example: success
+ *                 message:
+ *                   type: string
+ *                   example: bonjour
+ *                 donnees:
+ *                   type: array
+ *                   items:
+ *                     type: object
+ *       500:
+ *         description: Erreur serveur
+ */
 app.post('/api/activites', async (req, res) => {
     try {
         const data = await get_activites();
-        // On renvoie "bonjour" + les données pour que ton IF dans le JS soit content
         res.json({ 
             status: "success", 
             message: "bonjour", 
@@ -135,6 +161,33 @@ app.post('/api/activites', async (req, res) => {
     }
 });
 
+/**
+ * @swagger
+ * /api/utilisateur:
+ *   post:
+ *     summary: Récupère toutes les familles
+ *     description: Retourne la liste complète des familles depuis la base de données.
+ *     responses:
+ *       200:
+ *         description: Liste des familles récupérée avec succès
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: string
+ *                   example: success
+ *                 message:
+ *                   type: string
+ *                   example: bonjour
+ *                 donnees:
+ *                   type: array
+ *                   items:
+ *                     type: object
+ *       500:
+ *         description: Erreur serveur
+ */
 app.post('/api/utilisateur', async (req, res) => {
     try {
         const data = await get_familles();
@@ -148,7 +201,37 @@ app.post('/api/utilisateur', async (req, res) => {
     }
 });
 
-
+/**
+ * @swagger
+ * /api/donnee:
+ *   post:
+ *     summary: Récupère toutes les familles et activités
+ *     description: Retourne en une seule requête la liste des familles et des activités.
+ *     responses:
+ *       200:
+ *         description: Données récupérées avec succès
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: string
+ *                   example: success
+ *                 message:
+ *                   type: string
+ *                   example: bonjour
+ *                 activites:
+ *                   type: array
+ *                   items:
+ *                     type: object
+ *                 familles:
+ *                   type: array
+ *                   items:
+ *                     type: object
+ *       500:
+ *         description: Erreur serveur
+ */
 app.post('/api/donnee', async (req, res) => {
     try {
         const data_familles = await get_familles();
@@ -167,6 +250,74 @@ app.post('/api/donnee', async (req, res) => {
 
 const bcrypt = require('bcrypt');
 
+/**
+ * @swagger
+ * /html/api/login:
+ *   post:
+ *     summary: Connexion ou inscription d'une famille
+ *     description: |
+ *       Gère deux actions selon le champ `action` envoyé dans le body :
+ *       - `connexion_famille` : connecte une famille existante avec mail + mot de passe
+ *       - `inscription_famille&payeur` : crée une nouvelle famille avec le payeur
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - action
+ *             properties:
+ *               action:
+ *                 type: string
+ *                 enum: [connexion_famille, "inscription_famille&payeur"]
+ *                 example: connexion_famille
+ *               mail:
+ *                 type: string
+ *                 example: famille@email.com
+ *               password:
+ *                 type: string
+ *                 example: monMotDePasse
+ *               nom:
+ *                 type: string
+ *                 example: Dupont
+ *               prenom:
+ *                 type: string
+ *                 example: Jean
+ *               date_naissance:
+ *                 type: string
+ *                 example: 1990-01-15
+ *               adresse:
+ *                 type: string
+ *                 example: 12 rue des Fleurs
+ *               telephone:
+ *                 type: string
+ *                 example: 0612345678
+ *               code_postal:
+ *                 type: string
+ *                 example: "73000"
+ *               ville:
+ *                 type: string
+ *                 example: Chambéry
+ *     responses:
+ *       200:
+ *         description: Succès ou échec de la connexion/inscription
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: string
+ *                   example: success
+ *                 message:
+ *                   type: string
+ *                   example: Connexion famille réussie
+ *       400:
+ *         description: Action non reconnue
+ *       500:
+ *         description: Erreur serveur interne
+ */
 app.post('/html/api/login', async (req, res) => {
     const { action } = req.body;
     const db = await mysql.createConnection(dbConfig);

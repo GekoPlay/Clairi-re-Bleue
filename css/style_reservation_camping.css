@@ -170,39 +170,59 @@ button {
 
 /* Effet au survol : On montre qu'on peut cliquer */
 .emplacement:hover {
-    background-color: rgba(255, 255, 255, 0.4); /* Petit flash blanc */
+    background-color: rgba(255, 255, 255, 0.4); /* Petit contour blanc */
     border: 2px solid white;
     transform: scale(1.1);
 }
 
 /* --- ÉTATS --- */
+.emplacement {
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+    opacity: 1;
+    z-index: 10;
+    transition: transform 0.2s ease, opacity 0.3s ease;
+}
 
-/* Libre (anciennement Neutre) : */
-.emplacement.libre {
+
+/* --- TYPE : TENTES (IDs 1-29) --- */
+.emplacement.tente.libre {
     background-image: url('../images/0.png');
-    background-size: contain;
-    background-repeat: no-repeat;
-    background-position: center;
-    opacity: 1;
-    z-index: 10;
 }
-
-/* Sélectionné : */
-.emplacement.selectionne {
+.emplacement.tente.selectionne {
     background-image: url('../images/1.png');
-    background-size: contain;
-    background-repeat: no-repeat;
-    background-position: center;
-    opacity: 1;
-    z-index: 10;
+}
+.emplacement.tente.occupe {
+    background-image: url('../images/2.png');
+    cursor: not-allowed;
+    opacity: 0.8; 
 }
 
-/* Occupé : */
-.emplacement.occupe {
-    background-image: url('../images/2.png');
-    background-size: contain;
-    background-repeat: no-repeat;
-    background-position: center;
-    opacity: 1;
+
+/* --- TYPE : MOBIL-HOMES (IDs 30-37) --- */
+.emplacement.mobilhome.libre {
+    background-image: url('../images/maison-mobile0.png');
+    
+}
+.emplacement.mobilhome.selectionne {
+    background-image: url('../images/maison-mobile1.png');
+}
+.emplacement.mobilhome.occupe {
+    background-image: url('../images/maison-mobile2.png');
     cursor: not-allowed;
+    opacity: 0.8;
+}
+
+/* --- TYPE : Campingcar (IDs 38-39) --- */
+.emplacement.campingcar.libre {
+    background-image: url('../images/camping-car0.png');
+}
+.emplacement.campingcar.selectionne {
+    background-image: url('../images/camping-car1.png');
+}
+.emplacement.campingcar.occupe {
+    background-image: url('../images/camping-car2.png');
+    cursor: not-allowed;
+    opacity: 0.8;
 }
