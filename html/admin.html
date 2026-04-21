@@ -1,20 +1,301 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="../css/style_admin.css">
-        <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
 
     <title>Administrateur</title>
 </head>
+
 <body>
-    <button onclick="Deco()">deco</button>
-    <div id="left_container"></div>
-    <div id="center_container"></div>
-    <div id="right_container"></div>
-    
-    
+
+    <div id="app">
+
+        <div v-show="visible" id="surBloc">
+            <div id="list-participant">
+                <button class="croix" @click="visible =!visible">X</button>
+                <h1>Liste des Participants</h1>
+                <h2 v-if="participants.length ===0">Aucun Participant</h2>
+                <div v-else id="participants">
+                    <div v-for="participant in participants" class="participant">
+                        <p>Famille {{participant.nom_payeur}}</p>
+                        <p>( {{participant.prenom_payeur}} )</p>
+                        <p>NB membre : {{participant.nb_membre}}</p>
+                        <button @click="reservationDelete(participant.id_famille)">Supprimer</button></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+
+        <div v-show="visibleChoice" id="choice">
+                <!-- <h1>{{famille</h1> -->
+
+
+                <div id="blocOnChoice">
+                     <button class="croix" @click="visibleChoice =!visibleChoice">X</button>
+
+
+                    <div v-if="Choice === null" id="list-button">
+                        <h1>Que voulez-vous faire ?</h1>
+                        <button @click="Choice = 'A'">Ajouter à une activité</button>
+                        <button @click="Choice = 'B'">AJouter à un emplacement</button>
+                        <button>Modifier la famille</button>
+                    </div>
+
+                    
+                    <div v-if="Choice === 'A'" id="list-button">
+                        <h1>Ajouter la famille a une activité</h1>
+                        <div v-for="activite in activites" class="familleForActivite">
+                            <h1>Activité : {{activite.nom}}</h1>
+                            <input type="number" v-model.number="NBMembres" placeholder="Nombre de Membres">
+                            <button @click="InscrireF_A(activite.id)">Inscrire Activite</button>
+                            <button @click="InscrireFamilleAFifo(activite.id)">Inscrire File Attente</button>
+                        </div>
+                        <button @click="Choice = null">Retour</button>
+                    </div>
+
+
+
+                    <div v-if="Choice === 'B'" id="emplChoice">
+                        <h1>Ajouter la famille à un emplacement</h1>
+                        <div id="InscriptRes">
+                            <select v-model="NumEmplacementChoisi">
+                                <option v-for="emplacement in emplacements" :value="emplacement.num_emplacement">
+                                    {{emplacement.nom}} - {{emplacement.num_emplacement}}
+                                </option>
+                            </select>
+                            <div v-if="NumEmplacementChoisi">
+                                <form @submit.prevent="InscrireFamilleEmplacment(NumEmplacementChoisi)" class="formulaire">
+                                    <h1>Emplacement N°{{NumEmplacementChoisi}}</h1>
+                                    <input type="date" v-model="dateDebutEmplacement" placeholder="Date début" required>
+                                    <input type="date" v-model="dateFinEmplacement" placeholder="Date fin" required>
+                                    <input type="number" v-model="NBMembres" required>
+                                    <button type="submit">Enregistrer</button>
+                                </form>
+                                <div v-if="calendrier" id="calendrier">
+                                    <div v-for="cal in calendrier" class="cal">
+                                        <p>{{ new Date(cal.date).toLocaleDateString('fr-FR') }}</p>
+                                        <div v-if="cal.reservation">
+                                            {{cal.reservation.Nom_famille}}
+                                        </div>
+                                        <div v-else>
+                                            PAS DE RESERVATION                                        </div>
+                                    </div>
+                                    
+                                </div>
+                                <div v-else>
+                                    Pas ouf
+                                </div>
+                                <div>
+                                    <div v-if="creneaux.length > 0">
+                                        <h3>Les Créneaux disponibles</h3>
+                                        <div v-for="creneau in creneaux" :key="creneau.id">
+                                          <span>{{ creneau.debut }}</span> -> 
+                                          <span>{{ creneau.fin }}</span>
+                                          <button @click="reserverCreneau(creneau)">Réserver</button>
+                                        </div>
+                                    </div>
+                                    <div v-else>Pas de Créneaux disponibles</div>
+                                </div>
+                            </div>
+                            <div v-else><h3>Choississez un emplacement pour continuer</h3></div>
+                        </div>
+                        <button @click="Choice = null">Retour</button>
+                    </div>
+                    <div v-if="Choice === 'S' ">Success votre inscription a bien été pris en compte
+                        <button @click="Choice = null">Retour</button>
+                    </div>
+
+                </div>
+                <!-- <button class="croix" @click="visibleChoice =!visibleChoice">X</button>
+                
+               
+                
+ -->
+
+
+            
+        </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        <div id="center">
+            <div id="familles">
+                <h2 class="title">Familles</h2>
+                <div id="list-familles">
+                    <div v-for="famille in familles" :key="famille.id_famille">
+                        <hp>{{ famille.nom }}</hp>
+                        <p>Payeur : {{ famille.prenom }} {{ famille.nom }}</p>
+                        <p>Nombre de Membres : {{famille.nb_membres}}</p>
+                        <p>Nombre de Membres : {{famille.id_famille}}</p>
+                        <button @click="SuprimerFamille(famille.id_famille)">Supprimer</button>
+                        <button
+                            @click="visibleChoice =!visibleChoice; FamilleChoice_id = famille.id_famille">Modifier</button>
+                    </div>
+                </div>
+                <div id="ajoutFamille">
+                    <p>Ajouter une famille</p>
+                    <form @submit.prevent="createFamily" class="formulaire">
+                        <input required v-model="nvlFamille.nom" type="text" placeholder="Nom de Famille">
+                        <input required v-model="nvlFamille.prenom" type="text" placeholder="Prenom du Payeur">
+                        <input required v-model="nvlFamille.date_n" type="date" placeholder="Date de Naissance">
+                        <input required v-model="nvlFamille.mail" type="email" placeholder="mail">
+                        <input required v-model="nvlFamille.tel" type="tel" placeholder="telephone">
+                        <input required v-model="nvlFamille.adresse" type="text" placeholder="adresse">
+                        <input required v-model="nvlFamille.ville" type="text" placeholder="ville">
+                        <input required v-model="nvlFamille.code_postal" type="number" placeholder="code postal">
+                        <input required v-model="nvlFamille.password" type="password" placeholder="password">
+                        <button type="submit">Enregistrer</button>
+                    </form>
+                </div>
+            </div>
+
+            <div id="activites">
+                <h2 class="title">Activités</h2>
+
+                <div id="list-activites">
+                    <div v-for="activite in activites" :key="activite.id" class="act">
+                        <h2>{{ activite.nom }}</h2>
+                        <p>Prix : {{ activite.prix }} €</p>
+                        <p>Capacité Restante : {{ activite.cap_act }}</p>
+                        <p>Date de début : {{ activite.date_d }}</p>
+                        <p>Date de fin : {{ activite.date_f }}</p>
+                        <button @click="handleDelete(activite.id)">Supprimer</button>
+                        <button @click="findParticipantsActivite(activite.id)">Liste Participant</button>
+                    </div>
+                </div>
+
+                <div id="ajout">
+                    <p>Ajouter une activité</p>
+                    <div class="flex_act">
+                        <div>
+                            <div class="inputWithLabel">
+                                <label name="Nom de l'activité">Nom de l'activité : </label>
+                                <input v-model="nouvelleActivite.nom" placeholder="Nom">
+                            </div>
+                            <div class="inputWithLabel">
+                                <label name="prix">Prix : </label>
+                                <input v-model.number="nouvelleActivite.prix" type="number" placeholder="Prix">
+                            </div>
+
+                            <div class="inputWithLabel">
+                                <label name="Capacité de l'activité">Capacité de l'activité : </label>
+                                <input v-model.number="nouvelleActivite.cap_act" type="number" placeholder="Capacité">
+                            </div>
+                        </div>
+                        <div>
+                            <div class="inputWithLabel">
+                                <label name="Date du début de l'activité">Date du début de l'activité</label>
+                                <input v-model="nouvelleActivite.date_d" type="date" placeholder="Date de début">
+                            </div>
+                            <div class="inputWithLabel">
+                                <label for="Date de fin de l'activité" name="Date de fin de l'activité">Date de fin de
+                                    l'activité</label>
+                                <input v-model="nouvelleActivite.date_f" type="date" placeholder="Date de fin">
+                            </div>
+                        </div>
+                    </div>
+                    <button @click="ajoutAct">Enregistrer l'activité</button>
+                </div>
+            </div>
+            <div id="fifo">
+                <div id="fifoActivite">
+                    <h2 class="title">File d'attente Activité</h2>
+                    <div v-for="fifo in fifo_activites" :key="fifo.id" class="fifo">
+                        <p>Famille {{ fifo.nom_payeur}}</p>
+                        <p>Activité : {{ fifo.nom_activite }}</p>
+                        <p>Nb de Membre : {{fifo.nb_membre}}</p>
+                        <button @click="handleAccept(fifo)">Valider</button>
+                        <button @click="handleRefuse(fifo.id_attente)">Refuser</button>
+                    </div>
+                </div>
+                <div id="fifoEmplacement">
+                    <h2 class="title">File d'attente Emplacement</h2>
+                    <div v-for="fifo in fifo_emplacements" :key="fifo.id" class="fifo">
+                        <p>Famille : {{ fifo.nom_payeur }}</p>
+                        <p>Emplacement : {{ fifo.nom_emplacement }}</p>
+                        <p>Du {{ fifo.date_debut }} au {{ fifo.date_fin }}</p>
+                        <button @click="handleAcceptEmplacement(fifo)">Valider</button>
+                        <button @click="handleRefuseEmplacement(fifo.id_attente)">Refuser</button>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+         <div id="bottom"> 
+            <div id="moisChoice">
+                <label for="Choisir Mois">Choisir le mois : </label>
+                <input v-model="month" type="month" @change="ChercherEmplacements()">
+            </div>
+
+            <div id="tabEmplacement">
+                <div v-for="emplacement in emplacements">
+                    <p class="num_emplacement">Numéro d'emplacement : {{emplacement.num_emplacement}} </p>
+                    <p>Nom Emplacement : {{emplacement.nom}}</p>
+                    <p>Prix {{emplacement.prix}} €</p>
+                    <h3>Les Réservations</h3>
+                    <div v-if="!emplacement.reservations || emplacement.reservations.length === 0">
+                        <p>Pas de réservation </p>
+                    </div>
+                    <div v-else>
+                        <div v-for="reservation in emplacement.reservations"  class="resaEmplacement">
+                        <p>Nom : {{reservation.Nom_famille}} {{reservation.Prenom_payeur}}</p>
+                        <button @click="reservationEmpDelete(reservation.id_res_empl)">Supprimer la réservation</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+
+
+
+
+<!--  
+
+<div>
+    <button @click="datePrev">Date Avant</button>
+    <p>{{todayEU}}</p>
+    <button @click="dateNext">Date Après</button>
+</div>                <div class="emplacement" v-for="emplacement in emplacements">
+                    <h1>{{emplacement.nom}}</h1>
+                    <p>Numéro d'emplacement : {{emplacement.num_emplacement}}</p>
+                    <p>Capacite : {{emplacement.capacite}}</p>
+                    <p>Prix : {{emplacement.prix}}</p>
+                    <div id="list-res-empl">
+                        <div v-for="resa in reservations_emplacements.filter(r => r.num_emplacement === emplacement.num_emplacement)"
+                            class="resaEmplacement">
+                            <p>{{resa.Prenom_payeur}} {{resa.Nom_famille}}</p>
+                            <p>{{ resa.date_debut }} → {{ resa.date_fin }}</p>
+                        </div>
+                        <button>+ d'infos</button>
+                    </div>
+                </div>
+        </div> -->
+    </div>
 </body>
-<script src="../js/script_admin.js"></script>
+<!-- <script src="../js/script_admin.js"></script> -->
+<script src="js/app.js"></script>
+
 </html>

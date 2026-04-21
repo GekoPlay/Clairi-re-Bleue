@@ -1,180 +1,39 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Utilisateur</title>
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+    <script defer src="js/app_utilisateur.js"></script>
 
-    <link rel="stylesheet" href="../css/style_utilisateur.css">
 
+    <title>Page Utilisateur</title>
 </head>
+<body id="app">
+    <div id="user">
+        <h1>Bonjour {{ payeur.prenom }} {{ payeur.nom }}</h1>
+        <p>Adresse : {{ payeur.adresse }}</p>
+        <p>Date de naissance : {{ payeur.date_naissance }}</p>
+        <p>Numéro de téléphone : {{ payeur.telephone }}</p>
+        <p>Email : {{ payeur.mail }}</p>
+        <p>Code postal : {{ payeur.code_postal }}</p>
+        <p>Ville : {{ payeur.ville }}</p>
+    </div>
 
 
-
-<body>
-    <div id="surplus">
-        <div id="payement">
-            <img src="" alt="">
-            <div id="right">
-                <form id="top">
-                    <h1>Détail du Payement</h1>
-                    <div class="line">
-                        <div class="line-cote">
-                            <label for="">Nom de la Carte</label>
-                            <input type="text" name="nom_carte">
-                        </div>
-
-                        <div class="line-cote">
-                            <label for="">Numéro de Carte</label>
-                            <input name="num_carte" type="text">
-                        </div>
-                    </div>
-
-                    <div>
-                    <label for="date d'expiration">Date d'expiration de la carte</label>
-                    <div class="line">
-                    <div class="line-cote">
-                    <select name="mois" id="">
-                        <option value="" selected disabled>--Veuillez choisir une option--</option>
-                        <option>Janvier</option>
-                        <option>Fevriee</option>
-                        <option>Mars</option>
-                        <option>Avril</option>
-                        <option>Mai</option>
-                        <option>Juin</option>
-                        <option>Juillet</option>
-                        <option>Août</option>
-                        <option>Septembre</option>
-                        <option>Octobre</option>
-                        <option>Novembre</option>
-                        <option>Decembre</option>
-                    </select>
-                    </div>
-                     <div class="line-cote">
-                    <select name="annee" id="">
-                        <option value="" selected disabled>--Veuillez choisir une option--</option>
-                        <option>2015</option>
-                        <option>2016</option>
-                        <option>2017</option>
-                        <option>2018</option>
-                        <option>2019</option>
-                        <option>2020</option>
-                        <option>2021</option>
-                        <option>2022</option>
-                        <option>2023</option>
-                        <option>2024</option>
-                        <option>2026</option>
-                        <option>2027</option>
-                        <option>2028</option>
-                        <option>2029</option>
-                        <option>2030</option>
-                    </select>
-                    </div>
-                    </div>
-                    </div>
-
-                    <div class="line">
-                    <label for="cvv">CVV</label>
-                    <input name="cvv" type="number">
-                    </div>
-
-                </form>
-                <div id="bottom">
-                    <button name="previousStep">Previous Step</button>
-                    <button name="confirmOrder">Confirm Order →</button>
-                </div>
+    <div id="activites">
+        <h1>ACTIVITÉS</h1>
+        <div id="activites-dispo">
+            <div v-for="activite in activites" :key="activite.id">
+                <h2>{{ activite.nom }}</h2>
+                <p>Date de début : {{ activite.date_d }}</p>
+                <p>Date de fin : {{ activite.date_f }}</p>
+                <button @click="reserverActivite(activite.id)"> Réserver </button>
             </div>
         </div>
-    </div>
-    <div id="sous">
-        <img id="carte" src="" alt="">
-        <div id="interface"></div>
-        <div id="fifo"></div>
-    </div>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    <nav class="left box">
-        <h1>Nom</h1>
-        <ul>
-            <li class="li-nav"><a href="" class="lien-nav">Home</a></li>
-            <li class="li-nav"><a href="" class="lien-nav">Reservation</a></li>
-            <li class="li-nav"><a href="" class="lien-nav">lien 3</a></li>
-            <li class="li-nav"><a href="" class="lien-nav">lien 4</a></li>
-            <li class="li-nav"><a href="" class="lien-nav">lien 5</a></li>
-            <li class="li-nav"><a href="" class="lien-nav">lien 6</a></li>
-        </ul>
-    </nav>
-
-    <div class="box ombre-box center">
-        <div id="sur-box" class="ombre-box"><div id="home-menu">Home</div><div id="deconnexion">Déconnexion</div></div>
-        <div class="cote">
-        <div class="min-box">
-            <div class="nano-box ombre-box" id="presentation">
-                <img src="" alt="">
-
-            </div>
-            <div class="nano-box ombre-box" id="sejour">
-                <div id="total">+ d'infos</div>
-            </div>
-        </div>
-        <div class="min-box">
-            
-            <div class="nano-box ombre-box" id="membres"></div>
-            <div id="planning" class="nano-box ombre-box"></div>
-        </div>
-        </div>
-    
+        <div id="reservation-activite"></div>
 
     </div>
-    <div class="right">
-        <div id="haut"> <div id='calendar'></div>
-</div>
-        <div id="bas"></div>
-        
-    </div>
-
-
-
 </body>
-
 </html>
-
-    <script src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.20/index.global.min.js'></script>
-
-<script defer src="../js/script_utilisateur.js"></script>
