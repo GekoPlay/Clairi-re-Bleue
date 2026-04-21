@@ -6,34 +6,108 @@
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
     <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
     <script defer src="js/app_utilisateur.js"></script>
+    <link rel="stylesheet" href="../css/style_utilisateur.css">
 
 
     <title>Page Utilisateur</title>
 </head>
 <body id="app">
-    <div id="user">
-        <h1>Bonjour {{ payeur.prenom }} {{ payeur.nom }}</h1>
-        <p>Adresse : {{ payeur.adresse }}</p>
-        <p>Date de naissance : {{ payeur.date_naissance }}</p>
-        <p>Numéro de téléphone : {{ payeur.telephone }}</p>
-        <p>Email : {{ payeur.mail }}</p>
-        <p>Code postal : {{ payeur.code_postal }}</p>
-        <p>Ville : {{ payeur.ville }}</p>
+    
+    <div id="donnees">
+        <div v-if="choiceMenu == null">
+            <div id="text-user">Bienvenue sur votre espace utilisateur
+                <h1>Bonjour {{ payeur.prenom }} {{ payeur.nom }}</h1>
+                <p>Adresse : {{ payeur.adresse }}</p>
+                <p>Date de naissance : {{ payeur.date_naissance }}</p>
+                <p>Numéro de téléphone : {{ payeur.telephone }}</p>
+                <p>Email : {{ payeur.mail }}</p>
+                <p>Code postal : {{ payeur.code_postal }}</p>
+                <p>Ville : {{ payeur.ville }}</p>
+            </div>
+        </div>
+        <div v-if="choiceMenu == 'activites'">
+            <h1>ACTIVITÉS</h1>
+            <div id="activites-dispo">
+                <div v-for="activite in activites" :key="activite.id">
+                    <h2>{{ activite.nom }}</h2>
+                    <p>Date de début : {{ activite.date_d }}</p>
+                    <p>Date de fin : {{ activite.date_f }}</p>
+                    <p>Prix : {{ activite.prix }} €</p>
+                    <p>{{activite.nb_reservations}} places réservées</p>
+                    <p>Prix Total : {{ activite.prix * activite.nb_reservations }} €</p>
+                    <input v-model="nb_membre" type="number" placeholder="Nombre de Personnes">
+                    <p>Prix : {{ activite.prix * nb_membre }} €</p>
+                    <div v-if="activite.nb_reservations == 0">
+                        <button @click="reserverActivite(activite.id_activite)">Réserver</button>
+                    </div>
+                    <div v-else>
+                        <button @click="retirerMembreActivite(activite.id_activite, activite.id_reservation_activite)">Retirer Membre(s)</button>
+                        <button @click="ajouterMembreActivite(activite.id_activite, activite.id_reservation_activite)">Ajouter Membre(s)</button>
+                        <button @click="deleteReservation(activite.id_reservation_activite)">Supprimer la réservation</button>
+                    </div>
+                    <p>Encore {{ activite.cap_act }} places disponibles</p>
+                </div>
+            </div>
+        </div>
+        <div v-if="choiceMenu == 'emplacement'" id="emplacements">
+            <div v-if="ResaEmplacement">
+                Tu as réservé l'emplacement {{ ResaEmplacement.nom }} du {{ ResaEmplacement.date_debut }} au {{ ResaEmplacement.date_fin }}
+            </div>
+            <h1>Emplacements</h1>
+            <div id="list-emplacements">
+            <div v-for="emplacement in emplacements" :key="emplacement.id" class="emplacement">
+                <h2>{{ emplacement.nom }}</h2>
+                <p>Capacité : {{ emplacement.capacite }}</p>
+                <div v-for="resa in emplacement.reservations" :key="resa.id">
+                    <h3>Reservation</h3>
+                    <p>Date de début : {{ resa.date_debut }}</p>
+                    <p>Date de fin : {{ resa.date_fin }}</p>
+                </div>
+                <input type="text" required placeholder="Nb de Places" v-model="nb_membre">
+                <button @click="reserverEmplacement(emplacement.id)">Réserver</button>
+            </div>
+            </div>
+            <!-- Contenu pour le profil -->
+        </div>
     </div>
 
 
-    <div id="activites">
+<!-- <button @click="displayMenu = !displayMenu">Menu</button> -->
+
+
+<div v-if="displayMenu" id="menu">
+    
+        <a @click="choiceMenu = 'activites'">Activités</a>
+        <a @click="choiceMenu = 'emplacement'">Emplacement</a>
+        <a href="historique.html">Historique</a>
+        <a href="contact.html">Contact</a>
+    
+</div>
+
+    <!-- <div id="activites">
         <h1>ACTIVITÉS</h1>
         <div id="activites-dispo">
             <div v-for="activite in activites" :key="activite.id">
                 <h2>{{ activite.nom }}</h2>
                 <p>Date de début : {{ activite.date_d }}</p>
                 <p>Date de fin : {{ activite.date_f }}</p>
-                <button @click="reserverActivite(activite.id)"> Réserver </button>
+                <p>Prix : {{ activite.prix }} €</p>
+                <p>{{activite.nb_reservations}} places réservées</p>
+                <input v-model="nb_membre" type="number" placeholder="Nombre de Personnes">
+                <div v-if="activite.nb_reservations == 0">
+                    <button @click="reserverActivite(activite.id_activite)">Réserver</button>
+                </div>
+                <div v-else>
+                    <button @click="retirerMembreActivite(activite.id_activite, activite.id_reservation_activite)">Retirer Membre(s)</button>
+                    <button @click="ajouterMembreActivite(activite.id_activite, activite.id_reservation_activite)">Ajouter Membre(s)</button>
+                    <button @click="deleteReservation(activite.id_reservation_activite)">Supprimer la réservation</button>
+                </div>
+                <p>Encore {{ activite.cap_act }} places disponibles</p>
+                
             </div>
         </div>
         <div id="reservation-activite"></div>
 
-    </div>
+    </div> -->
 </body>
 </html>

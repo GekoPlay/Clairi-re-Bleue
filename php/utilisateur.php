@@ -28,7 +28,6 @@ switch ($entity) {
     case 'users':
         if ($option === 'reservation') {
             if ($secondOption === 'add') {
-
             $resultat = putReservationActiviteWithUpdate($conn, $data);
             $response = [
                 "status" => ($resultat === "success") ? "success" : $resultat,
@@ -48,6 +47,33 @@ switch ($entity) {
         } else {
             $response = $id ? getUserById($conn, $id) : getUsers($conn);
         }
+        break;
+        case 'activites':
+        if ($option === 'with_reservations' && $id) {
+            $response = getActivitesWithReservations($conn, $id);
+        }elseif($option === 'ajouter_membre') {
+            $resultat = UpdateReservationActivite($conn, $data,"add");
+            $response = [
+                "status" => ($resultat === "success") ? "success" : $resultat,
+                "msg" => $resultat
+            ];
+        }elseif($option === 'retirer_membre') {
+            $resultat = UpdateReservationActivite($conn, $data,"delete");
+            $response = [
+                "status" => ($resultat === "success") ? "success" : $resultat,
+                "msg" => $resultat
+            ];
+        }elseif($option === 'delete' && $id){
+                $resultat = deleteReservation($conn, $id);
+                $response = [
+                    "status" => $resultat ? "success" : "error",
+                    "msg" => $resultat
+                ];
+            }
+        else {
+            $response = getActivites($conn);
         }
+        break;
+}
 echo json_encode($response);
 ?>

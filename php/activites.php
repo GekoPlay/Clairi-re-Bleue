@@ -315,3 +315,86 @@ function updateFamily($conn, $data)
 
     return mysqli_stmt_execute($requete);
 }
+
+
+
+function getActivitesWithReservations($conn, $id_famille) {
+    $sql = "SELECT 
+                a.id AS id_activite,
+                a.nom,
+                a.date_d,
+                a.date_f,
+                a.prix,
+                a.cap_act,
+                r.id_reservation_activite,
+                IFNULL(r.nb_membre, 0) AS nb_reservations
+            FROM activites a
+            LEFT JOIN reservation_activites r ON a.id = r.id_activite AND r.id_famille = ?
+            ORDER BY a.date_d ASC";
+    
+    $requete = mysqli_prepare($conn, $sql);
+    mysqli_stmt_bind_param($requete, "i", $id_famille);
+    mysqli_stmt_execute($requete);
+    $res = mysqli_stmt_get_result($requete);
+    return mysqli_fetch_all($res, MYSQLI_ASSOC) ?: [];
+}
+
+
+function UpdateCapReservationActivite($conn, $data,$nb_membre_modif){
+    $id_activite = $data['id_activite'];
+    $id_famille = $data['id_famille'];
+    
+    $sql = "UPDATE reservation_activites SET nb_membre = nb_membre + ? WHERE id_activite = ? AND id_famille = ?";
+    $requete = mysqli_prepare($conn, $sql);
+    mysqli_stmt_bind_param($requete, 'iii', $nb_membre_modif, $id_activite, $id_famille);
+
+    if (mysqli_stmt_execute($requete)) {
+        return UpdateCapActivite($conn, $data, ($nb_membre_modif > 0) ? "-" : "+");
+    }
+}
+
+
+function  UpdateReservationActivite($conn, $data,$action){ 
+    $data_activite = getActiviteById($conn, $data['id_activite']);
+    $data_reservation = getReservationsActivitebyId($conn, $data['id_reservation_activite']);
+
+    $nb_membre = $data['nb_membre'];
+
+    if (!$data_activite) {
+        return "Activité introuvable";
+    }
+
+    if(!$data_reservation) {
+        return "Réservation introuvable";
+    }
+
+    if ($action === 'add') {
+        if ($data_activite['cap_act'] >= $nb_membre) {
+            if (UpdateCapReservationActivite($conn, $data,$nb_membre)) {
+                return "success";
+            } else {
+                return "Activité complète, famille ajoutée à la file d'attente";
+            }
+        } else {
+            if (PutFamilyFiFo($conn, $data)) {
+                return "Activité complète, famille ajoutée à la file d'attente";
+            } else {
+                return "Erreur lors de l'ajout en file d'attente";
+            }
+        }
+    } elseif ($action === 'delete') {
+        if($data_reservation['nb_membre'] < $nb_membre) {
+            return "Le nombre de membres à retirer dépasse le nombre de membres réservés";
+        }else{
+        if (UpdateCapReservationActivite($conn, $data,-$nb_membre)) {
+            return "success";
+        } else {
+            return "Erreur lors de la suppression de la réservation ou de la mise à jour des places";
+        }
+        }
+    } else {
+        return "Action non reconnue";
+    }
+}
+
+
