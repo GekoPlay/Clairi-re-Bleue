@@ -199,4 +199,26 @@ function getEmplacement($conn){
     $res = mysqli_stmt_get_result($requete);
     return mysqli_fetch_all($res, MYSQLI_ASSOC) ?: [];
 }
-// ?>
+
+
+
+
+function get_reservation_famille($conn, $id_famille){
+    $sql = "SELECT 
+    re.num_emplacement,
+    re.date_debut,
+    re.date_fin,
+    re.id_res_empl,
+    e.nom
+    FROM reservation_emplacement re
+    JOIN emplacements e ON e.num_emplacement = re.num_emplacement
+    WHERE re.id_famille = ?";
+    $requete = mysqli_prepare($conn, $sql);
+    mysqli_stmt_bind_param($requete, "i", $id_famille);
+    mysqli_stmt_execute($requete);
+    $res = mysqli_stmt_get_result($requete);
+    return mysqli_fetch_all($res, MYSQLI_ASSOC) ?: [];
+}
+
+?>
+

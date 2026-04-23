@@ -14,38 +14,89 @@ html, body {
 
 body{
     display: flex;
-    height: 100vh;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
 }
 
 #menu{
-  position: absolute;
-   display: flex;
-  flex-direction: column;
+  margin: 3%;
+  display: flex;
   align-items: center;
-    justify-content: space-around;
     background-color: #E76F51;
-    right: 0;
-    height: 100%;
-    width: 5vw;
-    z-index: 1;
+    border-radius: 50px;
+    box-sizing: border-box;
+    width: 60%;
+    z-index: 2;
+    overflow: hidden;
 }
 
-#menu ul {
-    list-style: none;
-    padding: 0;
-    margin: 0;
+#menu a{
+  color:black;
+  text-align: center;
+  text-decoration: none;
+  font-size: 20px;
+  transition: 0.3s;
+  flex: 1;
+  padding: 10px;
+  border-radius: 15px;
 }
 
+#menu a:hover{
+  background-color: #E9C46A;
+  color: white;
+  font-weight: bold;
+  cursor: pointer;
+}
 #donnees{
   display: flex;
   justify-content: center;
   flex-direction: column;
   align-items: center;
+  height: 100%;
   width: 95vw;
   background-color: #E9C46A;
   height: 100%;
   /* transform: translateX(-15vw); */
   z-index: 2;
+
+}
+
+#resaEmplacement{
+  background-color: #E76F51;
+  box-sizing: border-box;
+  padding: 20px;
+  border-radius: 10px;
+  text-align: center;
+  flex: 1;
+  transition: 1s;
+  width: 60%;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 0 20px #b8774254;
+  margin: 20px;
+  gap: 20px;
+}
+#resaEmplacement h1{
+  font-size: 3em;
+}
+
+#resaEmplacement button{
+  background-color: #E9C46A;
+  color: black;
+  font-weight: bold;
+  padding: 10px;
+  border: none;
+  border-radius: 15px;
+  font-family: "Bebas Neue", sans-serif;
+
+}
+
+.resaEmplacement{
+  background-color: #F4A261;
+  display: flex;
+  width: 100%;
+  justify-content: space-around;
 
 }
 
@@ -59,11 +110,13 @@ body{
   display: grid;
   align-items: stretch;
   width: 90%;
-  grid-template-columns: repeat(6, 1fr);
-  gap: 20px;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 40px;
   align-items: center;
   justify-content: center;
   padding: 20px;
+  height: 100%;
+  box-sizing: border-box;
 
 }
 
@@ -72,7 +125,9 @@ body{
   display: flex;
   flex-direction: column;
   align-items: center;
+  height: 100%;
 }
+
 .emplacement{
   background-color: #F4A261;
   box-sizing: border-box;
@@ -82,11 +137,67 @@ body{
   flex: 1;
   transition: 1s;
   height: 100%;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 0 20px #b8774254;
 }
 
+.emplacement form{
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+}
+
+.emplacement h2{
+  font-size: 3em;
+}
+
+.logo-tente{
+  width: 3%;
+  position: absolute;
+}
+
+
+#plan{
+  width: 80%;
+  
+  height: 80vh;
+  background-color: antiquewhite;
+  background-image: url('../images/plan_fond.png');
+  background-position: center;
+  background-size: contain;
+}
+
+
+.emplacement form input, .emplacement form button{
+  padding: 7px;
+  border: none;
+  margin: 5px;
+  border-radius: 15px;
+  width: 80%;
+}
+
+
+.emplacement form button{
+  background-color: #E76F51;
+  color: white;
+  font-weight: bold;
+  padding: 20px;
+  width: 90%;
+  transition: 1s;
+}
+
+.emplacement form button:hover{
+  background-color: #E9C46A;
+  cursor: pointer;
+  transition: 1s;
+}
+
+/* 
 .emplacement:hover{
   background-color: #E76F51;
   cursor: pointer;
   flex: 2;
   transition: 1s;
-}
+} */

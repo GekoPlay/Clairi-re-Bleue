@@ -28,27 +28,26 @@ switch ($entity) {
     case 'users':
         if ($option === 'reservation') {
             if ($secondOption === 'add') {
-            $resultat = putReservationActiviteWithUpdate($conn, $data);
-            $response = [
-                "status" => ($resultat === "success") ? "success" : $resultat,
-                "msg" => $resultat
-            ];
+                $resultat = putReservationActiviteWithUpdate($conn, $data);
+                $response = [
+                    "status" => ($resultat === "success") ? "success" : $resultat,
+                    "msg" => $resultat
+                ];
             }elseif($secondOption === 'delete'){
             
                 $resultat = deleteReservation($conn, $id);
-            $response = [
+                $response = [
                 "status" => ($resultat === "success") ? "success" : $resultat,
                 "msg" => $resultat];
             }
-        else {
-            $response = $id ? getUserById($conn, $id) : getUsers($conn);
-        }
-
+            else {
+                $response = $id ? getUserById($conn, $id) : getUsers($conn);
+            }
         } else {
             $response = $id ? getUserById($conn, $id) : getUsers($conn);
         }
         break;
-        case 'activites':
+    case 'activites':
         if ($option === 'with_reservations' && $id) {
             $response = getActivitesWithReservations($conn, $id);
         }elseif($option === 'ajouter_membre') {
@@ -69,11 +68,30 @@ switch ($entity) {
                     "status" => $resultat ? "success" : "error",
                     "msg" => $resultat
                 ];
-            }
-        else {
+        }else {
             $response = getActivites($conn);
         }
         break;
+        case 'emplacements':
+        if ($option === 'reservation') {
+            if($id){
+                $response = get_reservation_famille($conn, $id);
+            }else{
+            $response = PutReservationsEmplacement($conn, $data);
+            }
+        }elseif($option === 'delete' && $id){
+            $resultat = deleteReservationEmplacement($conn, $id);
+            $response = [
+                "status" => $resultat ? "success" : "error",
+                "msg" => $resultat
+            ];
+        }
+        
+        else {
+            // $response = getEmplacements($conn);
+        }
+        break;
 }
+
 echo json_encode($response);
 ?>

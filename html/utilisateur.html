@@ -12,6 +12,17 @@
     <title>Page Utilisateur</title>
 </head>
 <body id="app">
+
+
+    <div v-if="displayMenu" id="menu">
+    
+        <a @click="choiceMenu = 'activites'">Activités</a>
+        <a @click="choiceMenu = 'emplacement'">Emplacement</a>
+        <a href="historique.html">Historique</a>
+        <a href="contact.html">Contact</a>
+    
+</div>
+
     
     <div id="donnees">
         <div v-if="choiceMenu == null">
@@ -50,22 +61,57 @@
             </div>
         </div>
         <div v-if="choiceMenu == 'emplacement'" id="emplacements">
-            <div v-if="ResaEmplacement">
-                Tu as réservé l'emplacement {{ ResaEmplacement.nom }} du {{ ResaEmplacement.date_debut }} au {{ ResaEmplacement.date_fin }}
+            <div v-if="ResaEmplacement.length > 0" id="resaEmplacement">
+                <h1>Oooh Mais c'est pour bientôt !!!</h1>
+                <div v-for="resa in ResaEmplacement" :key="resa.id" class="resaEmplacement">
+                    <p>
+                      Tu as réservé l'emplacement <b>{{ resa.nom }}</b> 
+                      du {{ new Date(resa.date_debut).toLocaleDateString() }} 
+                      au {{ new Date(resa.date_fin).toLocaleDateString() }}
+                    </p>
+                    <button @click="deleteReservation(resa.id_res_empl)">Supprimer la réservation</button>
+                </div>
             </div>
-            <h1>Emplacements</h1>
+
+
+
+<div id="plan">
+    <div class="empl-Logo"><img src="../images/maison-mobile0.png" alt="" class="logo-tente"><img src="../images/maison-mobile0.png" alt="" class="logo-tente"><img src="../images/maison-mobile0.png" alt="" class="logo-tente"><img src="../images/maison-mobile0.png" alt="" class="logo-tente"><img src="../images/maison-mobile0.png" alt="" class="logo-tente"><img src="../images/maison-mobile0.png" alt="" class="logo-tente"><img src="../images/maison-mobile0.png" alt="" class="logo-tente"><img src="../images/maison-mobile0.png" alt="" class="logo-tente"><img src="../images/maison-mobile0.png" alt="" class="logo-tente"><img src="../images/maison-mobile0.png" alt="" class="logo-tente"><img src="../images/maison-mobile0.png" alt="" class="logo-tente"><img src="../images/maison-mobile0.png" alt="" class="logo-tente"><img src="../images/maison-mobile0.png" alt="" class="logo-tente"><img src="../images/maison-mobile0.png" alt="" class="logo-tente"><img src="../images/maison-mobile0.png" alt="" class="logo-tente"></div>
+</div>
+
+
+
+
+            <h1>Emplacements &lt;icon&gt; </h1>
             <div id="list-emplacements">
             <div v-for="emplacement in emplacements" :key="emplacement.id" class="emplacement">
                 <h2>{{ emplacement.nom }}</h2>
                 <p>Capacité : {{ emplacement.capacite }}</p>
                 <div v-for="resa in emplacement.reservations" :key="resa.id">
                     <h3>Reservation</h3>
-                    <p>Date de début : {{ resa.date_debut }}</p>
-                    <p>Date de fin : {{ resa.date_fin }}</p>
+                    <p>Réservé du {{ resa.date_debut }} au {{ resa.date_fin }}</p>
+                    
                 </div>
-                <input type="text" required placeholder="Nb de Places" v-model="nb_membre">
-                <button @click="reserverEmplacement(emplacement.id)">Réserver</button>
-            </div>
+
+
+
+
+                <form @submit.prevent="InscrireFamilleEmplacement(emplacement.num_emplacement)" class="formulaire">
+                    <input type="number" required placeholder="Nb de Places" v-model="nb_membre">
+                    <input type="date" required v-model="date_debut">
+                    <input type="date" required v-model="date_fin">
+                    <button type="submit">Réserver</button>
+                </form>
+                <div v-if="creneaux.length > 0 && NumEmplacement == emplacement.num_emplacement">
+                    <h3>Sorry il semblerait que vous ayez été pris de cours...</h3>
+
+                    <p>Voici les créneaux disponibles pour cet emplacement :</p>
+                    <div v-for="creneau in creneaux" :key="creneau.id">
+                      <span>{{ creneau.debut }}</span> -> 
+                      <span>{{ creneau.fin }}</span>
+                      <button @click="reserverCreneau(creneau)">Réserver</button>
+                    </div>
+                </div>
             </div>
             <!-- Contenu pour le profil -->
         </div>
@@ -75,14 +121,6 @@
 <!-- <button @click="displayMenu = !displayMenu">Menu</button> -->
 
 
-<div v-if="displayMenu" id="menu">
-    
-        <a @click="choiceMenu = 'activites'">Activités</a>
-        <a @click="choiceMenu = 'emplacement'">Emplacement</a>
-        <a href="historique.html">Historique</a>
-        <a href="contact.html">Contact</a>
-    
-</div>
 
     <!-- <div id="activites">
         <h1>ACTIVITÉS</h1>

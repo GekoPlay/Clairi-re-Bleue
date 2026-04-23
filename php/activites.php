@@ -177,6 +177,9 @@ function deleteReservation($conn, $id_res_activite) {
     }
     return false;
 }
+
+
+
 function getActivitesFifo($conn)
 {
     $sql = "SELECT 
