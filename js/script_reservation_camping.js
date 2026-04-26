@@ -1,10 +1,9 @@
-//const estConnecte = localStorage.getItem('client_connecte');
+const estConnecte = localStorage.getItem('client_connecte');
 
-//if (estConnecte !== 'true') {
-  //  alert("Vous devez être connecté pour accéder à la réservation.");
-    // Redirige vers ta page de connexion 
- //   window.location.href = "connexion.html"; 
-//}
+if (estConnecte !== 'true') {
+    alert("Vous devez être connecté pour accéder à la réservation.");
+    window.location.href = "connexion.html"; 
+}
 
 // --- CONFIGURATION DU CAMPING ---
 const NB_EMPLACEMENTS = 39;
