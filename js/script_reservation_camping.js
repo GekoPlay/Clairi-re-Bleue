@@ -76,32 +76,17 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 
 // --- 2. GESTION DES DATES ---
-function gestionDates() {
-    const inputDebut = document.getElementById('date-debut');
-    const inputFin = document.getElementById('date-fin');
-    const today = new Date().toISOString().split('T')[0];
-
-    let dateMin = today;
-    if (DATE_OUVERTURE_SAISON > today) 
-        dateMin = DATE_OUVERTURE_SAISON;
-
-    if(inputDebut) {
-        inputDebut.min = dateMin;
-        inputDebut.max = DATE_FERMETURE_SAISON;
-        
-        inputDebut.addEventListener('change', function() {
-            if(inputFin) {
-                inputFin.min = this.value;
-                if (inputFin.value && inputFin.value < this.value) inputFin.value = "";
-            }
-        });
-    }
+document.addEventListener('DOMContentLoaded', function() {
+    // On active Flatpickr sur nos deux nouveaux champs globaux
+    flatpickr(".champ-date", {
+        locale: "fr",
+        dateFormat: "Y-m-d",
+        minDate: "today"
+    });
     
-    if(inputFin) {
-        inputFin.min = dateMin;
-        inputFin.max = DATE_FERMETURE_SAISON;
-    }
-}
+    initBaseDeDonnees();
+    afficherPlan();
+});
 
 // --- 3. CHARGEMENT ET CORRECTION DES DONNÉES ---
 let placesDb;
@@ -173,9 +158,10 @@ function afficherPlan() {
         if (mesSelections.includes(place.id)) classeEtat = 'selectionne';
         div.classList.add(classeEtat);
 
-        // Ajout du clic uniquement si libre
         if (place.etat !== 'occupe') {
             div.onclick = () => toggleSelection(place.id);
+        } else {
+            div.onclick = () => alert("Mince ! Cet emplacement est indisponible. Essayez de modifier vos dates en haut de la page.");
         }
 
         planDiv.appendChild(div);
@@ -269,29 +255,26 @@ if(btnRetour) {
 const btnReserver = document.getElementById('btn-reserver');
 if(btnReserver) {
     btnReserver.addEventListener('click', () => {
+        
+        const dateDebut = document.getElementById('date-debut-global').value;
+        const dateFin = document.getElementById('date-fin-global').value;
+        const nbPers = document.getElementById('nb-pers-global').value;
+
+
+        if (dateDebut === "" || dateFin === "" || dateFin <= dateDebut || nbPers === "") {
+            alert("Merci de remplir correctement vos dates et le nombre de personnes en haut de la page.");
+            return; 
+        }
+
         if (mesSelections.length > 0) {
-
-            let erreur = false;
             let listeReservations = mesSelections.map(idPlace => {
-                const dateDebutTente = document.getElementById(`date-debut-${idPlace}`).value;
-                const dateFinTente = document.getElementById(`date-fin-${idPlace}`).value;
-                const nb_pers = document.getElementById(`nb-pers-${idPlace}`).value;
-                if (dateDebutTente === "" || dateFinTente === "" || dateFinTente <= dateDebutTente || nb_pers ==="") {
-                    erreur = true;
-                }
-
                 return {
                     "id_emplacement": idPlace,
-                    "nb_membre": nb_pers, 
-                    "date_d": dateDebutTente,
-                    "date_f": dateFinTente
+                    "nb_membre": nbPers, 
+                    "date_d": dateDebut,
+                    "date_f": dateFin
                 };
             });
-
-            if (erreur === true) {
-                alert("Merci de remplir tous les champs. La date de départ doit être APRÈS la date d'arrivée.");
-                return; 
-            }
 
             const data = { 
                 action: "ajouter_reservation", 

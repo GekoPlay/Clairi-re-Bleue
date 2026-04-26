@@ -4,10 +4,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Réservation Camping - La Clairière Bleue</title>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
-<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
-<script src="https://npmcdn.com/flatpickr/dist/l10n/fr.js"></script>
     <link rel="stylesheet" href="../css/style_reservation_camping.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+    <script src="https://npmcdn.com/flatpickr/dist/l10n/fr.js"></script>
     
     <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&display=swap" rel="stylesheet">
 </head>
@@ -25,15 +25,15 @@
         <div id="panneau-recherche" style="background: #f9f9f9; padding: 20px; border-radius: 8px; margin-bottom: 20px; display: flex; gap: 15px; flex-wrap: wrap; align-items: center;">
             <div class="champ">
                 <label>Date d'arrivée :</label>
-                <input type="text" id="date-debut-global" class="champ-date" placeholder="Choisir date">
+                <input type="date" id="date-debut-global" class="champ-date" placeholder="Choisir date">
             </div>
             <div class="champ">
                 <label>Date de départ :</label>
-                <input type="text" id="date-fin-global" class="champ-date" placeholder="Choisir date">
+                <input type="date" id="date-fin-global" class="champ-date" placeholder="Choisir date">
             </div>
             <div class="champ">
                 <label>Nb de personnes :</label>
-                <input type="number" id="nb-pers-global" min="1" max="15" value="2">
+                <input type="number" id="nb-pers-global" min="1" max="5" value="2">
             </div>
         </div>
 
@@ -41,7 +41,7 @@
         <p>Sélectionnez les emplacements disponibles sur le plan pour vos dates.</p>
     
         <div class="legende">
-            <div class="legende-item"><span class="carre libre"></span> Disponible</div>
+            <div class="legende-item"> <img src ="../images/0.png"><span class="carre libre"></span> Disponible</div>
             <div class="legende-item"><span class="carre occupe"></span> Indisponible</div>
             <div class="legende-item"><span class="carre selectionne"></span> Ma sélection</div>
         </div>
