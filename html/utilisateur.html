@@ -1,180 +1,151 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Utilisateur</title>
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&display=swap" rel="stylesheet">
-
+    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+    <script defer src="js/app_utilisateur.js"></script>
     <link rel="stylesheet" href="../css/style_utilisateur.css">
 
+
+    <title>Page Utilisateur</title>
 </head>
+<body id="app">
 
 
+    <div v-if="displayMenu" id="menu">
+    
+        <a @click="choiceMenu = 'activites'">Activités</a>
+        <a @click="choiceMenu = 'emplacement'">Emplacement</a>
+        <a href="historique.html">Historique</a>
+        <a href="contact.html">Contact</a>
+    
+</div>
 
-<body>
-    <div id="surplus">
-        <div id="payement">
-            <img src="" alt="">
-            <div id="right">
-                <form id="top">
-                    <h1>Détail du Payement</h1>
-                    <div class="line">
-                        <div class="line-cote">
-                            <label for="">Nom de la Carte</label>
-                            <input type="text" name="nom_carte">
-                        </div>
-
-                        <div class="line-cote">
-                            <label for="">Numéro de Carte</label>
-                            <input name="num_carte" type="text">
-                        </div>
+    
+    <div id="donnees">
+        <div v-if="choiceMenu == null">
+            <div id="text-user">Bienvenue sur votre espace utilisateur
+                <h1>Bonjour {{ payeur.prenom }} {{ payeur.nom }}</h1>
+                <p>Adresse : {{ payeur.adresse }}</p>
+                <p>Date de naissance : {{ payeur.date_naissance }}</p>
+                <p>Numéro de téléphone : {{ payeur.telephone }}</p>
+                <p>Email : {{ payeur.mail }}</p>
+                <p>Code postal : {{ payeur.code_postal }}</p>
+                <p>Ville : {{ payeur.ville }}</p>
+            </div>
+        </div>
+        <div v-if="choiceMenu == 'activites'">
+            <h1>ACTIVITÉS</h1>
+            <div id="activites-dispo">
+                <div v-for="activite in activites" :key="activite.id">
+                    <h2>{{ activite.nom }}</h2>
+                    <p>Date de début : {{ activite.date_d }}</p>
+                    <p>Date de fin : {{ activite.date_f }}</p>
+                    <p>Prix : {{ activite.prix }} €</p>
+                    <p>{{activite.nb_reservations}} places réservées</p>
+                    <p>Prix Total : {{ activite.prix * activite.nb_reservations }} €</p>
+                    <input v-model="nb_membre" type="number" placeholder="Nombre de Personnes">
+                    <p>Prix : {{ activite.prix * nb_membre }} €</p>
+                    <div v-if="activite.nb_reservations == 0">
+                        <button @click="reserverActivite(activite.id_activite)">Réserver</button>
                     </div>
-
-                    <div>
-                    <label for="date d'expiration">Date d'expiration de la carte</label>
-                    <div class="line">
-                    <div class="line-cote">
-                    <select name="mois" id="">
-                        <option value="" selected disabled>--Veuillez choisir une option--</option>
-                        <option>Janvier</option>
-                        <option>Fevriee</option>
-                        <option>Mars</option>
-                        <option>Avril</option>
-                        <option>Mai</option>
-                        <option>Juin</option>
-                        <option>Juillet</option>
-                        <option>Août</option>
-                        <option>Septembre</option>
-                        <option>Octobre</option>
-                        <option>Novembre</option>
-                        <option>Decembre</option>
-                    </select>
+                    <div v-else>
+                        <button @click="retirerMembreActivite(activite.id_activite, activite.id_reservation_activite)">Retirer Membre(s)</button>
+                        <button @click="ajouterMembreActivite(activite.id_activite, activite.id_reservation_activite)">Ajouter Membre(s)</button>
+                        <button @click="deleteReservation(activite.id_reservation_activite)">Supprimer la réservation</button>
                     </div>
-                     <div class="line-cote">
-                    <select name="annee" id="">
-                        <option value="" selected disabled>--Veuillez choisir une option--</option>
-                        <option>2015</option>
-                        <option>2016</option>
-                        <option>2017</option>
-                        <option>2018</option>
-                        <option>2019</option>
-                        <option>2020</option>
-                        <option>2021</option>
-                        <option>2022</option>
-                        <option>2023</option>
-                        <option>2024</option>
-                        <option>2026</option>
-                        <option>2027</option>
-                        <option>2028</option>
-                        <option>2029</option>
-                        <option>2030</option>
-                    </select>
-                    </div>
-                    </div>
-                    </div>
-
-                    <div class="line">
-                    <label for="cvv">CVV</label>
-                    <input name="cvv" type="number">
-                    </div>
-
-                </form>
-                <div id="bottom">
-                    <button name="previousStep">Previous Step</button>
-                    <button name="confirmOrder">Confirm Order →</button>
+                    <p>Encore {{ activite.cap_act }} places disponibles</p>
                 </div>
             </div>
         </div>
-    </div>
-    <div id="sous">
-        <img id="carte" src="" alt="">
-        <div id="interface"></div>
-        <div id="fifo"></div>
-    </div>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    <nav class="left box">
-        <h1>Nom</h1>
-        <ul>
-            <li class="li-nav"><a href="" class="lien-nav">Home</a></li>
-            <li class="li-nav"><a href="" class="lien-nav">Reservation</a></li>
-            <li class="li-nav"><a href="" class="lien-nav">lien 3</a></li>
-            <li class="li-nav"><a href="" class="lien-nav">lien 4</a></li>
-            <li class="li-nav"><a href="" class="lien-nav">lien 5</a></li>
-            <li class="li-nav"><a href="" class="lien-nav">lien 6</a></li>
-        </ul>
-    </nav>
-
-    <div class="box ombre-box center">
-        <div id="sur-box" class="ombre-box"><div id="home-menu">Home</div><div id="deconnexion">Déconnexion</div></div>
-        <div class="cote">
-        <div class="min-box">
-            <div class="nano-box ombre-box" id="presentation">
-                <img src="" alt="">
-
+        <div v-if="choiceMenu == 'emplacement'" id="emplacements">
+            <div v-if="ResaEmplacement.length > 0" id="resaEmplacement">
+                <h1>Oooh Mais c'est pour bientôt !!!</h1>
+                <div v-for="resa in ResaEmplacement" :key="resa.id" class="resaEmplacement">
+                    <p>
+                      Tu as réservé l'emplacement <b>{{ resa.nom }}</b> 
+                      du {{ new Date(resa.date_debut).toLocaleDateString() }} 
+                      au {{ new Date(resa.date_fin).toLocaleDateString() }}
+                    </p>
+                    <button @click="deleteReservation(resa.id_res_empl)">Supprimer la réservation</button>
+                </div>
             </div>
-            <div class="nano-box ombre-box" id="sejour">
-                <div id="total">+ d'infos</div>
-            </div>
-        </div>
-        <div class="min-box">
-            
-            <div class="nano-box ombre-box" id="membres"></div>
-            <div id="planning" class="nano-box ombre-box"></div>
-        </div>
-        </div>
-    
 
-    </div>
-    <div class="right">
-        <div id="haut"> <div id='calendar'></div>
+
+
+<div id="plan">
+    <div class="empl-Logo"><img src="../images/maison-mobile0.png" alt="" class="logo-tente"><img src="../images/maison-mobile0.png" alt="" class="logo-tente"><img src="../images/maison-mobile0.png" alt="" class="logo-tente"><img src="../images/maison-mobile0.png" alt="" class="logo-tente"><img src="../images/maison-mobile0.png" alt="" class="logo-tente"><img src="../images/maison-mobile0.png" alt="" class="logo-tente"><img src="../images/maison-mobile0.png" alt="" class="logo-tente"><img src="../images/maison-mobile0.png" alt="" class="logo-tente"><img src="../images/maison-mobile0.png" alt="" class="logo-tente"><img src="../images/maison-mobile0.png" alt="" class="logo-tente"><img src="../images/maison-mobile0.png" alt="" class="logo-tente"><img src="../images/maison-mobile0.png" alt="" class="logo-tente"><img src="../images/maison-mobile0.png" alt="" class="logo-tente"><img src="../images/maison-mobile0.png" alt="" class="logo-tente"><img src="../images/maison-mobile0.png" alt="" class="logo-tente"></div>
 </div>
-        <div id="bas"></div>
-        
+
+
+
+
+            <h1>Emplacements &lt;icon&gt; </h1>
+            <div id="list-emplacements">
+            <div v-for="emplacement in emplacements" :key="emplacement.id" class="emplacement">
+                <h2>{{ emplacement.nom }}</h2>
+                <p>Capacité : {{ emplacement.capacite }}</p>
+                <div v-for="resa in emplacement.reservations" :key="resa.id">
+                    <h3>Reservation</h3>
+                    <p>Réservé du {{ resa.date_debut }} au {{ resa.date_fin }}</p>
+                    
+                </div>
+
+
+
+
+                <form @submit.prevent="InscrireFamilleEmplacement(emplacement.num_emplacement)" class="formulaire">
+                    <input type="number" required placeholder="Nb de Places" v-model="nb_membre">
+                    <input type="date" required v-model="date_debut">
+                    <input type="date" required v-model="date_fin">
+                    <button type="submit">Réserver</button>
+                </form>
+                <div v-if="creneaux.length > 0 && NumEmplacement == emplacement.num_emplacement">
+                    <h3>Sorry il semblerait que vous ayez été pris de cours...</h3>
+
+                    <p>Voici les créneaux disponibles pour cet emplacement :</p>
+                    <div v-for="creneau in creneaux" :key="creneau.id">
+                      <span>{{ creneau.debut }}</span> -> 
+                      <span>{{ creneau.fin }}</span>
+                      <button @click="reserverCreneau(creneau)">Réserver</button>
+                    </div>
+                </div>
+            </div>
+            <!-- Contenu pour le profil -->
+        </div>
     </div>
 
 
+<!-- <button @click="displayMenu = !displayMenu">Menu</button> -->
 
+
+
+    <!-- <div id="activites">
+        <h1>ACTIVITÉS</h1>
+        <div id="activites-dispo">
+            <div v-for="activite in activites" :key="activite.id">
+                <h2>{{ activite.nom }}</h2>
+                <p>Date de début : {{ activite.date_d }}</p>
+                <p>Date de fin : {{ activite.date_f }}</p>
+                <p>Prix : {{ activite.prix }} €</p>
+                <p>{{activite.nb_reservations}} places réservées</p>
+                <input v-model="nb_membre" type="number" placeholder="Nombre de Personnes">
+                <div v-if="activite.nb_reservations == 0">
+                    <button @click="reserverActivite(activite.id_activite)">Réserver</button>
+                </div>
+                <div v-else>
+                    <button @click="retirerMembreActivite(activite.id_activite, activite.id_reservation_activite)">Retirer Membre(s)</button>
+                    <button @click="ajouterMembreActivite(activite.id_activite, activite.id_reservation_activite)">Ajouter Membre(s)</button>
+                    <button @click="deleteReservation(activite.id_reservation_activite)">Supprimer la réservation</button>
+                </div>
+                <p>Encore {{ activite.cap_act }} places disponibles</p>
+                
+            </div>
+        </div>
+        <div id="reservation-activite"></div>
+
+    </div> -->
 </body>
-
 </html>
-
-    <script src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.20/index.global.min.js'></script>
-
-<script defer src="../js/script_utilisateur.js"></script>

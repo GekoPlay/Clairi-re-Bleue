@@ -1,21 +1,25 @@
 services:
     monapache3:
-        image: maelgbrt/monapache3
+        build: .        # ← utilise le Dockerfile local
+        # image: maelgbrt/monapache   ← supprime cette ligne
         ports:
             - "${PORT_SITE}:80"
+        volumes:
+            - .:/var/www/html
         environment:
             - DB_NAME=${DB_NAME}
             - DB_USER=${DB_USER}
             - DB_PASSWORD=${DB_PASSWORD}
     mariadb:
-        image: mariadb
+        image: maelgbrt/monmariadb
+        restart : always
         environment:
             - MARIADB_ROOT_PASSWORD=${DB_ROOT_PASSWORD}
             - MARIADB_DATABASE=${DB_NAME}
             - MARIADB_USER=${DB_USER}
             - MARIADB_PASSWORD=${DB_PASSWORD}
         volumes:
-            - ./bd_data:/var/lib/mysql
+            - ./base_neuve:/var/lib/mysql
         ports:
             - "${PORT_DB}:3306"
 

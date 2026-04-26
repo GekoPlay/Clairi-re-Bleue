@@ -1,0 +1,40 @@
+RewriteEngine On
+RewriteBase /php/
+
+# --- 1. ROUTES COMPLEXES ---
+RewriteRule ^admin/activites/fifo/delete/([0-9]+)$ admin.php?entity=activites&option=fifo&secondOption=delete&id=$1 [L,QSA]
+RewriteRule ^admin/activites/reservations/delete/([0-9]+)$ admin.php?entity=activites&option=reservations&secondOption=delete&id=$1 [L,QSA]
+RewriteRule ^admin/emplacements/reservations/delete/([0-9]+)$ admin.php?entity=emplacements&option=reservations&secondOption=delete&id=$1 [L,QSA]
+RewriteRule ^admin/emplacements/reservations/BetweenDate/([^/]+)$ admin.php?entity=emplacements&option=reservations&secondOption=BetweenDate&today=$1 [L,QSA]
+
+# --- 2. ACTIONS FIXES ---
+RewriteRule ^admin/activites/fifo/accept$ admin.php?entity=activites&option=fifo&secondOption=accept [L,QSA]
+RewriteRule ^admin/activites/fifo/add$ admin.php?entity=activites&option=fifo&secondOption=add [L,QSA]
+RewriteRule ^admin/activites/reservations/add$ admin.php?entity=activites&option=reservations&secondOption=add [L,QSA]
+RewriteRule ^admin/emplacements/reservations/add$ admin.php?entity=emplacements&option=reservations&secondOption=add [L,QSA]
+RewriteRule ^admin/emplacements/mois/([^/]+)$ admin.php?entity=emplacements&option=mois&mois=$1 [L,QSA]
+RewriteRule ^admin/familles/withPayeur$ admin.php?entity=family&option=withPayeur [L,QSA]
+RewriteRule ^admin/familles/create$ admin.php?entity=family&option=create [L,QSA]
+
+# --- 3. OPTIONS AVEC ID ---
+RewriteRule ^admin/activites/reserv/([0-9]+)$ admin.php?entity=activites&option=reservations&id=$1 [L,QSA]
+RewriteRule ^admin/activites/participants/([0-9]+)$ admin.php?entity=activites&option=participants&id=$1 [L,QSA]
+RewriteRule ^admin/activites/delete/([0-9]+)$ admin.php?entity=activites&option=delete&id=$1 [L,QSA]
+RewriteRule ^admin/familles/NbMembre/([0-9]+)$ admin.php?entity=family&option=nbMembre&id=$1 [L,QSA]
+RewriteRule ^admin/familles/delete/([0-9]+)$ admin.php?entity=family&option=delete&id=$1 [L,QSA]
+
+# --- 4. LISTES ET ID SIMPLES ---
+RewriteRule ^admin/activites/fifo$ admin.php?entity=activites&option=fifo [L,QSA]
+RewriteRule ^admin/activites/reservations$ admin.php?entity=activites&option=reservations [L,QSA]
+RewriteRule ^admin/activites/add$ admin.php?entity=activites&option=add [L,QSA]
+
+RewriteRule ^admin/familles$ admin.php?entity=family [L,QSA]
+RewriteRule ^admin/users$ admin.php?entity=users [L,QSA]
+RewriteRule ^admin/emplacements$ admin.php?entity=emplacements [L,QSA]
+RewriteRule ^admin/activites$ admin.php?entity=activites [L,QSA]
+
+# IDs simples
+RewriteRule ^admin/familles/([0-9]+)$ admin.php?entity=family&id=$1 [L,QSA]
+RewriteRule ^admin/users/([0-9]+)$ admin.php?entity=users&id=$1 [L,QSA]
+RewriteRule ^admin/emplacements/([0-9]+)$ admin.php?entity=emplacements&id=$1 [L,QSA]
+RewriteRule ^admin/activites/([0-9]+)$ admin.php?entity=activites&id=$1 [L,QSA]

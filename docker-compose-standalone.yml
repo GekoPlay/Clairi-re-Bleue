@@ -1,0 +1,34 @@
+services:
+    monapache3:
+        build: .
+        # image: maelgbrt/monapache
+        ports:
+            - "${PORT_SITE}:80"
+        volumes:
+            - .:/var/www/html
+            - ./sql:/docker-entrypoint-initdb.d/
+
+        environment:
+            - DB_NAME=${DB_NAME}
+            - DB_USER=${DB_USER}
+            - DB_PASSWORD=${DB_PASSWORD}
+        restart : unless_stopped
+    mariadb:
+        image: maelgbrt/monmariadb
+        restart: always
+        environment:
+            - MARIADB_ROOT_PASSWORD=${DB_ROOT_PASSWORD}
+            - MARIADB_DATABASE=${DB_NAME}
+            - MARIADB_USER=${DB_USER}
+            - MARIADB_PASSWORD=${DB_PASSWORD}
+        volumes:
+            - ./base_neuve:/var/lib/mysql
+        ports:
+            - "${PORT_DB}:3306"
+
+    phpmyadmin:
+        image: phpmyadmin
+        environment:
+            - PMA_ARBITRARY=1
+        ports:
+            - "${PORT_PMA}:80"

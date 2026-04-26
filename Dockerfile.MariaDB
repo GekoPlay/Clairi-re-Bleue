@@ -1,0 +1,2 @@
+FROM mariadb:latest
+COPY ./sql/projet_web_L2_S2.sql /docker-entrypoint-initdb.d/

@@ -1,80 +1,442 @@
 html{
     margin: 0;
+    padding: 0;
+    font-family:"Bebas Neue", sans-serif ;
+    font-weight: -100
 }
 
-body{
+.bebas-neue-regular {
+  font-family: "Bebas Neue", sans-serif;
+  font-weight: 400;
+  font-style: normal;
+}
+
+body {
+    margin:0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+}
+
+
+#frise{
+    display: flex;
+    background-color: #4a4e69;
+    width: 100%;
+    justify-content: space-around
+}
+#ajout{
+    background-color: red;
+    color: white;
+    width: 100%;
+    padding: 15px;
+    box-sizing: border-box;
+    border-radius:15px;
+    z-index: 2;
+    display: flex;
+    justify-content: space-around;
+    flex-direction: column;
+    align-items: center;
+}
+#ensemble{
+    justify-content: space-between;
+}
+
+#calendrier{
+    display: grid;
+  grid-template-columns: repeat(5, 1fr); /* 5 colonnes égales */
+  gap: 10px;
+}
+
+.cal{
+    border: 2px solid black;
+}
+
+.dejaResa{
+    background-color: rgb(0, 47, 255);
+    outline: 10px solid white;
+    outline-offset: -10px;
+    padding: 20px;
+
+}
+
+.flex_act{
+    display: flex;
+    width: 50%;
+    justify-content: space-between;
+    gap: 20px;
+
+}
+.flex_act >div{
+    flex : 1;               
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.inputWithLabel{
+    display: flex;
+    flex-direction: column;
+
+}
+
+#ajout input{
+    padding: 4px;
+
+}
+
+#choice{
+    width: 100%;
+    height: 100vh;
+    overflow: hidden;
+    background-color: rgba(253, 12, 12, 0.486);
+    position: absolute;
+    z-index: 20;
     display: flex;
     align-items: center;
-    height: 100vh;
+    justify-content: center;
     box-sizing: border-box;
+    /* display: flex;
+    position: absolute;
+    top: 0;
+    z-index: 20;
+    align-items: center;
+    justify-content: center; */
+}
+
+
+#blocOnChoice{
+    width: 50%;
+    background-color: white;
+    min-height: 40%;
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+
+#list-button{
+    width: 60%;
+    gap: 20px;
+    display: flex;
+    flex-direction: column;
+    
+}
+
+#list-empl{
+    background-color: red;
+    height: 80%;
+    width: 100%;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+}
+
+#emplChoice{
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    width: 100%;
+    background-color: red;
+}
+input:focus {
+    outline: none;
+}
+.formulaire{
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+.formulaire input{
+    padding: 7px;
+    border: none;
+    border-bottom: 2px solid black;
+}
+.formulaire button {
+    padding: 10px;
+    background-color: red;
+    color: white;
+    border: none;
+    font-family: "Bebas Neue", sans-serif ;
+    transition: 1s;
+    letter-spacing: 1px;
+    font-size: 1em;
+}
+.formulaire button:hover{
+    letter-spacing: 3px;
+    transition: 1s;
+}
+#app{
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    position: relative;
+}
+
+#surBloc{
+    position: absolute;
+    background-color: #4a4e69b4;
+    width: 100%;
+    height: 100%;
+    z-index: 20;
+    display: flex;
+    align-items: center;
     justify-content: center;
     margin: 0;
-    margin: 0 25px;
-    gap :25px;
-    background: linear-gradient(to right,rgb(224, 158, 72),white);
-}
+    padding: 0;
+    box-sizing: border-box;
 
-#right_container{
-    height: 80%;
-    flex: 1;
-    border-radius: 15px;
-    box-shadow: 0 0 50px rgba(0, 0, 0, 0.37);
+}
+#list-participant{
+    width: 50%;
+    height: 70%;
     background-color: white;
     display: flex;
     align-items: center;
     flex-direction: column;
-    gap: 10px;
-
-
+    justify-content: center;
+    position: relative;
 }
 
-#center_container{
-     height: 80%;
-    flex: 1;
-    border-radius: 15px;
-    box-shadow: 0 0 50px rgba(0, 0, 0, 0.37);
-    background-color: white;
+#participants{
     display: flex;
-    align-items: center;
+    flex-wrap: wrap;
     flex-direction: column;
-    gap: 10px;
+    gap: 20px;
+    width: 80%;
 }
 
-#left_container{
-    height: 80%;
-    flex: 1;
-    border-radius: 15px;
-    box-shadow: 0 0 50px rgba(0, 0, 0, 0.37);
-    background-color: white;
-
-}
-
-.element_attente{
+.participant{
     display: flex;
-    width: 90%;
+    gap: 20px;
+    width: 100%;
+    justify-content: center;
+}
+
+.croix{
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    padding: 10px 20px;
+}
+
+#center{
+    flex: 8;
+    display: flex;
+    justify-content: center;
+    background-color: #4a4e69;
     justify-content: space-around;
-    border-bottom: 2px solid black ;
+    padding:40px;
+    gap: 20px;
+}
+
+
+button{
+    background-color: red;
+    padding: 10px;
+    color: white;
+    font-family:"Bebas Neue", sans-serif;
+    letter-spacing: 1px;
+    border: none;
+    transition: 1s;
+}
+
+#list-familles{
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+#list-familles > div {
+    flex : 1 33%;
+    border: 2px solid black;
     padding: 10px;
 }
 
-.Accepter{
-    background-color: rgb(0, 92, 0);
-}
-.Accepter:hover{
-    background-color: rgb(0, 170, 0);
-}
-
-.Refuser{
+#list-familles button{
+    padding: 10px;
     background-color: red;
-}
-.Refuser:hover{
-    background-color: rgb(134, 3, 3);
-}
-
-button{
-    padding: 20px;
     border: none;
-    border-radius: 25px;
     color: white;
     transition: 1s;
+    font-family: "Bebas Neue", sans-serif;
+    letter-spacing: 1px;
+    margin-right: 10px;
+}
+
+#list-familles button:hover{
+    background-color: rgb(184, 0, 0);
+    transition: 1s;
+}
+#center > div{
+    border: none;
+    background-color: white;
+    border-radius: 15px;
+    box-shadow: 0 0 8px rgba(0, 0, 0, 0.233);
+    position: relative;
+    margin: 0;
+    padding: 30px;
+    flex: 1;
+    /* overflow-y: scroll; */
+
+}
+
+#fifoActivite{
+    background-color: #4a4e69;
+    padding: 20px;
+}
+
+.fifo{
+    display: flex;
+    justify-content: space-around;
+}
+
+.fifo button{
+    margin: 7px;
+    color: white;
+}
+
+
+#center > #fifo {
+    background-color: transparent;
+    box-shadow: none;
+    display: flex;
+    gap: 30px;
+    flex-direction: column;
+    margin: 0;
+    padding: 0;
+}
+
+
+#fifo > div {
+    position: relative;
+    border-radius: 15px;
+}
+#fifoActivite{
+    background-color: white;
+    flex: 1;
+    padding: 15px;
+}
+
+#fifoEmplacement{
+    padding: 15px;
+    flex: 1;
+    background-color: white;
+}
+
+/* Utilise cette syntaxe pour être sûr de gagner la priorité */
+#center > #activites {
+    flex: 2;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+
+#list-activites {
+    display: flex;
+    align-items: flex-start;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-bottom: 20px;
+}
+
+
+
+.line{
+    background-color: black;
+    width: 100%;
+    height: 1px;
+
+}
+
+.act{
+    border: 2px solid black;
+    padding: 15px;
+}
+.act button{
+    margin: 10px;
+}
+
+button:hover{
+    background-color: rgb(201, 8, 8);
+    cursor: pointer;
+}
+
+.act h2{
+    letter-spacing: 1px;
+    font-weight: 0;
+    border: 0;
+}
+
+
+
+.title{
+    letter-spacing: 1px;
+    font-family:"Bebas Neue", sans-serif ;
+    position: absolute;
+    background-color: red;
+    padding: 5px;
+    color: white;
+    top: -40px;
+    z-index: 2;
+    left: 50%;
+    transform: translateX(-50%);
+}
+
+#bottom {
+display: flex;
+flex-direction: column;
+background-color: yellowgreen;
+padding: 5vw;
+}
+#moisChoice{
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-left: 20vw;
+    width: 10vw;
+}
+#moisChoice input{
+    padding: 7px;
+    border: none;
+    border-bottom: 2px solid black;
+    background-color: transparent;
+
+}
+.num_emplacement{
+
+    padding: 10px;
+    border: 2px solid black;
+}
+
+.resaEmplacement{
+    background-color: rebeccapurple;
+}
+#tabEmplacement{
+    flex: 1;
+    display: grid;
+    grid-template-columns: repeat(8, 1fr);
+    padding: 50px;
+    gap: 20px; 
+}
+.emplacement {
+    border: 2px solid black;
+    min-height: 20vh;
+    width: 20vh;
+    display: flex;
+    flex-direction: column;
+    padding: 20PX;
+}
+
+.resaEmplacement{
+    background-color: red;
+    padding: 10px;
+}
+
+#list-res-empl{
+    display: flex;
+    flex-direction: column;
+    background-color: #4a4e69;
+    gap: 10px;
 }
