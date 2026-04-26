@@ -44,4 +44,4 @@ Utilisateur : info7
 _______________________________________________________________
                       DOC EN YAML
 ________________________________________________________________
-LIEN : ./documentation/doc.yaml
+LIEN : [doc](https://github.com/maelgbrt/Clairi-re-Bleue/tree/main/documentation)
