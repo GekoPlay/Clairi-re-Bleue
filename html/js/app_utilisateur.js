@@ -1,20 +1,54 @@
+// const { response } = require("express");
+
+// const { response } = require("express");
+
+// const { response } = require("express");
+
+// const { response } = require("express");
+
+// const { response } = require("express");
+
 const { createApp, ref, onMounted } = Vue;
 
 createApp({
   setup() {
+    const menuOpen = ref(false);
     const id_famille = ref(66);
     const payeur = ref([]);
     const activites = ref([]);
+    const fifo_activite = ref([]);
     const data = ref([]);
     const nb_membre = ref(null);
     const displayMenu = ref(true);
-    const choiceMenu = ref('emplacement');
+    const choiceMenu = ref();
     const emplacements = ref([]);
     const month = ref(new Date().toISOString().slice(0, 7));
     const date_debut = ref();
     const date_fin = ref();
     const NumEmplacement = ref();
     const ResaEmplacement = ref([]);
+    const ChoiceOverlay = ref(null);
+    const Infos_activites = ref([]);
+
+
+
+    const Pos_emplacements = [
+    { id: 1, x: 0, y: 20 },
+    { id: 2, x: 0, y: 0 },
+    { id: 3, x: 0, y: 0 },
+    { id: 4, x: 0, y: 0 },
+    { id: 5, x: 0, y: 0 },
+    { id: 6, x: 0, y: 0 },
+    { id: 7, x: 0, y: 0 },
+    { id: 8, x: 0, y: 0 },
+    { id: 9, x: 0, y: 0 },
+    { id: 10, x: 0, y: 0 },
+    { id: 11, x: 0, y: 0 },
+    { id: 15, x: 0, y: 0 },
+    { id: 12, x: 0, y: 0 },
+    { id: 13, x: 0, y: 0 },
+    { id: 14, x: 0, y: 0 },
+]
 
     data.value = {
       id_famille: id_famille.value,
@@ -55,9 +89,42 @@ createApp({
     };
 
 
+    const deleteFifo = (id) => {
+      axios.get(`../../php/admin/activites/fifo/delete/`+id).then(response => {
+        loadData();
+      })
+    }
+
+
+    const addFifoMb = (id) => {
+      data.value = {"nb_membre_aj" : nb_membre.value}
+      console.log(data.value);
+      console.log(id);
+      axios.post(`../../php/utilisateur.php?entity=activites&option=fifo&secondOption=addM&id=${id}`,data.value).then(response => {
+        loadData();
+      })
+    }
+    const delFifoMb = (id) => {
+      data.value = {"nb_membre_aj" : nb_membre.value}
+      console.log(data.value);
+      console.log(id);
+      axios.post(`../../php/utilisateur.php?entity=activites&option=fifo&secondOption=delM&id=${id}`,data.value).then(response => {
+        loadData();
+      })
+    }
+
+
+    const deleteReservationActivite = (id_res_activite) => {
+      console.log(id_res_activite);
+      axios.get(`../../php/admin.php?entity=activites&option=reservations&secondOption=delete&id=${id_res_activite}`).then(response => {
+        loadData();
+      })
+    }
+
 
 
     const deleteReservation = (id_res_empl) => {
+      
       axios.post(`../../php/utilisateur.php?entity=emplacements&option=delete&id=${id_res_empl}`)
         .then((response) => {
           alert("Réservation supprimée !");
@@ -74,6 +141,12 @@ createApp({
         console.log("Activités avec réservations :", activites.value); 
       }).catch(err => console.error("Erreur API :", err));
     };
+
+    // const get_fifo_activites = (id_famille) => {
+    //   axios.get(`../php/utilisateur.php?entity=activite&option=fifo&id=`${id_famille}).then(response=> {
+    //     fifo_activite.value = response.data;
+    //   })
+    // }
 
 
     const get_emplacements = () => {
@@ -169,6 +242,48 @@ const grouperDatesConsecutives = (dates) => {
 };
 
 
+
+const disconnect = () => {
+  axios.get('../php/login/disconnected').then(response => {
+    if(response.data.status == "disconnected"){
+      window.location.href = "login.html";
+    }else{
+      console.log("error lors de la deconnexion");
+    }
+  })
+}
+
+
+
+
+
+const isConnected = () => {
+  axios.get('../php/login/isConnected').then(response => {
+    console.log("fonctionnement de connexion");
+    console.log(response.data);
+    var res = response.data;
+    if(res['status'] == 'disconnected'){
+      window.location.href = "login.html";
+    }else{
+      if(res['admin'] == "admin"){
+        window.location.href = "admin.php";
+      }else{
+        console.log("connecter pr famille");
+        id_famille.value = res['id'];
+      }
+    }
+  })
+}
+
+const InfoActivite = (id_activite) => {
+  ChoiceOverlay.value = 'InfoActivite';
+  Infos_activites.value.id_activite = id_activite;
+  axios.get(`../../php/utilisateur.php?entity=activites&id=${id_activite}`).then(reponse => {
+    Infos_activites.value = reponse.data;
+    console.log(reponse.data);
+  })
+}
+
     const ajouterMembreActivite = (id_activite,id_res_act) => {
       data.value.id_activite = id_activite;
       data.value.id_reservation_activite = id_res_act;
@@ -203,9 +318,11 @@ const grouperDatesConsecutives = (dates) => {
       nb_membre.value = null; 
       get_emplacements(); 
       get_reservation_famille();
+
     };
 
     onMounted(() => {
+      isConnected();
       loadData();
     });
 
@@ -228,8 +345,17 @@ const grouperDatesConsecutives = (dates) => {
       creneaux,
       calendrier,
       NumEmplacement,
-      ResaEmplacement
-
+      ResaEmplacement,
+      Pos_emplacements,
+      ChoiceOverlay,
+      InfoActivite,
+      Infos_activites,
+      disconnect,
+      menuOpen,
+      deleteReservationActivite,
+      deleteFifo,
+      addFifoMb,
+      delFifoMb
     };
   }
 }).mount('#app');
