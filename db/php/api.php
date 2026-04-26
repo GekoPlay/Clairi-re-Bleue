@@ -150,6 +150,7 @@ $date_debut = isset($data['date_debut']) ? $data['date_debut'] : '01-01-0000';
 $date_fin = isset($data['date_fin']) ? $data['date_fin'] : '01-01-0000';
 $id_activite = isset($data['id_activite']) ? $data['id_activite'] : '';
 $nb_membre = isset($data['nb_membre']) ? $data['nb_membre'] : '';
+$num_emplacement = isset($data['num_emplacement']) ? $data['num_emplacement'] : '';
 $password = isset($data['password']) ? $data['password'] : '';
 $id_reservation = isset($data['id_reservation']) ? $data['id_reservation'] : '';
 $cap_act = isset($data['cap_act']) ? $data['cap_act'] : '0';
@@ -459,7 +460,7 @@ if ($action === 'session') {
         $msg = "erreur refus";
     }
 } elseif ($action == "reservation_emplacement") {
-    $stmt = mysqli_prepare($conn, "INSERT INTO reservation_emplacement (id_famille,numero_emplacement,date_debut,date_fin,status) VALUES (?,?,?,?,1)");
+    $stmt = mysqli_prepare($conn, "INSERT INTO reservation_emplacement (id_famille,num_emplacement,date_debut,date_fin,status) VALUES (?,?,?,?,1)");
     mysqli_stmt_bind_param($stmt, 'iiss', $id_f, $num_emplacement, $date_debut, $date_fin);
     if (mysqli_stmt_execute($stmt)) {
         $status = "success";
@@ -468,6 +469,10 @@ if ($action === 'session') {
         $status = "success";
         $msg = "Activité réservée";
     }
+} elseif ($action === "all_reservations") {
+    $reservations = recup_fifo_emplacements($conn);
+    echo json_encode($reservations);
+    exit;
 } elseif ($action === "deconnexion") {
     $_SESSION = array();
 

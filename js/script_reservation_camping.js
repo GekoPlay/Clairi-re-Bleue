@@ -64,113 +64,159 @@ const positionsCampingcar = [
     { id: 39, top: '75%', left: '66.75%' }
 ];
 
-const DATE_OUVERTURE_SAISON = "2026-01-01";
-const DATE_FERMETURE_SAISON = "2026-12-31"; 
-
+let placesDb = [];
+let mesSelections = [];
+let toutesLesReservations = []; // 📦 Va contenir la VRAIE base de données
 
 // --- 1. INITIALISATION ---
-document.addEventListener('DOMContentLoaded', function() {
-    gestionDates();
-    initBaseDeDonnees();
-    afficherPlan();
-});
+document.addEventListener('DOMContentLoaded', async function() {
+    
+    // On demande toutes les réservations au PHP via Axios !
+    try {
+        const reponse = await axios.post('../php/api.php', { action: 'all_reservations' });
+        if (Array.isArray(reponse.data)) {
+            toutesLesReservations = reponse.data;
+        }
+    } catch(e) {
+        console.error("Erreur de chargement des réservations avec le serveur", e);
+    }
 
-// --- 2. GESTION DES DATES ---
-document.addEventListener('DOMContentLoaded', function() {
-    // On active Flatpickr sur nos deux nouveaux champs globaux
     flatpickr(".champ-date", {
         locale: "fr",
         dateFormat: "Y-m-d",
-        minDate: "today"
+        minDate: "today",
+        onChange: function() {
+            mettreAJourLePlan(); // Dès qu'on modifie une date, le plan réagit
+        }
     });
     
     initBaseDeDonnees();
-    afficherPlan();
+    mettreAJourLePlan();
 });
 
-// --- 3. CHARGEMENT ET CORRECTION DES DONNÉES ---
-let placesDb;
-let mesSelections = [];
-
+// --- 2. BASE DE DONNÉES LOCALE (Pour afficher les tentes) ---
 function initBaseDeDonnees() {
-    // On charge la base existante
-    let savedData = JSON.parse(localStorage.getItem('camping_data'));
-    
-    // Si la base n'existe pas, on la crée
-if (!savedData || savedData.length === 0) {
-        savedData = [];
-        
-        // Liste des numéros qui doivent être LIBRES (les autres seront occupés)
-        const placesLibres = [1, 3, 4, 6, 7, 8, 9, 10, 11, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 25, 26, 27, 28, 30, 31, 32, 33, 35, 36, 37, 38];
-
-        for (let i = 1; i <= NB_EMPLACEMENTS; i++) {
-            // Si le numéro 'i' est dans la liste ci-dessus -> 'libre', sinon -> 'occupe'
-            let etatInit = placesLibres.includes(i) ? 'libre' : 'occupe';
-            
-            savedData.push({ id: i, etat: etatInit });
-        }
+    placesDb = [];
+    for (let i = 1; i <= NB_EMPLACEMENTS; i++) {
+        const coords = positionsTentes.find(p => p.id === i) || positionsMobilome.find(p => p.id === i) || positionsCampingcar.find(p => p.id === i);
+        placesDb.push({ id: i, etat: 'libre', top: coords ? coords.top : '0%', left: coords ? coords.left : '0%' });
     }
-
-    placesDb = savedData.map(place => {
-        const coords = positionsTentes.find(p => p.id === place.id) || positionsMobilome.find(p => p.id === place.id) || positionsCampingcar.find(p => p.id === place.id);
-        return {
-            ...place,
-            top: coords ? coords.top : '0%',
-            left: coords ? coords.left : '0%'
-        };
-    });
-
-    sauvegarder(); 
 }
 
-// --- 4. GESTION DU PLAN (AFFICHAGE) ---
-const planDiv = document.getElementById('plan-camping');
+// --- 3. COLORIAGE DYNAMIQUE (Rouge = Occupé, Vert = Libre) ---
+function mettreAJourLePlan() {
+    const dateDebutStr = document.getElementById('date-debut-global').value;
+    const dateFinStr = document.getElementById('date-fin-global').value;
+
+    // Si le client n'a pas encore choisi ses dates, toutes les tentes sont libres
+    if (!dateDebutStr || !dateFinStr) {
+        placesDb.forEach(place => place.etat = 'libre');
+        afficherPlan();
+        return;
+    }
+
+    const dDebut = new Date(dateDebutStr);
+    const dFin = new Date(dateFinStr);
+
+    placesDb.forEach(place => {
+        place.etat = 'libre';
+        
+        // On vérifie dans la vraie BDD si la tente est occupée à ces dates
+        const estOccupe = toutesLesReservations.some(resa => {
+            // (status 1 = En attente, status 2 = Confirmé)
+            if (resa.num_emplacement == place.id && (resa.status == 1 || resa.status == 2)) {
+                const rDebut = new Date(resa.date_debut);
+                const rFin = new Date(resa.date_fin);
+                // Si les dates se chevauchent :
+                return (dDebut < rFin && dFin > rDebut);
+            }
+            return false;
+        });
+
+        // Si c'est occupé, on colorie en rouge et on retire du panier si besoin
+        if (estOccupe) {
+            place.etat = 'occupe';
+            mesSelections = mesSelections.filter(id => id !== place.id);
+        }
+    });
+
+    afficherPlan();
+}
 
 function afficherPlan() {
+    const planDiv = document.getElementById('plan-camping');
     if(!planDiv) return;
     planDiv.innerHTML = ""; 
 
     placesDb.forEach(place => {
         const div = document.createElement('div');
         div.classList.add('emplacement');
-        
         div.style.top = place.top;
         div.style.left = place.left;
-        
         div.title = "Emplacement N° " + place.id;
 
-        
-        // IDs 1 à 29 -> c'est une Tente
-        if (place.id >= 1 && place.id <= 29) {
-            div.classList.add('tente');
-        }
-        // IDs 30 à 37 -> c'est un Mobil-home
-        else if (place.id >= 30 && place.id <= 37) {
-            div.classList.add('mobilhome');
-        }
-        // IDs 38 ou 39 -> c'est un Camping-car
-        else if (place.id === 38 || place.id === 39) {
-            div.classList.add('campingcar');
-        }
+        if (place.id >= 1 && place.id <= 29) div.classList.add('tente');
+        else if (place.id >= 30 && place.id <= 37) div.classList.add('mobilhome');
+        else if (place.id === 38 || place.id === 39) div.classList.add('campingcar');
 
-        // Gestion de l'état (Libre/Occupé/Sélectionné)
         let classeEtat = place.etat;
         if (mesSelections.includes(place.id)) classeEtat = 'selectionne';
         div.classList.add(classeEtat);
 
+        // LE CLIC DYNAMIQUE
         if (place.etat !== 'occupe') {
             div.onclick = () => toggleSelection(place.id);
         } else {
-            div.onclick = () => alert("Mince ! Cet emplacement est indisponible. Essayez de modifier vos dates en haut de la page.");
+            // Si c'est rouge, on ouvre le calendrier de secours !
+            div.onclick = () => afficherDispoSpecifique(place.id);
         }
 
         planDiv.appendChild(div);
     });
-    
     updateInterface();
 }
 
-// --- 5. ACTIONS ---
+// --- 4. LE CALENDRIER DE SECOURS (AVEC VRAIES DATES DE LA BDD) ---
+function afficherDispoSpecifique(idTente) {
+    const zone = document.getElementById('zone-calendrier-indispo');
+    zone.style.display = 'block'; 
+
+    // On isole les réservations de CETTE tente précise
+    const resasTente = toutesLesReservations.filter(r => r.num_emplacement == idTente && (r.status == 1 || r.status == 2));
+    
+    // On formate les dates pour bloquer Flatpickr
+    const datesInvalides = resasTente.map(r => {
+        return {
+            from: r.date_debut.split(' ')[0], 
+            to: r.date_fin.split(' ')[0]
+        };
+    });
+
+    zone.innerHTML = `
+        <div style="background: #ffebee; padding: 20px; border-radius: 8px; border: 2px solid #ffcdd2;">
+            <h3 style="color: #c62828; margin-top: 0; text-align: center;">Emplacement N°${idTente} indisponible à vos dates</h3>
+            <p style="color: #333; text-align: center;">Voici le calendrier de cet emplacement (les dates grisées sont occupées par d'autres campeurs) :</p>
+            <div style="display: flex; justify-content: center; margin-top: 15px;">
+                <input type="text" id="cal-secours-${idTente}" style="display:none;">
+            </div>
+            <div style="text-align: center; margin-top: 15px;">
+                <button onclick="document.getElementById('zone-calendrier-indispo').style.display='none'" style="background: #c62828; color: white; padding: 10px 20px; border-radius: 5px; border: none; cursor: pointer;">Fermer ce calendrier</button>
+            </div>
+        </div>
+    `;
+
+    flatpickr(`#cal-secours-${idTente}`, {
+        locale: "fr",
+        inline: true, // Le calendrier s'affiche ouvert
+        minDate: "today",
+        disable: datesInvalides // On bloque les VRAIES dates du serveur !
+    });
+    
+    // On glisse doucement l'écran vers le bas
+    zone.scrollIntoView({ behavior: 'smooth' });
+}
+
+// --- 5. GESTION DU PANIER ---
 function toggleSelection(id) {
     if (mesSelections.includes(id)) {
         mesSelections = mesSelections.filter(item => item !== id);
@@ -183,7 +229,6 @@ function toggleSelection(id) {
 function updateInterface() {
     const spanListe = document.getElementById('liste-places');
     const btn = document.getElementById('btn-reserver');
-    if(!spanListe || !btn) return;
 
     if (mesSelections.length > 0) {
         mesSelections.sort((a, b) => a - b);
@@ -201,65 +246,14 @@ function updateInterface() {
     }
 }
 
-// --- 6. BOUTONS ---
-const btnVoir = document.getElementById('btn-voir-dispo');
-if(btnVoir) {
-    btnVoir.addEventListener('click', function() {
-        if (mesSelections.length===0) {
-            alert("Veuillez sélectionner au moins un emplacement.");
-            return;
-        }
-        const conteneur = document.getElementById('conteneur-calendriers');
-        conteneur.innerHTML = "";
-        mesSelections.forEach(idTente => {
-            conteneur.innerHTML += `
-                <div class="form-dates" style="border: 1px solid #ccc; padding: 15px; margin-bottom: 15px; border-radius: 8px;">
-                    <h3>Emplacement N° ${idTente}</h3>
-                    
-                    <div class="champ">
-                        <label>Date d'arrivée :</label>
-                        <input type="text" class="champ-date" id="date-debut-${idTente}">
-                    </div>
-                    
-                    <div class="champ">
-                        <label>Date de départ :</label>
-                        <input type="text" class="champ-date" id="date-fin-${idTente}">
-                    </div>
-
-                    <div class="champ">
-                        <label>Nomnbre de personnes :</label>
-                        <input type="number" class="nb-pers" id="nb-pers-${idTente}" min=1 max=5>
-                    </div>
-                </div>
-            `;
-        });
-        flatpickr(".champ-date", {
-            locale: "fr",            // Pour avoir le calendrier en français
-            dateFormat: "Y-m-d",     // Le format parfait pour ton serveur PHP (Année-Mois-Jour)
-            minDate: "today"         // Bloque toutes les dates dans le passé !
-            });
-        
-        document.getElementById('etape1').style.display = 'none';
-        document.getElementById('etape2').style.display = 'block';
-    });
-}
-
-const btnRetour = document.getElementById('retour-plan');
-if(btnRetour) {
-    btnRetour.addEventListener('click', function() {
-    document.getElementById('etape2').style.display = 'none';
-    document.getElementById('etape1').style.display = 'block';
-    });
-}
-
+// --- 6. VALIDER LA RÉSERVATION (ENVOI AU SERVEUR) ---
 const btnReserver = document.getElementById('btn-reserver');
-if(btnReserver) {
-    btnReserver.addEventListener('click', () => {
+if (btnReserver) {
+    btnReserver.addEventListener('click', async () => {
         
         const dateDebut = document.getElementById('date-debut-global').value;
         const dateFin = document.getElementById('date-fin-global').value;
         const nbPers = document.getElementById('nb-pers-global').value;
-
 
         if (dateDebut === "" || dateFin === "" || dateFin <= dateDebut || nbPers === "") {
             alert("Merci de remplir correctement vos dates et le nombre de personnes en haut de la page.");
@@ -267,36 +261,48 @@ if(btnReserver) {
         }
 
         if (mesSelections.length > 0) {
-            let listeReservations = mesSelections.map(idPlace => {
-                return {
-                    "id_emplacement": idPlace,
-                    "nb_membre": nbPers, 
-                    "date_d": dateDebut,
-                    "date_f": dateFin
-                };
-            });
+            let toutEstOk = true;
 
-            const data = { 
-                action: "ajouter_reservation", 
-                infos: listeReservations 
-            };
-            console.log(listeReservations);
+            for (let idPlace of mesSelections) {
+                
+                // Le colis pour le PHP
+                const data = { 
+                    action: "reservation_emplacement",
+                    id_famille: 51, // Famille 51 forcée pour tester sans inscription
+                    num_emplacement: idPlace,
+                    date_debut: dateDebut + " 12:00:00",
+                    date_fin: dateFin + " 12:00:00"
+                };
+
+                try {
+                    const response = await axios.post('../php/api.php', data);
+                    if (response.data.status === "error" || response.data.status === "failed") {
+                        toutEstOk = false;
+                    }
+                } catch (error) {
+                    console.error("Erreur serveur", error);
+                    toutEstOk = false;
+                }
+            }
+
+            if (toutEstOk) {
+                alert("🎉 Réservation validée ! Vos emplacements sont bien enregistrés.");
+                window.location.href = "../index.html"; // On renvoie à l'accueil
+            } else {
+                alert("Mince, une erreur est survenue lors de la communication avec le serveur.");
+            }
         }
     });
 }
 
-
+// Reset Admin
 const btnReset = document.getElementById('btn-reset');
 if(btnReset) {
     btnReset.addEventListener('click', () => {
-        if(confirm("Effacer toutes les réservations ?")) {
-            localStorage.removeItem('camping_data');
-            location.reload();
-        }
+        mesSelections = [];
+        document.getElementById('date-debut-global').value = "";
+        document.getElementById('date-fin-global').value = "";
+        mettreAJourLePlan();
+        document.getElementById('zone-calendrier-indispo').style.display = 'none';
     });
-}
-
-
-function sauvegarder() {
-    localStorage.setItem('camping_data', JSON.stringify(placesDb));
 }
