@@ -68,6 +68,27 @@ switch ($entity) {
                     "status" => $resultat ? "success" : "error",
                     "msg" => $resultat
                 ];
+        }elseif($option === 'fifo'){
+
+            if( $secondOption === 'addM' && $id){
+                $data['signe'] = "+";
+
+                $resultat = UpdateNbMembreFifo($conn,$data,$id);
+                $response = [
+                    "status" => $resultat ? "success" : "error",
+                    "msg" => $resultat
+                ];
+            }elseif( $secondOption === 'delM' && $id){
+                $data['signe'] = "-";
+                $resultat = UpdateNbMembreFifo($conn,$data,$id);
+                $response = [
+                    "status" => $resultat ? "success" : "error",
+                    "msg" => $resultat
+                ];
+            }
+        }elseif($id){
+            $response = getActiviteById($conn,$id);
+            
         }else {
             $response = getActivites($conn);
         }

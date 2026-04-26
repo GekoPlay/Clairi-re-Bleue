@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -11,141 +12,136 @@
 
     <title>Page Utilisateur</title>
 </head>
+
 <body id="app">
 
 
-    <div v-if="displayMenu" id="menu">
-    
+    <div id="menu">
+    <button id="burger" @click="menuOpen = !menuOpen">☰</button>
+    <div id="menu-links" :class="{ open: menuOpen }">
+        <a href="../index.html"">Home</a>
         <a @click="choiceMenu = 'activites'">Activités</a>
         <a @click="choiceMenu = 'emplacement'">Emplacement</a>
-        <a href="historique.html">Historique</a>
-        <a href="contact.html">Contact</a>
-    
+        <a @click="choiceMenu = null">Informations</a>
+        <a @click="disconnect()">Deconnexion</a>
+    </div>
 </div>
 
-    
-    <div id="donnees">
+
+    <div id="card">
+
         <div v-if="choiceMenu == null">
-            <div id="text-user">Bienvenue sur votre espace utilisateur
-                <h1>Bonjour {{ payeur.prenom }} {{ payeur.nom }}</h1>
+            <div id="text-user">
+                <h1>Bonjour {{ payeur.prenom }},</h1>
                 <p>Adresse : {{ payeur.adresse }}</p>
                 <p>Date de naissance : {{ payeur.date_naissance }}</p>
                 <p>Numéro de téléphone : {{ payeur.telephone }}</p>
                 <p>Email : {{ payeur.mail }}</p>
                 <p>Code postal : {{ payeur.code_postal }}</p>
                 <p>Ville : {{ payeur.ville }}</p>
+                <button>Modifier les Informations</button>
             </div>
         </div>
-        <div v-if="choiceMenu == 'activites'">
+
+
+        <div v-if="choiceMenu == 'activites'" id="activites">
             <h1>ACTIVITÉS</h1>
             <div id="activites-dispo">
-                <div v-for="activite in activites" :key="activite.id">
+                <div v-for="activite in activites" @click="InfoActivite(activite.id_activite)" :key="activite.id"
+                    class="activites">
+                    <div id="valid" v-if="activite.nb_reservations != 0">
+                        <p>VOTRE RÉSERVATION EST VALIDÉ !! </p>
+                    </div>
+                    <div style="background-color: blueviolet;" id="valid" v-else-if="activite.file_attente_activite != null">
+                        <p>VOUS ETES DANS LA FILE D'ATTENTE</p>
+                    </div>
+
+
                     <h2>{{ activite.nom }}</h2>
                     <p>Date de début : {{ activite.date_d }}</p>
                     <p>Date de fin : {{ activite.date_f }}</p>
                     <p>Prix : {{ activite.prix }} €</p>
                     <p>{{activite.nb_reservations}} places réservées</p>
-                    <p>Prix Total : {{ activite.prix * activite.nb_reservations }} €</p>
+                    <p>Prix Total : {{ activite.prix * activite.nb_reservations}} €</p>
                     <input v-model="nb_membre" type="number" placeholder="Nombre de Personnes">
                     <p>Prix : {{ activite.prix * nb_membre }} €</p>
-                    <div v-if="activite.nb_reservations == 0">
-                        <button @click="reserverActivite(activite.id_activite)">Réserver</button>
-                    </div>
-                    <div v-else>
-                        <button @click="retirerMembreActivite(activite.id_activite, activite.id_reservation_activite)">Retirer Membre(s)</button>
-                        <button @click="ajouterMembreActivite(activite.id_activite, activite.id_reservation_activite)">Ajouter Membre(s)</button>
-                        <button @click="deleteReservation(activite.id_reservation_activite)">Supprimer la réservation</button>
-                    </div>
-                    <p>Encore {{ activite.cap_act }} places disponibles</p>
+                    <!-- Pas encore réservé -->
+<div v-if="activite.nb_reservations == 0 && activite.file_attente_activite == null ">
+    <button @click="reserverActivite(activite.id_activite)">Réserver</button>
+                            <p>Encore {{ activite.cap_act }} places disponibles</p>
+
+</div>
+
+ <div v-else-if="activite.file_attente_activite != null">
+    <button @click="delFifoMb(activite.file_attente_activite.id_attente)">Retirer Membre(s)</button>
+    <button @click="addFifoMb(activite.file_attente_activite.id_attente)">Ajouter Membre(s) File Attente</button>
+    <button @click="deleteFifo(activite.file_attente_activite.id_attente)">Supprimer de la file attente</button>
+    <p>{{activite.file_attente_activite.nb_membre}} en file d'attente</p>
+
+</div>
+<!-- En file d'attente
+
+
+<!-- Déjà réservé → boutons gestion -->
+<div v-else>
+    <button @click="retirerMembreActivite(activite.id_activite, activite.id_reservation_activite)">Retirer Membre(s)</button>
+    <button @click="ajouterMembreActivite(activite.id_activite, activite.id_reservation_activite)">Ajouter Membre(s)</button>
+    <button @click="deleteReservationActivite(activite.id_reservation_activite)">Supprimer la réservation</button>
+                        <p>Encore {{ activite.cap_act }} places disponibles</p>
+
+</div>
                 </div>
             </div>
         </div>
-        <div v-if="choiceMenu == 'emplacement'" id="emplacements">
+
+
+       <div v-if="choiceMenu == 'emplacement'" id="emplacements">
             <div v-if="ResaEmplacement.length > 0" id="resaEmplacement">
                 <h1>Oooh Mais c'est pour bientôt !!!</h1>
                 <div v-for="resa in ResaEmplacement" :key="resa.id" class="resaEmplacement">
                     <p>
-                      Tu as réservé l'emplacement <b>{{ resa.nom }}</b> 
-                      du {{ new Date(resa.date_debut).toLocaleDateString() }} 
-                      au {{ new Date(resa.date_fin).toLocaleDateString() }}
+                        Tu as réservé l'emplacement <b>{{ resa.nom }}</b>
+                        du {{ new Date(resa.date_debut).toLocaleDateString() }}
+                        au {{ new Date(resa.date_fin).toLocaleDateString() }}
                     </p>
                     <button @click="deleteReservation(resa.id_res_empl)">Supprimer la réservation</button>
                 </div>
             </div>
-
-
-
-<div id="plan">
-    <div class="empl-Logo"><img src="../images/maison-mobile0.png" alt="" class="logo-tente"><img src="../images/maison-mobile0.png" alt="" class="logo-tente"><img src="../images/maison-mobile0.png" alt="" class="logo-tente"><img src="../images/maison-mobile0.png" alt="" class="logo-tente"><img src="../images/maison-mobile0.png" alt="" class="logo-tente"><img src="../images/maison-mobile0.png" alt="" class="logo-tente"><img src="../images/maison-mobile0.png" alt="" class="logo-tente"><img src="../images/maison-mobile0.png" alt="" class="logo-tente"><img src="../images/maison-mobile0.png" alt="" class="logo-tente"><img src="../images/maison-mobile0.png" alt="" class="logo-tente"><img src="../images/maison-mobile0.png" alt="" class="logo-tente"><img src="../images/maison-mobile0.png" alt="" class="logo-tente"><img src="../images/maison-mobile0.png" alt="" class="logo-tente"><img src="../images/maison-mobile0.png" alt="" class="logo-tente"><img src="../images/maison-mobile0.png" alt="" class="logo-tente"></div>
-</div>
-
-
-
-
-            <h1>Emplacements &lt;icon&gt; </h1>
+            <div id="title">
+                <img src="../images/0.png" id="logo-tent" alt="">
+                <h1>Emplacements </h1>
+            </div>
             <div id="list-emplacements">
-            <div v-for="emplacement in emplacements" :key="emplacement.id" class="emplacement">
-                <h2>{{ emplacement.nom }}</h2>
-                <p>Capacité : {{ emplacement.capacite }}</p>
-                <div v-for="resa in emplacement.reservations" :key="resa.id">
-                    <h3>Reservation</h3>
-                    <p>Réservé du {{ resa.date_debut }} au {{ resa.date_fin }}</p>
-                    
-                </div>
+                <div v-for="emplacement in emplacements" :key="emplacement.id" class="emplacement">
+                    <h2>{{ emplacement.nom }}</h2>
+                    <p>Capacité : {{ emplacement.capacite }}</p>
+                    <div v-for="resa in emplacement.reservations" :key="resa.id">
+                        <h3>Reservation</h3>
+                        <p>Réservé du {{  new Date(resa.date_debut).toLocaleDateString() }} au {{  new Date(resa.date_fin).toLocaleDateString()}}</p>
+                    </div>
 
+                    <form @submit.prevent="InscrireFamilleEmplacement(emplacement.num_emplacement)" class="formulaire">
+                        <input type="number" required placeholder="Nb de Places" v-model="nb_membre">
+                        <input type="date" required v-model="date_debut">
+                        <input type="date" required v-model="date_fin">
+                        <button type="submit">Réserver</button>
+                    </form>
+                    <div v-if="creneaux.length > 0 && NumEmplacement == emplacement.num_emplacement">
+                        <h3>Sorry il semblerait que vous ayez été pris de cours...</h3>
 
-
-
-                <form @submit.prevent="InscrireFamilleEmplacement(emplacement.num_emplacement)" class="formulaire">
-                    <input type="number" required placeholder="Nb de Places" v-model="nb_membre">
-                    <input type="date" required v-model="date_debut">
-                    <input type="date" required v-model="date_fin">
-                    <button type="submit">Réserver</button>
-                </form>
-                <div v-if="creneaux.length > 0 && NumEmplacement == emplacement.num_emplacement">
-                    <h3>Sorry il semblerait que vous ayez été pris de cours...</h3>
-
-                    <p>Voici les créneaux disponibles pour cet emplacement :</p>
-                    <div v-for="creneau in creneaux" :key="creneau.id">
-                      <span>{{ creneau.debut }}</span> -> 
-                      <span>{{ creneau.fin }}</span>
-                      <button @click="reserverCreneau(creneau)">Réserver</button>
+                        <p>Voici les créneaux disponibles pour cet emplacement :</p>
+                        <div v-for="creneau in creneaux" :key="creneau.id">
+                            <span>{{ creneau.debut }}</span> ->
+                            <span>{{ creneau.fin }}</span>
+                            <button @click="reserverCreneau(creneau)">Réserver</button>
+                        </div>
                     </div>
                 </div>
             </div>
-            <!-- Contenu pour le profil -->
-        </div>
-    </div>
-
-
-<!-- <button @click="displayMenu = !displayMenu">Menu</button> -->
+       </div>
 
 
 
-    <!-- <div id="activites">
-        <h1>ACTIVITÉS</h1>
-        <div id="activites-dispo">
-            <div v-for="activite in activites" :key="activite.id">
-                <h2>{{ activite.nom }}</h2>
-                <p>Date de début : {{ activite.date_d }}</p>
-                <p>Date de fin : {{ activite.date_f }}</p>
-                <p>Prix : {{ activite.prix }} €</p>
-                <p>{{activite.nb_reservations}} places réservées</p>
-                <input v-model="nb_membre" type="number" placeholder="Nombre de Personnes">
-                <div v-if="activite.nb_reservations == 0">
-                    <button @click="reserverActivite(activite.id_activite)">Réserver</button>
-                </div>
-                <div v-else>
-                    <button @click="retirerMembreActivite(activite.id_activite, activite.id_reservation_activite)">Retirer Membre(s)</button>
-                    <button @click="ajouterMembreActivite(activite.id_activite, activite.id_reservation_activite)">Ajouter Membre(s)</button>
-                    <button @click="deleteReservation(activite.id_reservation_activite)">Supprimer la réservation</button>
-                </div>
-                <p>Encore {{ activite.cap_act }} places disponibles</p>
-                
-            </div>
-        </div>
-        <div id="reservation-activite"></div>
+       </body>
 
-    </div> -->
-</body>
 </html>

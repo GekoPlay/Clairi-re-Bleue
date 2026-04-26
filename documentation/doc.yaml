@@ -1,0 +1,896 @@
+openapi: 3.0.0
+info:
+  title: "API Clairie Bleu"
+  description: "Voila la doc du BACKEND, toutes les requetes necessaires pour pouvoir exploiter le projet"
+  version: 1.0.0
+
+servers:
+  - url: http://localhost:8085/php
+    description: Serveur Local de dev
+
+
+
+# 1. Définition des chemins (Routes)
+paths:
+
+  /admin/activites:
+    get:
+      summary: "Récupération de toute les activites"
+      tags:
+        - Getteur Global
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: "Données chargées avec succès"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Activites'
+
+  /admin/familles:
+    get:
+      summary: "Récupération de toute les familles"
+      tags:
+        - Getteur Global
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: "Données chargées avec succès"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Familles'
+
+  /admin/users:
+    get:
+      summary: "Recupération Utilisateur"
+      tags:
+        - Getteur Global
+      responses:
+        '200':
+          description: "Données chargées avec succès"
+          content:
+            application/json:
+              schema:
+                properties:
+                  id : {type : int, example : 119}
+                  nom : {type : string, example : Gaborit}
+                  prenom : {type : string, example : Mael}
+                  id_famille : {type : int, example : 66}
+                  date_naissance : {type : string, example : "2006-07-14" }
+
+
+
+  /admin/emplacements:
+    get:
+      summary: "Récupération de toutes les familles"
+      tags:
+        - Getteur Global
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: "Données chargées avec succès"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Emplacements'
+
+
+
+
+
+  /admin/activites/{id_activite}:
+      get:
+        summary: "Récupère l'activité selon son id"
+        tags:
+          - Getteur Id
+        parameters:
+          - name: id_activite
+            in: path
+            required: true
+            schema:
+              type: integer
+        responses:
+          '200':
+            description: "Données chargées avec succès"
+            content:
+              application/json:
+                schema:
+                  $ref: '#/components/schemas/Activites'
+
+
+  /admin/users/{id_user}:
+      get:
+        summary: "Récupère l'activité selon son id"
+        tags:
+          - Getteur Id
+        parameters:
+          - name: id_user
+            in: path
+            required: true
+            schema:
+              type: integer
+        responses:
+          '200':
+            description: "Données chargées avec succès"
+            content:
+              application/json:
+                schema:
+                  $ref: '#/components/schemas/Users'
+
+
+  /admin/emplacements/{id_emplacement}:
+      get:
+        summary: "Récupère l'activité selon son id"
+        tags:
+          - Getteur Id
+        parameters:
+          - name: id_emplacement
+            in: path
+            required: true
+            schema:
+              type: integer
+        responses:
+          '200':
+            description: "Données chargées avec succès"
+            content:
+              application/json:
+                schema:
+                  $ref: '#/components/schemas/Emplacements'
+
+  /admin/familles/{id_famille}:
+      get:
+        summary: "Récupère l'activité selon son id"
+        tags:
+          - Getteur Id
+        parameters:
+          - name: id_famille
+            in: path
+            required: true
+            schema:
+              type: integer
+        responses:
+          '200':
+            description: "Données chargées avec succès"
+            content:
+              application/json:
+                schema:
+                  $ref: '#/components/schemas/Familles'
+  
+
+  /admin/familles/NbMembre/{id_famille}:
+      get:
+        summary: "Récupère le Nombre de membre d'une famille"
+        parameters:
+          - name: id
+            in: path
+            required: true
+            schema:
+              type: integer
+        responses:
+          '200':
+            description: "Données chargées avec succès"
+            content:
+              application/json:
+                schema:
+                  type : int
+                  example : 5
+  /admin/activites/delete/{id_activite}:
+      delete:
+        summary: "Supprime l'activité grace à son id"
+        tags:
+          - Delete
+        parameters:
+          - name: id_activite
+            in: path
+            required: true
+            schema:
+              type: integer
+        responses:
+          '200':
+            description: "Données chargées avec succès"
+            content:
+              application/json:
+                schema:
+                  $ref: '#/components/schemas/Success'
+          '400':
+            content : 
+              application/json:
+                schema:
+                  $ref: '#/components/schemas/Error'
+
+  /admin/familles/delete/{id_famille}:
+      delete:
+        summary: "Supprimer famille grâce à son id"
+        tags:
+          - Delete
+        parameters:
+          - name: id
+            in: path
+            required: true
+            schema:
+              type: integer
+        responses:
+          '200':
+            description: "Données chargées avec succès"
+            content:
+              application/json:
+                schema:
+                  $ref: '#/components/schemas/Success'
+          '400' :
+            description : "Erreur Chargement Donnees"
+            content: 
+              application/json:
+                schema :
+                  $ref: '#/components/schemas/Error'
+  /admin/activites/participants/{id_activites}:
+      get:
+        summary: "Supprimer famille grâce à son id"
+        parameters:
+          - name: id
+            in: path
+            required: true
+            schema:
+              type: integer
+        responses:
+          '200':
+            description: "Données chargées avec succès"
+            content:
+              application/json:
+                schema:
+                  $ref: '#/components/schemas/Participant'
+  admin/familles/withPayeur:
+      get:
+        summary: "Recup les familles avec les infos du payeur"
+        tags:
+          - Getteur Global With
+        responses:
+          '200':
+            description: "Données chargées avec succès"
+            content:
+              application/json:
+                schema:
+                  properties:
+                      id_famille : {type : int ,example : 4}
+                      mail : {type : string ,example : mail@mail.fr}
+                      adresse : {type : string ,example : 260 route du chemin}
+                      telephone : {type : int ,example : 0707070707}
+                      payeur_id : {type : int ,example : 4}
+                      ville : {type : string ,example : "Areches"}
+                      nom : {type : string ,example : "Gaborit"}
+                      prenom : {type : string ,example : Mael}
+                      date_naissance : {type : string ,example : "2006-07-14"}
+                      user_id : {type : int ,example : 4}
+
+
+  /admin/emplacements/mois/{mois} :
+      get:
+        summary: "Recup les familles avec les infos du payeur"
+        tags:
+          - Getteur Global With
+        parameters:
+          - name: mois
+            in: path
+            required: true
+            schema:
+              type: month
+        responses:
+          '200':
+            description: "Données chargées avec succès"
+            content:
+              application/json:
+                schema:
+                  properties:
+                    capacite : {type : int ,example : 4}
+                    num_emplacement : {type : int ,example : 4}
+                    prix : {type : int ,example : 40}
+                    nom : {type : string ,example : "Gaborit"}
+                    reservations:
+                      type: array
+                      items :
+                        properties :
+                          id_famille : {type : int, example : 4}
+                          Nom_famille : {type : string, example : "Gaborit"}
+                          date_debut : {type : string, example : "2026-04-10 00:00:00"}
+                          date_fin : {type : string, example : "2026-04-10 00:00:00"}
+                          id_res_empl : {type : string, example : 55}
+                          Prenom_payeur : {type : string, example : "Mael"}
+
+
+
+                      
+
+
+
+
+
+  /admin/activites/reservations/{id_reservation_activite}:
+      get:
+        summary: "Supprimer famille grâce à son id"
+        parameters:
+          - name: id
+            in: path
+            required: true
+            schema:
+              type: integer
+        responses:
+          '200':
+            description: "Données chargées avec succès"
+            content:
+              application/json:
+                schema:
+                  $ref: '#/components/schemas/ReservationActivite'
+  /admin/familles/create:
+      post:
+        summary: "Supprimer famille grâce à son id"
+        tags:
+        - CREATE
+        requestBody:
+            required: true
+            content:
+              application/json:
+                schema:
+                  $ref: '#/components/schemas/createFamille'
+                  # type: object
+                    
+        responses:
+          '200':
+            description: "Données chargées avec succès"
+            content:
+              application/json:
+                schema:
+                  $ref: '#/components/schemas/Success'
+
+
+  /admin/activites/add:
+      post:
+        summary: "Supprimer famille grâce à son id"
+        tags:
+        - CREATE
+        requestBody:
+            required: true
+            content:
+              application/json:
+                schema:                    
+                    properties :
+                      id_famille : {type : int ,example : 4}
+                      id_activite : {type : int ,example : 4}
+                      nb_membre : {type : int ,example : 4}
+        responses:
+          '200':
+            description: "Données chargées avec succès"
+            content:
+              application/json:
+                schema:
+                  properties :
+                    status : {type : string,example : success}
+                    msg : {type : string ,example : Reservation AQJOUTE}
+  /admin/activites/fifo/accept:
+      post:
+        summary: "Accept File attente"
+        tags:
+        - FIFO
+        requestBody:
+            required: true
+            content:
+              application/json:
+                schema:                    
+                    properties :
+                      id_famille : {type : int ,example : 4}
+                      id_activite : {type : int ,example : 4}
+                      nb_membre : {type : int ,example : 4}
+                      id_attente : {type : int ,example : 4}
+        responses:
+          '200':
+            description: "Données chargées avec succès"
+            content:
+              application/json:
+                schema:
+                  properties :
+                    msg : {type : string ,example : impossible de supprimer l'élément de la file d'attente}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  /login/connected:
+      post:
+        summary: Connecte à la session famille
+        tags:
+        - Login
+        requestBody:
+            required: true
+            content:
+              application/json:
+                schema:                    
+                    properties :
+                      mail_saisi : {type : string ,example : maelgaborit1407@gmail.com }
+                      password_saisi : {type : int ,example : mdp}
+        responses:
+          '200':
+            description: "Données chargées avec succès"
+            content:
+              application/json:
+                schema:
+                  properties :
+                    status : {type : string ,example : connected}
+                    msg : {type : string ,example : "Connecté avec success" }
+
+
+  /login/disconnected:
+      get:
+        summary: Deconnecte Session
+        tags:
+        - Login
+        responses:
+          '200':
+            description: "Données chargées avec succès"
+            content:
+              application/json:
+                schema:
+                  properties :
+                    status : {type : string ,example : disconnected}
+                    msg : {type : string ,example : Déconnecter avec success}
+
+
+
+  /login/isConnected:
+      get:
+        summary: Verifie Connection Session et renvoit id si connecter
+        tags:
+        - Login 
+  
+        responses:
+          '200':
+            description: "Données chargées avec succès"
+            content:
+              application/json:
+                schema:
+                  properties :
+                    status : {type : string ,example : Connected }
+                    role : {type : string ,example : Famille }
+                    id: {type : int ,example : 66}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  admin/activites/reservations:
+      get:
+        summary: "Supprimer famille grâce à son id"
+        tags:
+        - RESERVATIONS
+        responses:
+          '200':
+            description: "Données chargées avec succès"
+            content:
+              application/json:
+                schema:
+                  properties :
+                    id_famille : {type : int,example : 67}
+                    id_activite : {type : int ,example : 47}
+                    id_reservation_activite : {type : int ,example : 234}
+                    nb_membre : {type : int ,example : 10}
+  admin/activites/fifo:
+      get:
+        summary: "Supprimer famille grâce à son id"
+        tags:
+        - FIFO
+        responses:
+          '200':
+            description: "Données chargées avec succès"
+            content:
+              application/json:
+                schema:
+                  properties :
+                    id_famille : {type : int,example : 66}
+                    id_activite : {type : int ,example : 47}
+                    id_attente : {type : int ,example : 39}
+                    nom_activite : {type : int ,example : "AquaSplash"}
+                    prix: {type : int ,example : 47}
+                    cap_act : {type : int ,example : 47}
+                    date_inscription : {type : string ,example : "2026-04-21 13:14:38"}
+                    nb_membre : {type : int ,example : 10}
+                    id_payeur : {type : int ,example : 10}
+                    nom_payeur : {type : string ,example : "Gaborit"}
+                    prenom_payeur : {type : string ,example : Mael}
+
+# 2. Modèles de données réutilisables (La partie "Belle Doc")
+components:
+  securitySchemes:
+    bearerAuth:            # Pour ajouter le bouton "Authorize" (cadenas)
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
+  schemas:
+    Activites:
+      type: object
+      properties:
+        prix:
+          type: int
+          example : 50
+        nom :
+          type : string
+          example : AquaSplash
+        cap_act :
+          type : int
+          example : 24
+        description:
+          type: string
+          example : description de l'activité
+        id:
+          type : int
+          example : 1
+        lieu:
+          type : string
+          example : Arêches
+        date_d:
+          type : datetime
+          example: "2026-04-02 09:12:44"
+        date_f:
+          type: datetime
+          example : "2026-04-02 09:12:44"
+    Familles:
+      properties:
+        id_famille:
+          type : string
+          example : 66
+        mail :
+          type : email
+          example : mail@mail.fr
+        password : 
+          type : password
+          example : password crypté
+        adresse : 
+          type : string
+          example : 260 route du Chemin
+        telephone : 
+          type  : tel
+          example : +33 58 55 68 58 56
+        code_postal : 
+          type : int
+          example : 73290
+        id_payeur : 
+          type : int
+          example : 179
+        ville :
+          type : int
+          example : Chambery
+    Emplacements : 
+      properties : 
+        num_emplacemnt:
+          type : int
+          example : 1
+        capacite: 
+          type : int
+          example : 24
+        prix : 
+          type : int
+          example : 45
+        nom :
+          type : string
+          example : Neptune
+
+  
+    Users : 
+      properties : 
+        id:
+          type : int
+          example : 45
+        nom : 
+          type : string
+          example : Gaborit
+        prenom :
+          type : string
+          example : Mael
+        date_naissance : 
+          type : string
+          format : date
+          example : "20006-07-14"
+        id_famille : 
+          type : int
+          example : 66
+
+
+
+    Success : 
+      properties : 
+        status :
+          type : string
+          example : success
+        msg : 
+          type : string
+          example : success
+
+
+
+
+    Error : 
+      properties : 
+        status : 
+          type : string
+          example : error
+        msg :
+          type : string
+          example : error
+
+
+
+    Participant:
+      properties:
+        id_activite : 
+          type : int
+          example : 47 
+        nb_membre : 
+          type : int
+          example : 10
+        id_famille : 
+          type : int
+          example : 67
+        nom_payeur : 
+          type : string
+          example : Gaborit
+        prenom_payeur : 
+          type : string
+          example : Telio
+
+
+
+    ReservationActivite : 
+      type : object
+      properties:
+        id_famille: { type: integer, example: 67 }
+        id_activite: { type: integer, example: 47 }
+        nb_membre: { type: integer, example: 10 }
+        id_reservation_activite: { type: int, example: 234 }
+    createFamille : 
+      type : object
+      properties:
+        nom: { type: string, example: Gaborit }
+        prenom: { type: string, example: Mael }
+        date_n: { type: string, example: "2006-07-14"}
+        mail: { type: mail, example: mail@mail.fr }
+        tel: { type: int, example: 0707070707 }
+        adresse: { type: string, example: 260 route du chemin }
+        ville: { type: string, example: Areches }
+        code_postal: { type: int, example: 7270 }
+        password: { type: string, example: mdpCrypte }
+
+
+
+# openapi: 3.0.0
+# info:
+#   title: "API Clairie Bleu"
+#   description: "Documentation du BACKEND pour exploiter le projet."
+# #   version: 1.0.0
+
+# servers:
+#   - url: http://localhost:8085
+#     description: Serveur Local de dev
+
+# paths:
+#   /php/utilisateur/:
+#     post:
+#       summary: "Connexion de l'utilisateur"
+#       tags: [ADMINISTATEUR]
+#       requestBody:
+#         required: true
+#         content:
+#           application/json:
+#             schema:
+#               type: object
+#               properties:
+#                 email: { type: string, example: "user@projet.com" }
+#                 password: { type: string, example: "monPasswordSecurise" }
+#       responses:
+#         '200':
+#           description: "Connexion réussie"
+#           content:
+#             application/json:
+#               schema:
+#                 type: object
+#                 properties:
+#                   token: { type: string }
+
+#   /admin/activites:
+#     get:
+#       summary: "Récupération de toutes les activités"
+#       tags: [Pages Web]
+#       responses:
+#         '200':
+#           description: "Succès"
+#           content:
+#             application/json:
+#               schema:
+#                 type: array
+#                 items:
+#                   $ref: '#/components/schemas/Activites'
+
+#   /admin/activites/{id}:
+#     get:
+#       summary: "Récupère l'activité selon son id"
+#       tags: [Pages Web]
+#       parameters:
+#         - name: id
+#           in: path
+#           required: true
+#           schema:
+#             type: integer
+#       responses:
+#         '200':
+#           description: "Données chargées"
+#           content:
+#             application/json:
+#               schema:
+#                 $ref: '#/components/schemas/Activites'
+
+  # /admin/familles/NbMembre/{id}:
+  #   get:
+  #     summary: "Nombre de membres"
+  #     tags: [Pages Web]
+  #     parameters:
+  #       - name: id
+  #         in: path
+  #         required: true
+  #         schema:
+  #           type: integer
+  #     responses:
+  #       '200':
+  #         description: "Succès"
+  #         content:
+  #           application/json:
+  #             schema:
+  #               type: integer
+  #               example: 5
+
+  # /admin/activites/participants/{id}:
+  #   get:
+  #     summary: "Liste des participants"
+  #     tags: [Pages Web]
+  #     parameters:
+  #       - name: id
+  #         in: path
+  #         required: true
+  #         schema:
+  #           type: integer
+  #     responses:
+  #       '200':
+  #         description: "Succès"
+  #         content:
+  #           application/json:
+  #             schema:
+  #               type: array
+  #               items:
+  #                 $ref: '#/components/schemas/Participant'
+
+# components:
+#   schemas:
+#     Activites:
+#       type: object # <-- AJOUTÉ
+#       properties:
+#         id: { type: integer, example: 1 }
+#         prix: { type: integer, example: 50 }
+#         nom: { type: string, example: "AquaSplash" }
+#         cap_act: { type: integer, example: 24 }
+
+#     Familles:
+#       type: object # <-- AJOUTÉ
+#       properties:
+#         id_famille: { type: string, example: "66" }
+#         mail: { type: string, example: "mail@mail.fr" }
+
+#     Emplacements:
+#       type: object # <-- AJOUTÉ
+#       properties:
+#         num_emplacemnt: { type: integer, example: 1 }
+#         nom: { type: string, example: "Neptune" }
+
+#     Users:
+#       type: object # <-- AJOUTÉ
+#       properties:
+#         id: { type: integer, example: 45 }
+#         nom: { type: string, example: "Gaborit" }
+
+#     Participant:
+#       type: object # <-- AJOUTÉ
+#       properties:
+#         id_activite: { type: integer, example: 47 }
+#         nb_membre: { type: integer, example: 10 }
+#         id_famille: { type: integer, example: 67 }
+#         nom_payeur: { type: string, example: "Gaborit" }
+#         prenom_payeur: { type: string, example: "Telio" }
+
+#     Success:
+#       type: object
+#       properties:
+#         status: { type: string, example: "success" }
+#         msg: { type: string, example: "success" }
+
+#     Error:
+#       type: object
+#       properties:
+#         status: { type: string, example: "error" }
+#         msg: { type: string, example: "error" }
+# Widget:
+    #   type: object
+    #   properties:
+    #     id:
+    #       type: integer
+    #     name:
+    #       type: string
+    #       example: "Statistiques de ventes"

@@ -8,6 +8,19 @@ include("user.php");
 include("activites.php");
 include("emplacements.php");
 
+
+// Autorise n'importe quelle origine (ton Swagger)
+header("Access-Control-Allow-Origin: *");
+// Autorise les méthodes HTTP classiques
+header("Access-Control-Allow-Methods: GET, POST, OPTIONS, DELETE");
+// Autorise les headers comme Content-Type ou Authorization (pour ton Bearer Token)
+header("Access-Control-Allow-Headers: Content-Type, Authorization");
+
+// Très important : Gérer la requête de "pré-vérification" (OPTIONS)
+if ($_SERVER['REQUEST_METHOD'] == 'OPTIONS') {
+    http_response_code(200);
+    exit;
+}
 header('Content-Type: application/json');
 
 $entity   = $_GET['entity'] ?? '';
@@ -40,7 +53,7 @@ switch ($entity) {
         } elseif ($option === 'create') {
         $resultat = createPackFamily($conn, $data);
         $response = [
-            "status" => ($resultat === "success") ? "success" : $resultat,
+            "status" => ($resultat === "success") ? "success" : "failed",
             "msg" => $resultat
         ];
 

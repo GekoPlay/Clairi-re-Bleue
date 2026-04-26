@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+    <script defer src="js/app_login.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <title>Connexion</title>
+</head>
+<body class="bg-[url(../images/fond.png)] bg-cover bg-center flex min-h-screen  min-w-screen items-center justify-center bg-blue-200" id="app">
+    <div v-if="action === 'connexion'"  class=" box-border items-center text-white flex backdrop-blur-3xl relative flex-col  p-8   rounded-xl shadow-2xl ">
+        <div class=" w-32 h-32 rounded-full">
+        <img src="../images/connexion.png" alt="" class="w-full">
+        </div>
+        <form @submit.prevent="handleLogin()" class="flex flex-col  mt-10 gap-5 ">
+            <h1 class=" font-bold text-3xl mb-6">ÇA FAISAIT LONGTEMPS...</h1>
+            
+            <label class="" for="email">Email :</label>
+            <input class="text-black shadow-md p-3 rounded-lg" placeholder="votremail@mail.fr" v-model="connexion.mail_saisi" type="email" id="email" required>
+            
+            <label for="password">Mot de passe :</label>
+            <input class=" text-black shadow-md p-3 rounded-lg" placeholder="Votre mot de passe" v-model="connexion.password_saisi" type="password" id="password" required>
+            
+            <input class="p-3 text-white rounded-lg cursor-pointer transition duration-1000 bg-red-500 hover:bg-red-600 shadow-xl" type="submit" value="Se connecter" >
+        </form>
+
+        <p v-if="error">
+            <p class="text-center font-bold mt-2">{{error}}</p>
+        </p>
+        <p class="mt-5" @click="action = 'inscription'" style="cursor: pointer;">
+            Vous n'êtes pas encore inscrit ?
+        </p>
+        
+    </div>
+
+    <div v-else class="  gap-2 box-border flex items-center relative flex-col backdrop-blur-3xl text-white p-5 rounded-xl shadow-2xl box-border">
+        <div class=" w-32 h-32 rounded-full">
+        <img src="../images/connexion.png" alt="" class="w-full">
+        </div>
+        <form @submit.prevent="handleRegister()" class="flex flex-col gap-5 box-border">
+            <h1 class="font-bold text-3xl   text-center">INSCRIPTION</h1>
+            <div class="flex gap-4 items-center box-border">
+                <input placeholder="Nom" class="text-black shadow-md p-3 rounded-lg w-full min-w-0"" v-model="inscription.nom" type="text" id="reg-nom" required>
+                
+                <input placeholder="Prenom" class="text-black shadow-md p-3 w-full min-w-0 box-border rounded-lg" v-model="inscription.prenom" type="text" id="reg-prenom" required>
+            </div>
+            <div class="flex items-center">
+                <label class="w-2/5" for="reg-password ">Date de Naissance :</label>
+                <input  placeholder="Date de Naiscance" class="text-black shadow-md p-3 rounded-lg w-3/5" v-model="inscription.date_n" type="date" id="reg-date_n" required>
+            </div>
+
+            <input placeholder="Adresse Mail" class="text-black shadow-md p-3  mt-4 rounded-lg" v-model="inscription.mail" type="email" id="reg-email" required>
+            
+            <input placeholder="Adresse" class="text-black shadow-md p-3 rounded-lg" v-model="inscription.adresse" type="tel" id="reg-adresse" required>
+            <input placeholder="Numéro de Téléphone (+33)" class="text-black shadow-md p-3 rounded-lg" v-model="inscription.tel" type="tel" id="reg-adresse" required>
+            
+            <div class="flex gap-4 items-center">
+                <input placeholder="Ville" class="text-black w-full shadow-md p-3 rounded-lg" v-model="inscription.adresse" type="text" id="reg-ville" required>
+                <input placeholder="Code Postal" class="text-black  w-full shadow-md p-3 rounded-lg" v-model="inscription.code_postal" type="number" id="reg-code_postal" required>
+            </div>
+            <div class="flex gap-4 items-center">
+                <input placeholder="Mot de Passe" class="text-black w-full shadow-md p-3 rounded-lg" v-model="inscription.password" type="password" id="reg-password" required>
+                
+                <input placeholder="Confirmation Mot de Passe" class="text-black w-full shadow-md p-3 rounded-lg" v-model="inscription.confirm_password" type="password" id="reg-password" required>
+            </div>
+
+            <input class="p-3 text-white rounded-lg cursor-pointer transition duration-1000 bg-red-500 hover:bg-red-600 shadow-xl" type="submit" value="Créer un compte">
+        </form>
+        <p @click="action = 'connexion'" style="cursor: pointer;">
+            Déjà un compte ? Connectez-vous.
+        </p>
+        <p v-if="error">{{error}}</p>
+    </div>
+
+</body>
+</html>

@@ -195,6 +195,9 @@ function getActivitesFifo($conn)
     u.id AS id_payeur,
     u.nom AS nom_payeur,
     u.prenom AS prenom_payeur
+
+
+    
 FROM `file_attente_activites` AS fifo
 LEFT JOIN familles AS f ON fifo.id_famille = f.id_famille
 LEFT JOIN utilisateurs AS u ON f.id_payeur = u.id
@@ -319,8 +322,6 @@ function updateFamily($conn, $data)
     return mysqli_stmt_execute($requete);
 }
 
-
-
 function getActivitesWithReservations($conn, $id_famille) {
     $sql = "SELECT 
                 a.id AS id_activite,
@@ -330,7 +331,8 @@ function getActivitesWithReservations($conn, $id_famille) {
                 a.prix,
                 a.cap_act,
                 r.id_reservation_activite,
-                IFNULL(r.nb_membre, 0) AS nb_reservations
+                IFNULL(r.nb_membre, 0) AS nb_reservations,
+                IFNULL((SELECT SUM(nb_membre) FROM reservation_activites WHERE id_activite = a.id), 0) AS total_deja_reserve
             FROM activites a
             LEFT JOIN reservation_activites r ON a.id = r.id_activite AND r.id_famille = ?
             ORDER BY a.date_d ASC";
@@ -338,8 +340,22 @@ function getActivitesWithReservations($conn, $id_famille) {
     $requete = mysqli_prepare($conn, $sql);
     mysqli_stmt_bind_param($requete, "i", $id_famille);
     mysqli_stmt_execute($requete);
-    $res = mysqli_stmt_get_result($requete);
-    return mysqli_fetch_all($res, MYSQLI_ASSOC) ?: [];
+    $result_activites = mysqli_stmt_get_result($requete);
+    $activites = mysqli_fetch_all($result_activites, MYSQLI_ASSOC) ?: [];
+
+    foreach ($activites as &$row) {
+        $id_activite = $row['id_activite'];
+
+        $sql2 = "SELECT * FROM file_attente_activites WHERE id_famille = ? AND id_activite = ?";
+        $requete2 = mysqli_prepare($conn, $sql2);
+        mysqli_stmt_bind_param($requete2, "ii", $id_famille, $id_activite);
+        mysqli_stmt_execute($requete2);
+        $result2 = mysqli_stmt_get_result($requete2);
+        $row['file_attente_activite'] = mysqli_fetch_assoc($result2);
+    }
+    unset($row);
+
+    return $activites; // ← manquait !
 }
 
 
@@ -401,3 +417,30 @@ function  UpdateReservationActivite($conn, $data,$action){
 }
 
 
+
+
+function getActivitesFifoFamille($conn, $id_famille,$id_activite) {
+    $sql = "SELECT * from flie_attente_activite where id_famille = ? and id_activite = ?";
+    $requete = mysqli_prepare($conn, $sql);
+    mysqli_stmt_bind_param($requete, "ii", $id_famille,$id_activite);
+    mysqli_stmt_execute($requete);
+    $res = mysqli_stmt_get_result($requete);
+    return mysqli_fetch_all($res, MYSQLI_ASSOC) ?: [];
+}
+
+
+function UpdateNbMembreFifo($conn, $data,$id){
+    $signe = $data['signe'];
+    $nb_membre_aj = $data['nb_membre_aj'];   
+
+    if ($signe !== '+' && $signe !== '-') {
+        return false; 
+    }
+
+    $sql = "UPDATE file_attente_activites SET nb_membre = nb_membre $signe ? WHERE id_attente = ?";
+    
+    $requete = mysqli_prepare($conn, $sql);
+        mysqli_stmt_bind_param($requete, "ii", $nb_membre_aj, $id);
+    
+    return mysqli_stmt_execute($requete);
+}
