@@ -1,0 +1,15 @@
+image: alpine
+
+stages:
+  - deploy
+
+deploy:
+  stage: deploy
+  when: manual
+  before_script:
+  - apk add openssh
+  - mkdir -p ~/.ssh
+  - eval $(ssh-agent -s)
+  script:
+    - ssh-add <(echo "$SSH_KEY")
+    - ssh -o StrictHostKeyChecking=no  "$debian"@"$gaborit.site" "cd $git-project/Clairi-re-Bleue && git pull"

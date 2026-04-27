@@ -4,50 +4,72 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Réservation Camping - La Clairière Bleue</title>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
-<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
-<script src="https://npmcdn.com/flatpickr/dist/l10n/fr.js"></script>
-    <link rel="stylesheet" href="../css/style_reservation_camping.css">
     
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+    <script src="https://npmcdn.com/flatpickr/dist/l10n/fr.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    
+    <link rel="stylesheet" href="../css/style_reservation_camping.css">
     <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&display=swap" rel="stylesheet">
 </head>
 <body>
 
     <nav>
         <div id="logo">
-           <a href = "../index.html"><img src="../images/LOGO.png" alt="Logo" /></a>
+           <a href="../index.html"><img src="../images/LOGO.png" alt="Logo" /></a>
         </div>
     </nav>
 
     <div class="container">
-        <div id = "etape1">
         <h1>Réserver votre séjour</h1>
-        
-            <h2>1. Choisissez vos emplacements</h2>
-            <p>Sélectionnez les emplacements sur le plan.</p>
-            
-            <div class="legende">
-                <div class="legende-item"><span class="carre libre"></span> Libre</div>
-                <div class="legende-item"><span class="carre occupe"></span> Occupé</div>
-                <div class="legende-item"><span class="carre selectionne"></span> Ma sélection</div>
+    
+        <div id="panneau-recherche" style="background: #f9f9f9; padding: 20px; border-radius: 8px; margin-bottom: 20px; display: flex; gap: 15px; flex-wrap: wrap; align-items: center; justify-content: center;">
+            <div class="champ">
+                <label>Date d'arrivée :</label>
+                <input type="text" id="date-debut-global" class="champ-date" placeholder="Choisir une date">
             </div>
-
-            <div id="plan-camping"></div>
-
-            <div id="actions">
-                <p>Emplacements sélectionnés : <span id="liste-places">Aucun</span></p>
-                <button id="btn-voir-dispo">Voir les disponibilités</button>
+            <div class="champ">
+                <label>Date de départ :</label>
+                <input type="text" id="date-fin-global" class="champ-date" placeholder="Choisir une date">
+            </div>
+            <div class="champ">
+                <label>Nb de personnes :</label>
+                <input type="number" id="nb-pers-global" min="1" max="15" value="2" style="padding: 10px; border: 1px solid #ccc; border-radius: 5px;">
             </div>
         </div>
-                <div id="etape2" style="display: none;">
-                    <h2>Nos disponibilités </h2>
-                    <div id="conteneur-calendriers"></div>
-                    <button id="btn-reserver" disabled>VALIDER LA RÉSERVATION</button>
-                    <button id="retour-plan" >RETOURNER AU PLAN</button>
-                </div>
+
+        <h2>Choisissez vos emplacements</h2>
+        <p>Sélectionnez les emplacements disponibles sur le plan pour vos dates.</p>
+    
+        <div class="legende" style="display: flex; justify-content: center; gap: 20px; margin-bottom: 20px;">
+            <div class="legende-item" style="display: flex; align-items: center; gap: 8px;">
+                <img src="../images/0.png" alt="Disponible" style="width: 30px; height: auto;"> 
+                Disponible
             </div>
-        <div style="margin-top: 50px; border-top: 1px solid #eee; padding-top: 10px;">
-            <button id="btn-reset" class="btn-admin">(Admin) Tout remettre à zéro</button>
+            
+            <div class="legende-item" style="display: flex; align-items: center; gap: 8px;">
+                <img src="../images/2.png" alt="Indisponible" style="width: 30px; height: auto;"> 
+                Indisponible
+            </div>
+            
+            <div class="legende-item" style="display: flex; align-items: center; gap: 8px;">
+                <img src="../images/1.png" alt="Sélectionné" style="width: 30px; height: auto;"> 
+                Ma sélection
+            </div>
+        </div>
+
+        <div id="plan-camping"></div>
+
+        <div id="zone-calendrier-indispo" style="display: none; margin-top: 20px; width: 100%;"></div>
+
+        <div id="actions" style="margin-top: 20px; padding: 15px; background: #e3f2fd; border-radius: 8px; width: 100%;">
+            <p>Emplacements sélectionnés : <span id="liste-places">Aucun</span></p>
+            <button id="btn-reserver" disabled>VALIDER LA RÉSERVATION</button>
+        </div>
+
+        <div style="margin-top: 50px; border-top: 1px solid #eee; padding-top: 10px; width: 100%;">
+            <button id="btn-reset" class="btn-admin" style="background: #ccc; color: #333; font-size: 0.9em; padding: 5px 10px; border: none; border-radius: 5px; cursor: pointer;">Réinitialiser le plan</button>
         </div>
     </div>
 

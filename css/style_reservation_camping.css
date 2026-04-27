@@ -188,13 +188,13 @@ button {
 
 /* --- TYPE : TENTES (IDs 1-29) --- */
 .emplacement.tente.libre {
-    background-image: url('../images/0.png');
+    background-image: url('../images/tente0.png');
 }
 .emplacement.tente.selectionne {
-    background-image: url('../images/1.png');
+    background-image: url('../images/tente1.png');
 }
 .emplacement.tente.occupe {
-    background-image: url('../images/2.png');
+    background-image: url('../images/tente2.png');
     cursor: not-allowed;
     opacity: 0.8; 
 }
