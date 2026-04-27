@@ -146,7 +146,7 @@ CREATE TABLE `file_attente_activites` (
   `nb_membre` int(11) NOT NULL,
   `date_inscription` datetime NOT NULL,
   `id_attente` int(11) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_uca1400_ai_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- --------------------------------------------------------
 
@@ -160,7 +160,7 @@ CREATE TABLE `file_attente_emplacements` (
   `date_debut` int(11) NOT NULL,
   `date_fin` int(11) NOT NULL,
   `id_fifo_emplacement` int(11) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_uca1400_ai_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- --------------------------------------------------------
 
