@@ -312,6 +312,10 @@ const InfoActivite = (id_activite) => {
 
 
 
+    // const MajInfos = () => {
+    //   axios.post(,payeur.value)
+    // }
+
     const loadData = () => {
       get_activites_with_reservations(id_famille.value);
       get_payeur(id_famille.value);
@@ -355,7 +359,8 @@ const InfoActivite = (id_activite) => {
       deleteReservationActivite,
       deleteFifo,
       addFifoMb,
-      delFifoMb
+      delFifoMb,
+      MajInfos
     };
   }
 }).mount('#app');

@@ -33,19 +33,13 @@
         <div v-if="choiceMenu == null">
             <div id="text-user">
                 <h1>Bonjour {{ payeur.prenom }},</h1>
-                <div><label>Adresse : </label><input type="text" :value="payeur.adresse"></div>
-                <div><label>Date de </label><input type="text" :value="payeur.adresse"></div>
-                <div><label>Adresse : </label><input type="text" :value="payeur.adresse"></div>
-                <div><label>Adresse : </label><input type="text" :value="payeur.adresse"></div>
-                <div><label>Adresse : </label><input type="text" :value="payeur.adresse"></div>
-                <div><label>Adresse : </label><input type="text" :value="payeur.adresse"></div>
-                
-                <p>Date de naissance : {{ payeur.date_naissance }}</p>
-                <p>Numéro de téléphone : {{ payeur.telephone }}</p>
-                <p>Email : {{ payeur.mail }}</p>
-                <p>Code postal : {{ payeur.code_postal }}</p>
-                <p>Ville : {{ payeur.ville }}</p>
-                <button>Modifier les Informations</button>
+                <div class="infos-user"><label>Adresse :</label><input type="text" v-model="payeur.adresse"></div>
+                <div class="infos-user"><label>Date de Naissance : </label><input type="text" v-model="payeur.date_naissance"></div>
+                <div class="infos-user"><label>Numéro de Téléphone : </label><input type="number" v-model="payeur.telephone"></div>
+                <div class="infos-user"><label>Email : </label><input type="text" v-model="payeur.mail"></div>
+                <div class="infos-user"><label>Code Postal : </label><input type="text" v-model="payeur.code_postal"></div>
+                <div class="infos-user"><label>Ville : </label><input type="text" v-model="payeur.ville"></div>
+                <button @click="MajInfos()">Modifier les Informations</button>
             </div>
         </div>
 
