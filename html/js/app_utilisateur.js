@@ -317,6 +317,7 @@ const InfoActivite = (id_activite) => {
     const MajInfos = () => {
       axios.post(`../../php/utilisateur.php?entity=users&option=update`, payeur.value).then(response =>{
         loadData();
+        alert(" Succès : Vos informations ont bien été modifiées !")
       })
 
     }
