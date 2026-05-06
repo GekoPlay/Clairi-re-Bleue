@@ -1,12 +1,14 @@
-const { createApp, ref, onMounted, computed } = Vue;
+const { createApp, ref, onMounted } = Vue;
 
 createApp({
   setup() {
+
+
     const tab_res = ref([]);
-    const triSelectionne = ref(""); 
 
     const get_activites = () => {
       axios.get("../../php/admin/activites").then(response => {
+        
         tab_res.value = response.data;
       });
     };
