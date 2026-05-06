@@ -46,6 +46,30 @@ justify-content: space-between;
 }
 
 
+#text-user input{
+  background-color: transparent ;
+  color: white;
+  border: none;
+}
+
+
+#text-user input:focus {
+    outline: none;
+}
+
+
+.infos-user{
+  display: flex;
+  width: 100%;
+  align-items: center;
+}
+
+.infos-user label{
+  display: flex;
+  align-items: center;
+  white-space: nowrap;
+}
+
 #burger {
     display: none;
     background: none;

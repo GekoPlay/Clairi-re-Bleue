@@ -1,0 +1,130 @@
+
+nav{
+    height: 10vh;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: transparent;
+    backdrop-filter: blur(10px);
+    padding: 0 20px;
+    box-sizing: border-box;
+}
+
+#link{
+    width: 90%;
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+
+}
+nav a{
+    display: flex;
+    flex-direction: column;
+    color: white;
+    font-family:"Bebas Neue", sans-serif;
+    text-decoration: none;
+    overflow-wrap: break-word;   
+}
+
+#logo-center{
+    flex: 4;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+#logo-center-img{
+    width: 90%;
+}
+
+#logo-identification{
+    /* background-color: green; */
+    width: 20px;
+    height: auto;
+    width: 10%;
+}
+
+nav img{
+    width: 40px;
+}
+body{
+    background-image: url('../images/fond.png');
+    background-size: cover;
+    background-position: center;
+    min-height: 100vh;
+    margin: 0;
+    display: flex;
+    /* justify-content: center; */
+    flex-direction: column;
+    align-items: center;
+    font-family:"Bebas Neue", sans-serif;
+
+}
+
+#list-activites{
+    width: 90%;
+    display:grid;
+    grid-template-columns: 1fr;
+    gap: 40px;
+}
+
+#title{
+    color: white;
+    font-size: 2em;
+}
+
+.activite{
+    font-family:"Bebas Neue", sans-serif;
+    padding: 20px;
+    box-sizing: border-box;
+    border:  4px solid white;
+    color: white;
+    backdrop-filter: blur(10px);
+}
+.btn-reservation{
+    padding: 10px;
+    background-color: red;
+    color: white;
+    font-family:"Bebas Neue", sans-serif;
+    border: none;
+    transition: 1s;
+}
+
+.btn-reservation:hover{
+    transition: 1s;
+    background-color: rgb(168, 6, 6);
+    cursor: pointer;
+}
+
+#ipt-trier{
+    display: block;      /* Pour pouvoir le centrer */
+    width: 80%;        /* Fixe une largeur précise (ex: 200px) */
+    margin: 20px auto;   /* Le centre horizontalement */
+    padding: 10px;       /* Un peu d'espace interne */
+    
+    background: rgba(0, 0, 0, 0.5); /* Fond sombre semi-transparent */
+    color: white;
+    border: 2px solid white;
+    border-radius: 5px;
+    font-family: "Bebas Neue", sans-serif;
+    cursor: pointer;
+}
+option{
+    width: 90%;
+    color: black;
+    padding: 20px;
+}
+
+@media screen and (min-width: 768px) {
+
+
+    #title{
+        font-size: 4em;
+    }
+    #list-activites{
+    grid-template-columns: repeat(2, 1fr);
+
+    }
+}

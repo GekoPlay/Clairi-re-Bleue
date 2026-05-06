@@ -177,3 +177,61 @@ function deleteFamille($conn, $id) {
 
     return $msg;
 }
+
+function updateFamily($conn, $data)
+{
+    $mail        = $data['mail'];
+    $adresse     = $data['adresse'];
+    $telephone   = $data['telephone'];
+    $code_postal = $data['code_postal'] ?? null;
+    $id_payeur   = $data['id_payeur'] ?? $data['payeur_id'];
+    $ville       = $data['ville'];
+    $id_famille  = $data['id_famille'];
+    $hasPassword = !empty($data['password']);
+
+    $sql = "UPDATE familles SET 
+                mail        = ?,
+                adresse     = ?,
+                telephone   = ?,
+                code_postal = ?,
+                id_payeur   = ?,
+                ville       = ?"
+                . ($hasPassword ? ", password = ?" : "") . "
+            WHERE id_famille = ?";
+
+    $requete = mysqli_prepare($conn, $sql);
+
+    if ($hasPassword) {
+        $password = password_hash($data['password'], PASSWORD_BCRYPT);
+        mysqli_stmt_bind_param($requete, "ssssissi", $mail, $adresse, $telephone, $code_postal, $id_payeur, $ville, $password, $id_famille);
+    } else {
+        mysqli_stmt_bind_param($requete, "ssssisi", $mail, $adresse, $telephone, $code_postal, $id_payeur, $ville, $id_famille);
+    }
+
+    $res = mysqli_stmt_execute($requete);
+    
+    if($res){
+        return UpdateUserAll($conn, $data);
+    } else {
+        return "Impossible de mettre à jour familles : " . mysqli_error($conn);
+    }
+}
+
+function UpdateUserAll($conn, $data){
+    $nom = $data['nom'];
+    $prenom = $data['prenom'];
+    $date_naissance = $data['date_naissance'];
+    $id_user = $data['id_utilisateur'] ?? $data['id']; // Assurez-vous d'avoir l'ID utilisateur
+
+    $sql = "UPDATE utilisateurs SET
+        nom = ?,
+        prenom = ?,
+        date_naissance = ? 
+        WHERE id = ?";
+        
+    $requete = mysqli_prepare($conn, $sql);
+    // Liaison des 4 paramètres (sss + i)
+    mysqli_stmt_bind_param($requete, "sssi", $nom, $prenom, $date_naissance, $id_user);
+    
+    return mysqli_stmt_execute($requete);
+}

@@ -9,7 +9,7 @@ services:
             - ./sql:/docker-entrypoint-initdb.d/
 
         environment:
-            - DB_NAME=${DB_NAME}
+            - DB_NAME=${DB_NAME}zz
             - DB_USER=${DB_USER}
             - DB_PASSWORD=${DB_PASSWORD}
         restart : unless_stopped

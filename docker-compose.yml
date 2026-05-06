@@ -1,36 +1,43 @@
 services:
-    monapache3:
-        build: .        # ← utilise le Dockerfile local
-        # image: maelgbrt/monapache   ← supprime cette ligne
-        ports:
-            - "${PORT_SITE}:80"
-        volumes:
-            - .:/var/www/html
-        environment:
-            - DB_NAME=${DB_NAME}
-            - DB_USER=${DB_USER}
-            - DB_PASSWORD=${DB_PASSWORD}
-    mariadb:
-        build:
-            context: .
-            dockerfile: Dockerfile.MariaDB
-        image: maelgbrt/monmariadb
-        restart: always
-        environment:
-            - MARIADB_ROOT_PASSWORD=${DB_ROOT_PASSWORD}
-            - MARIADB_DATABASE=${DB_NAME}
-            - MARIADB_USER=${DB_USER}
-            - MARIADB_PASSWORD=${DB_PASSWORD}
-        volumes:
-            - ./base_neuve:/var/lib/mysql
-            - ./projet_web_L2_S2.sql:/docker-entrypoint-initdb.d/projet_web_L2_S2.sql
-        ports:
-            - "${PORT_DB}:3306"
+  monapache3:
+    build: .
+    ports:
+      - "${PORT_SITE}:80"
+    volumes:
+      - .:/var/www/html
+    environment:
+      - DB_NAME=${DB_NAME}
+      - DB_USER=${DB_USER}
+      - DB_PASSWORD=${DB_PASSWORD}
+    depends_on:
+      - mariadb
 
+  mariadb:
+    build:
+      context: .
+      dockerfile: Dockerfile.MariaDB
+    image: maelgbrt/monmariadb
+    restart: always
+    environment:
+      - MARIADB_ROOT_PASSWORD=${DB_ROOT_PASSWORD}
+      - MARIADB_DATABASE=${DB_NAME}
+      - MARIADB_USER=${DB_USER}
+      - MARIADB_PASSWORD=${DB_PASSWORD}
+    volumes:
+      - mariadb_data:/var/lib/mysql
+      - ./projet_web_L2_S2.sql:/docker-entrypoint-initdb.d/projet_web_L2_S2.sql
+    ports:
+      - "${PORT_DB}:3306"
 
-    phpmyadmin:
-        image: phpmyadmin
-        environment:
-            - PMA_ARBITRARY=1
-        ports:
-            - "${PORT_PMA}:80"
+  phpmyadmin:
+    image: phpmyadmin
+    restart: always
+    environment:
+      - PMA_ARBITRARY=1
+      - PMA_HOST=mariadb
+      - PMA_ARBITRARY=0
+    ports:
+      - "${PORT_PMA}:80"
+
+volumes:
+  mariadb_data:

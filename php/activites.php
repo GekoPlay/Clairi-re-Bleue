@@ -289,39 +289,6 @@ function PutEmplacementFiFo($conn, $data)
 
 
 
-
-function updateFamily($conn, $data)
-{
-    $mail        = $data['mail'];
-    $adresse     = $data['adresse'];
-    $telephone   = $data['telephone'];
-    $code_postal = $data['code_postal'] ?? null;
-    $id_payeur   = $data['id_payeur'] ?? $data['payeur_id'];
-    $ville       = $data['ville'];
-    $id_famille  = $data['id_famille'];
-
-    $sql = "UPDATE familles SET 
-                mail        = ?,
-                adresse     = ?,
-                telephone   = ?,
-                code_postal = ?,
-                id_payeur   = ?,
-                ville       = ?"
-                . (!empty($data['password']) ? ", password = ?" : "") . "
-            WHERE id_famille = ?";
-
-    $requete = mysqli_prepare($conn, $sql);
-
-    if (!empty($data['password'])) {
-        $password = password_hash($data['password'], PASSWORD_BCRYPT);
-        mysqli_stmt_bind_param($requete, "ssssisi", $mail, $adresse, $telephone, $code_postal, $id_payeur, $ville, $password, $id_famille);
-    } else {
-        mysqli_stmt_bind_param($requete, "sssssii", $mail, $adresse, $telephone, $code_postal, $ville, $id_payeur, $id_famille);
-    }
-
-    return mysqli_stmt_execute($requete);
-}
-
 function getActivitesWithReservations($conn, $id_famille) {
     $sql = "SELECT 
                 a.id AS id_activite,

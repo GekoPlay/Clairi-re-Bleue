@@ -33,6 +33,7 @@ switch ($entity) {
                     "status" => ($resultat === "success") ? "success" : $resultat,
                     "msg" => $resultat
                 ];
+            
             }elseif($secondOption === 'delete'){
             
                 $resultat = deleteReservation($conn, $id);
@@ -43,7 +44,13 @@ switch ($entity) {
             else {
                 $response = $id ? getUserById($conn, $id) : getUsers($conn);
             }
-        } else {
+        }elseif($option === 'update'){
+                $res = updateFamily($conn,$data);
+                $response = [
+                    "status" => $res ? "success" : $res,
+                    "msg" => $res ? $res : $res
+                ];
+        }else {
             $response = $id ? getUserById($conn, $id) : getUsers($conn);
         }
         break;

@@ -1,4 +1,5 @@
-db/db_connect.php
+# db/db_connect.php
+db/db_connect.phpmyadmin.php
 package-lock.json
 package.json
 node_modules

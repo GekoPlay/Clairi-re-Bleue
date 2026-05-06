@@ -61,6 +61,8 @@ createApp({
       })
       .then((response) => {
         payeur.value = response.data;
+        console.log("le payeur");
+        console.log(payeur.value)
       })
       .catch(err => console.error("Erreur API :", err));
     };
@@ -312,6 +314,13 @@ const InfoActivite = (id_activite) => {
 
 
 
+    const MajInfos = () => {
+      axios.post(`../../php/utilisateur.php?entity=users&option=update`, payeur.value).then(response =>{
+        loadData();
+      })
+
+    }
+
     const loadData = () => {
       get_activites_with_reservations(id_famille.value);
       get_payeur(id_famille.value);
@@ -355,7 +364,8 @@ const InfoActivite = (id_activite) => {
       deleteReservationActivite,
       deleteFifo,
       addFifoMb,
-      delFifoMb
+      delFifoMb,
+      MajInfos
     };
   }
 }).mount('#app');
