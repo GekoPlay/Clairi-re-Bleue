@@ -3,15 +3,15 @@ const { createApp, ref, onMounted } = Vue;
 createApp({
   setup() {
 
-    const activite = {
+    const activite = ref({
       "nom" : '',
       "prix" : '',
       "description" : "",
       "date_d":"",
-      "dare_f":"",
+      "date_f":"",
       "lieu":"",
-      "capacite":""
-    }
+      "cap_act":""
+    });
 
 
     const tab_res = ref([]);
@@ -30,18 +30,30 @@ createApp({
 
 
 
-    const update_activites = () => {
-      axios.post("",data.value).then(response =>{
-        activite.value = response.data;        
-      })
-    }
+    // const update_activites = () => {
+    //   axios.post("",data.value).then(response =>{
+    //     activite.value = response.data;        
+    //   })
+    // }
+
+
+    const creation_activites = () => {
+      console.log(activite.value);
+      axios.post('../../php/admin.php?entity=activites&option=add', activite.value)
+        .then(response => {
+          // console.log("gooo");
+          console.log(response.data);
+        })
+        .catch(error => console.error('Erreur POST:', error));
+    };
     onMounted(() => {
       get_activites();
     });
 
     return {
       tab_res,
-      activite
+      activite,
+      creation_activites
     };
   }
 }).mount('#app');  

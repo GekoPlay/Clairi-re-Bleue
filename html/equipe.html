@@ -41,22 +41,25 @@
                 </div>
             </div>
             <div id="right">
-                <h1>Modification</h1>
-                <p>Nom de l'activité : </p>
-                <input type="text" v-model="activite.nom" placeholder="">
-                <p>Prix : </p>
-                <input type="number" placeholder="">
-                <p>Description : </p>
-                <input type="text">
-                <p>Date Début : </p>
-                <input type="datetime">
-                <p>Date Fin : </p>
-                <input type="datetime">
-                <p>Lieu : </p>
-                <input type="text">
-                <p>Capacité : </p>
-                <input type="number">
-                <button>Enregistrer</button>
+                <h1>Création</h1>
+                <form @submit.prevent="creation_activites()">
+                    <p>Nom de l'activité : </p>
+                    <input required type="text" v-model="activite.nom" placeholder="">
+                    <p>Prix : </p>
+                    <input required type="number" v-model="activite.prix" placeholder="">
+                    <p>Description : </p>
+                    <input required type="text" v-model="activite.description"> 
+                    <p>Date Début : </p>
+                    <input required type="date" v-model="activite.date_d"> -->
+                    <p>Date Fin : </p>
+                    <input required type="date" v-model="activite.date_f">
+                    <p>Lieu : </p>
+                    <input required type="text" v-model="activite.lieu">
+                    <p>Capacité : </p>
+                    <input required type="number" v-model="activite.cap_act"> 
+                    <button type="submit">Enregistrer</button> -->
+                </form>
+                
             </div>
         </div>
 </body>

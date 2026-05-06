@@ -150,15 +150,17 @@ function addActivite($conn, $data)
     $date_f = $data['date_f'] ?? '';
     $date_d = $data['date_d'] ?? '';
     $cap_act = $data['cap_act'] ?? '';
-    $prix = $data['cap_act'] ?? '';
+    $prix = $data['prix'] ?? '';
+    $description = $data['description'] ?? '';
+    $lieu = $data['lieu'] ?? '';
 
     if (empty($nom) || $cap_act <= 0) {
         return false;
     }
 
-    $sql = "INSERT INTO activites (nom, date_f, date_d, cap_act, prix) VALUES (?, ?, ?, ?, ?)";
+    $sql = "INSERT INTO activites (nom, date_f, date_d, cap_act, prix,lieu,description) VALUES (?, ?, ?, ?, ?,?,?)";
     $stmt = mysqli_prepare($conn, $sql);
-    mysqli_stmt_bind_param($stmt, "sssii", $nom, $date_f, $date_d, $cap_act, $prix);
+    mysqli_stmt_bind_param($stmt, "sssiiss", $nom, $date_f, $date_d, $cap_act, $prix,$lieu,$description);
 
     return mysqli_stmt_execute($stmt);
 }
