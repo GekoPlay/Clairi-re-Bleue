@@ -14,20 +14,29 @@ createApp({
 
     const dico = ref({"nom" : "mael", "age" : 20});
 
-    const tab = ref([{"nom" : "mael", "age" : 20},{"nom" : prenom, "age" : 20}]);
-
-    
-
-    const tab_act = ref([{"prix" : 12, "date_d" : "2026-04-02 09:12:44", "date_f" : "2026-04-02 09:12:44","id" : 87, "nom" : "Kayak", "cap_act" : 15, "description" : "venez faire du kayak svp", "lieu" : "Pontons du lac"}, 
-      {"prix" : 15, "date_d" : "2026-04-03 09:12:44", "date_f" : "2026-04-03 10:12:44","id" : 150, "nom" : "Yoga", "cap_act" : 20, "description" : "venez faire du yoga svp", "lieu" : "Salle de yoga"}])
-
-    
+    const tab = ref({"nom" : "mael", "age" : 20},{"nom" : prenom, "age" : 20});
 
   
+    const tab_activite = ref([]);
+    
+      
+      const activite1 = ref({"prix" : 12, "date_d" : "2026-04-02 09:12:44", "date_f" : "2026-04-02 09:12:44","id" : 87, "nom" : "Kayak", "cap_act" : 15, "description" : "venez faire du kayak svp", "lieu" : "Pontons du lac"}); 
+      const activite2 = ref({"prix" : 15, "date_d" : "2026-04-03 09:12:44", "date_f" : "2026-04-03 10:12:44","id" : 150, "nom" : "Yoga", "cap_act" : 20, "description" : "venez faire du yoga svp", "lieu" : "Salle de yoga"});
+
+
+      const get_activite = () => {
+         console.log("On recup les donnees des activités");
+         axios.get("../../php/admin/activites").then(response =>{
+          console.log(response.data);
+          tab_activite.value = response.data;
+         })
+        }
+    
 
 
 
     onMounted(() => {
+      get_activite()
     });
 
     return { 
@@ -35,7 +44,8 @@ createApp({
         ageplus,
         tab,
         dico,
-        tab_act,
+        tab_activite,
+        
     };
   }
 }).mount('#app');

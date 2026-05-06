@@ -29,21 +29,16 @@
         <option >Prix (ordre decroissant)</option>
     </select>
     <div id="list-activites">
-        <div v-for="tabl in tab_act">
+        <div v-for="tabl in tab_activite">
             <div class="activite">
             
-            <p>Prix : {{tab_act.prix}}</p>
-            <p>Date de début : {{tabl.date_d}}</p>
-            <p>Date de fin : {{tabl.date_f}}</p>
-            <p>Identifiant de l'activité : {{tabl.id}}</p>
-            <p>Nom de l'activité : {{tabl.nom}}</p>
-            <p>Nombre de places : {{tabl.cap_act}}</p>
-            <p>Déscription de l'activité : {{tabl.description}}</p>
-            <p>Lieu de rendez vous : {{tabl.lieu}}</p>
+            <p>{{ tabl.nom }}</p>
 
             <button class="btn-reservation">Je reserve</button>
         </div>   
                  
+
+        
             <!--<button class="btn-reservation">Je reserve</button>
         </div>
         <div class="activite">

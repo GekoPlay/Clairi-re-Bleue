@@ -1,0 +1,13 @@
+#equipe-page{
+    min-height: 80vh;
+    box-sizing: border-box;
+    width: 80%;
+    display: grid;
+    grid-template-columns: repeat(3 ,1fr);
+    gap: 20px;
+    margin: auto;
+}
+
+#equipe-page div{
+    background-color: aliceblue;
+}
