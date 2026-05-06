@@ -1,13 +1,13 @@
 RewriteEngine On
 RewriteBase /php/
 
-# --- 1. ROUTES COMPLEXES ---
+# --- 1. ROUTES COMPLEXES (3 segments ou plus après l'entité) ---
 RewriteRule ^admin/activites/fifo/delete/([0-9]+)$ admin.php?entity=activites&option=fifo&secondOption=delete&id=$1 [L,QSA]
 RewriteRule ^admin/activites/reservations/delete/([0-9]+)$ admin.php?entity=activites&option=reservations&secondOption=delete&id=$1 [L,QSA]
 RewriteRule ^admin/emplacements/reservations/delete/([0-9]+)$ admin.php?entity=emplacements&option=reservations&secondOption=delete&id=$1 [L,QSA]
 RewriteRule ^admin/emplacements/reservations/BetweenDate/([^/]+)$ admin.php?entity=emplacements&option=reservations&secondOption=BetweenDate&today=$1 [L,QSA]
 
-# --- 2. ACTIONS FIXES ---
+# --- 2. ACTIONS FIXES ET OPTIONS SPÉCIFIQUES ---
 RewriteRule ^admin/activites/fifo/accept$ admin.php?entity=activites&option=fifo&secondOption=accept [L,QSA]
 RewriteRule ^admin/activites/fifo/add$ admin.php?entity=activites&option=fifo&secondOption=add [L,QSA]
 RewriteRule ^admin/activites/reservations/add$ admin.php?entity=activites&option=reservations&secondOption=add [L,QSA]
@@ -16,29 +16,36 @@ RewriteRule ^admin/emplacements/mois/([^/]+)$ admin.php?entity=emplacements&opti
 RewriteRule ^admin/familles/withPayeur$ admin.php?entity=family&option=withPayeur [L,QSA]
 RewriteRule ^admin/familles/create$ admin.php?entity=family&option=create [L,QSA]
 
-# --- 3. OPTIONS AVEC ID ---
+# --- 3. OPTIONS AVEC ID (Routes à 2 segments + ID) ---
 RewriteRule ^admin/activites/reservations/([0-9]+)$ admin.php?entity=activites&option=reservations&id=$1 [L,QSA]
 RewriteRule ^admin/activites/participants/([0-9]+)$ admin.php?entity=activites&option=participants&id=$1 [L,QSA]
 RewriteRule ^admin/activites/delete/([0-9]+)$ admin.php?entity=activites&option=delete&id=$1 [L,QSA]
 RewriteRule ^admin/familles/NbMembre/([0-9]+)$ admin.php?entity=family&option=nbMembre&id=$1 [L,QSA]
 RewriteRule ^admin/familles/delete/([0-9]+)$ admin.php?entity=family&option=delete&id=$1 [L,QSA]
 
-# --- 4. LISTES ET ID SIMPLES ---
+# --- 4. LISTES ET ROUTES DE BASE (Le plus court en dernier) ---
+# On traite d'abord les sous-sections
 RewriteRule ^admin/activites/fifo$ admin.php?entity=activites&option=fifo [L,QSA]
 RewriteRule ^admin/activites/reservations$ admin.php?entity=activites&option=reservations [L,QSA]
-RewriteRule ^admin/activites/add$ admin.php?entity=activites&option=add [L,QSA]
 
-RewriteRule ^admin/familles$ admin.php?entity=family [L,QSA]
-RewriteRule ^admin/users$ admin.php?entity=users [L,QSA]
-RewriteRule ^admin/emplacements$ admin.php?entity=emplacements [L,QSA]
-RewriteRule ^admin/activites$ admin.php?entity=activites [L,QSA]
+# Puis les routes Utilisateur (Spécifiques d'abord)
+RewriteRule ^utilisateur/payeur/([0-9]+)$ utilisateur.php?entity=payeur&id=$1 [L,QSA]
+RewriteRule ^utilisateur/users$ utilisateur.php?entity=users [L,QSA]
 
-# IDs simples
+# Puis les IDs simples admin
 RewriteRule ^admin/familles/([0-9]+)$ admin.php?entity=family&id=$1 [L,QSA]
 RewriteRule ^admin/users/([0-9]+)$ admin.php?entity=users&id=$1 [L,QSA]
 RewriteRule ^admin/emplacements/([0-9]+)$ admin.php?entity=emplacements&id=$1 [L,QSA]
 RewriteRule ^admin/activites/([0-9]+)$ admin.php?entity=activites&id=$1 [L,QSA]
 
+# Enfin les listes globales admin
+RewriteRule ^admin/familles$ admin.php?entity=family [L,QSA]
+RewriteRule ^admin/users$ admin.php?entity=users [L,QSA]
+RewriteRule ^admin/emplacements$ admin.php?entity=emplacements [L,QSA]
+RewriteRule ^admin/activites$ admin.php?entity=activites [L,QSA]
+RewriteRule ^admin/activites/add$ admin.php?entity=activites&option=add [L,QSA]
+
+# --- 5. AUTHENTIFICATION ---
 RewriteRule ^login/connected login.php?action=connected [L,QSA]
 RewriteRule ^login/disconnected login.php?action=disconnected [L,QSA]
 RewriteRule ^login/isConnected login.php?action=isConnected [L,QSA]

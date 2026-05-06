@@ -8,144 +8,50 @@ servers:
   - url: http://localhost:8085/php
     description: Serveur Local de dev
 
-
+tags:
+  - name:  Authentification
+    description: "Connexion et déconnexion des utilisateurs"
+  - name:  Familles
+    description: "Gestion des comptes familles et de leurs données"
+  - name:  Emplacements
+    description: "Gestion des terrains du camping"
+  - name:  Activités
+    description: "Gestion du catalogue des activités proposées"
+  - name:  Réservations & Attente
+    description: "Gestion des inscriptions, désinscriptions et de la file d'attente (FIFO)"
+  - name:  Utilisateurs
+    description: "Gestion des sous-profils liés à une famille"
 
 # 1. Définition des chemins (Routes)
 paths:
 
-  /admin/activites:
-    get:
-      summary: "Récupération de toute les activites"
-      tags:
-        - Getteur Global
-      security:
-        - bearerAuth: []
-      responses:
-        '200':
-          description: "Données chargées avec succès"
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Activites'
+#ADMIN
 
-  /admin/familles:
-    get:
-      summary: "Récupération de toute les familles"
-      tags:
-        - Getteur Global
-      security:
-        - bearerAuth: []
-      responses:
-        '200':
-          description: "Données chargées avec succès"
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Familles'
-
-  /admin/users:
-    get:
-      summary: "Recupération Utilisateur"
-      tags:
-        - Getteur Global
-      responses:
-        '200':
-          description: "Données chargées avec succès"
-          content:
-            application/json:
-              schema:
-                properties:
-                  id : {type : int, example : 119}
-                  nom : {type : string, example : Gaborit}
-                  prenom : {type : string, example : Mael}
-                  id_famille : {type : int, example : 66}
-                  date_naissance : {type : string, example : "2006-07-14" }
-
-
-
-  /admin/emplacements:
-    get:
-      summary: "Récupération de toutes les familles"
-      tags:
-        - Getteur Global
-      security:
-        - bearerAuth: []
-      responses:
-        '200':
-          description: "Données chargées avec succès"
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Emplacements'
-
-
-
-
-
-  /admin/activites/{id_activite}:
+#/admin/famillies :
+  /admin/familles/NbMembre/{id_famille}:
       get:
-        summary: "Récupère l'activité selon son id"
-        tags:
-          - Getteur Id
+        summary: "Récupère le Nombre de membre d'une famille via son id"
+        tags: 
+          - Familles
         parameters:
-          - name: id_activite
+          - name: id
             in: path
             required: true
             schema:
               type: integer
         responses:
           '200':
-            description: "Données chargées avec succès"
+            description: "Nombre de membre avec succès"
             content:
               application/json:
                 schema:
-                  $ref: '#/components/schemas/Activites'
-
-
-  /admin/users/{id_user}:
-      get:
-        summary: "Récupère l'activité selon son id"
+                  type : integer
+                  example : 5
+  /admin/familles/delete/{id_famille}:
+      delete:
+        summary: "Supprimer famille grâce à son id"
         tags:
-          - Getteur Id
-        parameters:
-          - name: id_user
-            in: path
-            required: true
-            schema:
-              type: integer
-        responses:
-          '200':
-            description: "Données chargées avec succès"
-            content:
-              application/json:
-                schema:
-                  $ref: '#/components/schemas/Users'
-
-
-  /admin/emplacements/{id_emplacement}:
-      get:
-        summary: "Récupère l'activité selon son id"
-        tags:
-          - Getteur Id
-        parameters:
-          - name: id_emplacement
-            in: path
-            required: true
-            schema:
-              type: integer
-        responses:
-          '200':
-            description: "Données chargées avec succès"
-            content:
-              application/json:
-                schema:
-                  $ref: '#/components/schemas/Emplacements'
-
-  /admin/familles/{id_famille}:
-      get:
-        summary: "Récupère l'activité selon son id"
-        tags:
-          - Getteur Id
+          - Familles
         parameters:
           - name: id_famille
             in: path
@@ -154,16 +60,258 @@ paths:
               type: integer
         responses:
           '200':
-            description: "Données chargées avec succès"
+            description: "Famille supprimé avec succès"
+            content:
+              application/json:
+                schema:
+                  $ref: '#/components/schemas/Success'
+          '400' :
+            description : "Erreur lors de la suppression"
+            content: 
+              application/json:
+                schema :
+                  $ref: '#/components/schemas/Error'
+  /admin/familles/withPayeur:
+      get:
+        summary: "Recup les familles avec les infos du payeur"
+        tags:
+          - Familles
+        responses:
+          '200':
+            description: "Données récupéré avec succès"
+            content:
+              application/json:
+                schema:
+                  type: object
+                  properties:
+                      id_famille : {type : integer ,example : 4}
+                      mail : {type : string ,example : mail@mail.fr}
+                      adresse : {type : string ,example : 260 route du chemin}
+                      telephone : {type : integer ,example : 0707070707}
+                      payeur_id : {type : integer ,example : 4}
+                      ville : {type : string ,example : "Areches"}
+                      nom : {type : string ,example : "Gaborit"}
+                      prenom : {type : string ,example : Mael}
+                      date_naissance : {type : string ,example : "2006-07-14"}
+                      user_id : {type : integer ,example : 4}
+  /admin/familles/create:
+      post:
+        summary: "Ajoute une famille"
+        tags:
+        - Familles
+        requestBody:
+            required: true
+            content:
+              application/json:
+                schema:
+                  
+                  $ref: '#/components/schemas/createFamille'
+                  # type: object
+                    
+        responses:
+          '200':
+            description: "Famille ajouté avec succès"
+            content:
+              application/json:
+                schema:
+                  $ref: '#/components/schemas/Success'
+  /admin/familles/{id_famille}:
+      get:
+        summary: "Récupère la famille selon son id"
+        tags:
+          - Familles
+        parameters:
+          - name: id_famille
+            in: path
+            required: true
+            schema:
+              type: integer
+        responses:
+          '200':
+            description: "Famille récupéré avec succès"
             content:
               application/json:
                 schema:
                   $ref: '#/components/schemas/Familles'
-  
+  /admin/familles:
+    get:
+      summary: "Récupération de toute les familles"
+      tags:
+        - Familles
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: "Familles récupérés avec succès"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                    id_famille : {type : integer ,example : 4}
+                    mail : {type : string ,example : "mail@mail.fr"}
+                    password : {type: string, example: "As48d63"}
+                    adresse : {type : string ,example : "260 route du chemin"}
+                    telephone : {type : integer ,example : 0707070707}
+                    code_postal : {type : integer ,example : 73100}
+                    id_payeur : {type: integer, example : 119 }
+                    ville : {type : string ,example : "Areches"}
+                   
 
-  /admin/familles/NbMembre/{id_famille}:
+
+
+#/admin/users
+
+  /admin/users/{id_user}:
       get:
-        summary: "Récupère le Nombre de membre d'une famille"
+        summary: "Récupère l'utilisateur selon son id"
+        tags:
+          - Utilisateurs
+        parameters:
+          - name: id_user
+            in: path
+            required: true
+            schema:
+              type: integer
+        responses:
+          '200':
+            description: "Utilisateur récupéré avec succès"
+            content:
+              application/json:
+                schema:
+                  $ref: '#/components/schemas/Users'
+  /admin/users:
+    get:
+      summary: "Recupération Utilisateur"
+      tags:
+        - Utilisateurs
+      responses:
+        '200':
+          description: "Utilisateur récupéré avec succès"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                    id : {type : integer ,example : 4}
+                    nom : {type : string ,example : "Mollet"}
+                    prenom : {type: string, example: "Enzo"}
+                    date_naissance : {type : string ,example : "10/12/2006"}
+                    id_famille : {type : integer ,example : 66}
+
+#/admin/activites
+  /admin/activites/fifo/delete/{id}:
+    delete:
+      summary: "Refuser (supprimer) une demande de la file d'attente"
+      tags:
+        - Réservations & Attente
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: "L'ID de l'attente (id_attente) à supprimer"
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: "Opération traitée par le serveur"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status: 
+                    type: string
+                    example: "success"
+                  msg: 
+                    type: string
+                    example: "Entrée supprimée de la file d'attente"
+  /admin/activites/fifo/accept:
+      post:
+        summary: "Accept File attente"
+        tags:
+        - Réservations & Attente
+        requestBody:
+            required: true
+            content:
+              application/json:
+                schema:     
+                    type: object               
+                    properties :
+                      id_famille : {type : integer ,example : 4}
+                      id_activite : {type : integer ,example : 4}
+                      nb_membre : {type : integer ,example : 4}
+                      id_attente : {type : integer ,example : 4}
+        responses:
+          '200':
+            description: "Demande de la file d'attente acceptée avec succès"
+            content:
+              application/json:
+                schema:
+                  type: object
+                  properties :
+                    msg : {type : string ,example : impossible de supprimer l'élément de la file d'attente}
+                    mskg : {type : string ,example : impossible de supprimer l'élément de la file d'attente}
+# /admin/activites/fifo/add :
+
+
+
+
+
+
+  /admin/activites/fifo:
+      get:
+        summary: "Supprimer famille grâce à son id"
+        tags:
+        - Réservations & Attente
+        responses:
+          '200':
+            description: "Données chargées avec succès"
+            content:
+              application/json:
+                schema:
+                  type: object
+                  properties :
+                    id_famille : {type : integer,example : 66}
+                    id_activite : {type : integer ,example : 47}
+                    id_attente : {type : integer ,example : 39}
+                    nom_activite : {type : integer ,example : "AquaSplash"}
+                    prix: {type : integer ,example : 47}
+                    cap_act : {type : integer ,example : 47}
+                    date_inscription : {type : string ,example : "2026-04-21 13:14:38"}
+                    nb_membre : {type : integer ,example : 10}
+                    id_payeur : {type : integer ,example : 10}
+                    nom_payeur : {type : string ,example : "Gaborit"}
+                    prenom_payeur : {type : string ,example : Mael}  
+  /admin/activites/reservations/delete/{id}:
+    delete:
+      summary: "Supprime une réservation d'activité via son id"
+      tags: 
+        - Réservations & Attente
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: "L'ID de la réservation à supprimer"
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: "Réservation supprimée avec succès"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Success' 
+# /admin/activites/reservations/add:
+
+
+
+
+  /admin/activites/reservations/{id_reservation_activite}:
+      get:
+        summary: "Récupère une réservation d'activité via son id"
+        tags :
+          - Réservations & Attente
         parameters:
           - name: id
             in: path
@@ -172,17 +320,58 @@ paths:
               type: integer
         responses:
           '200':
-            description: "Données chargées avec succès"
+            description: "Réservation d'activité récupéré avec succès"
             content:
               application/json:
                 schema:
-                  type : int
-                  example : 5
+                  $ref: '#/components/schemas/ReservationActivite'
+  /admin/activites/reservations:
+      get:
+        summary: "Récupère les réservations pour une activité"
+        tags:
+          - Réservations & Attente
+        responses:
+          '200':
+            description: "Réservation d'activité récupéré avec succès"
+            content:
+              application/json:
+                schema:
+                  type: object
+                  properties :
+                    id_famille : {type : integer,example : 67}
+                    id_activite : {type : integer ,example : 47}
+                    id_reservation_activite : {type : integer ,example : 234}
+                    nb_membre : {type : integer ,example : 10}
+  /admin/activites/participants/{id}:
+    get :
+      summary : "récupère un participant via son id"
+      tags:
+      - Réservations & Attente
+      parameters :
+      - name : id
+        in : path
+        required: true
+        description: "L'ID du participant à récupérer"
+        schema:
+          type: integer
+      responses:
+        '200':
+          description: "Echec de la récupération"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Success'
+        '400':
+            description: "Echec de la récupération"
+            content : 
+              application/json:
+                schema:
+                  $ref: '#/components/schemas/Error'
   /admin/activites/delete/{id_activite}:
       delete:
         summary: "Supprime l'activité grace à son id"
         tags:
-          - Delete
+          - Activités
         parameters:
           - name: id_activite
             in: path
@@ -191,113 +380,439 @@ paths:
               type: integer
         responses:
           '200':
-            description: "Données chargées avec succès"
+            description: "Activité supprimé avec succès"
             content:
               application/json:
                 schema:
                   $ref: '#/components/schemas/Success'
           '400':
+            description: "Erreur de l'opération"
             content : 
               application/json:
                 schema:
                   $ref: '#/components/schemas/Error'
-
-  /admin/familles/delete/{id_famille}:
-      delete:
-        summary: "Supprimer famille grâce à son id"
+  /admin/activites/add:
+      post:
+        summary: "Ajoute une réservation à une activité"
         tags:
-          - Delete
+        - Réservations & Attente
+        requestBody:
+            required: true
+            content:
+              application/json:
+                schema:   
+                    type: object                 
+                    properties :
+                      id_famille : {type : integer ,example : 4}
+                      id_activite : {type : integer ,example : 4}
+                      nb_membre : {type : integer ,example : 4}
+        responses:
+          '200':
+            description: "Réservation ajoutée avec succès"
+            content:
+              application/json:
+                schema:
+                  type: object
+                  properties :
+                    status : {type : string,example : success}
+                    msg : {type : string ,example : Reservation AQJOUTE}
+  /admin/activites/{id_activite}:
+      get:
+        summary: "Récupère l'activité selon son id"
+        tags:
+          - Activités
         parameters:
-          - name: id
+          - name: id_activite
             in: path
             required: true
             schema:
               type: integer
         responses:
           '200':
-            description: "Données chargées avec succès"
+            description: "Activité récupéré avec succès"
+            content:
+              application/json:
+                schema:
+                  $ref: '#/components/schemas/Activites'
+  /admin/activites:
+    get:
+      summary: "Récupération de toute les activites"
+      tags:
+        - Activités
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: "Activités récupérés avec succès"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                    prix : {type : integer ,example : 4}
+                    date_d : {type : string ,example : "2026-04-03 08:17:40"}
+                    date_f : {type : string ,example : "2026-04-03 10:17:40"}
+                    id : {type : integer ,example : 3}
+                    nom : {type : string ,example : "Paintball"}
+                    cap_act : {type: integer, example: "18"}
+                    description : {type : string ,example : "Venez vous faire allumer au paintball"}
+                    lieu : {type : string ,example : "lac d'Aiguebelette"}
+
+#/admin/emplacement
+
+#/admin/emplacements/reservations/add :
+
+
+  /admin/emplacements/reservations/delete/{id_reservation}:
+    delete:
+      summary: "Supprime une réservation selon son id"
+      tags:
+        - Emplacements
+      parameters:
+          - name: id_reservation
+            in: path
+            required: true
+            schema:
+              type: integer
+      responses:
+          '200':
+            description: "Réservation supprimée avec succès"
             content:
               application/json:
                 schema:
                   $ref: '#/components/schemas/Success'
-          '400' :
-            description : "Erreur Chargement Donnees"
-            content: 
+          '400':
+            description: "Erreur lors de la suppression"
+            content : 
               application/json:
-                schema :
+                schema:
                   $ref: '#/components/schemas/Error'
-  /admin/activites/participants/{id_activites}:
-      get:
-        summary: "Supprimer famille grâce à son id"
-        parameters:
-          - name: id
-            in: path
-            required: true
-            schema:
-              type: integer
-        responses:
-          '200':
-            description: "Données chargées avec succès"
-            content:
-              application/json:
-                schema:
-                  $ref: '#/components/schemas/Participant'
-  admin/familles/withPayeur:
-      get:
-        summary: "Recup les familles avec les infos du payeur"
-        tags:
-          - Getteur Global With
-        responses:
-          '200':
-            description: "Données chargées avec succès"
-            content:
-              application/json:
-                schema:
-                  properties:
-                      id_famille : {type : int ,example : 4}
-                      mail : {type : string ,example : mail@mail.fr}
-                      adresse : {type : string ,example : 260 route du chemin}
-                      telephone : {type : int ,example : 0707070707}
-                      payeur_id : {type : int ,example : 4}
-                      ville : {type : string ,example : "Areches"}
-                      nom : {type : string ,example : "Gaborit"}
-                      prenom : {type : string ,example : Mael}
-                      date_naissance : {type : string ,example : "2006-07-14"}
-                      user_id : {type : int ,example : 4}
-
-
   /admin/emplacements/mois/{mois} :
       get:
-        summary: "Recup les familles avec les infos du payeur"
+        summary: "Recup les dates d'occupations d'un emplacement"
         tags:
-          - Getteur Global With
+          - Emplacements
         parameters:
           - name: mois
             in: path
             required: true
             schema:
-              type: month
+              type: string
         responses:
           '200':
-            description: "Données chargées avec succès"
+            description: "Dates d'occupations de l'emplacement récupéré avec succès"
             content:
               application/json:
                 schema:
+                  type: object
                   properties:
-                    capacite : {type : int ,example : 4}
-                    num_emplacement : {type : int ,example : 4}
-                    prix : {type : int ,example : 40}
+                    capacite : {type : integer ,example : 4}
+                    num_emplacement : {type : integer ,example : 4}
+                    prix : {type : integer ,example : 40}
                     nom : {type : string ,example : "Gaborit"}
                     reservations:
                       type: array
                       items :
                         properties :
-                          id_famille : {type : int, example : 4}
+                          id_famille : {type : integer, example : 4}
                           Nom_famille : {type : string, example : "Gaborit"}
                           date_debut : {type : string, example : "2026-04-10 00:00:00"}
                           date_fin : {type : string, example : "2026-04-10 00:00:00"}
                           id_res_empl : {type : string, example : 55}
                           Prenom_payeur : {type : string, example : "Mael"}
+  /admin/emplacements:
+    get:
+      summary: "Récupération de tous les emplacements"
+      tags:
+        - Emplacements
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: "Emplacements récupérés avec succès"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                    num_emplacement : {type : integer ,example : 4}
+                    capacite : {type : integer ,example : 8}
+                    prix : {type : integer ,example : 40}
+                    nom : {type : string ,example : "Neptune"}
+
+  /admin/emplacements/{id_emplacement}:
+      get:
+        summary: "Récupère l'emplacement selon son id"
+        tags:
+          - Emplacements
+        parameters:
+          - name: id_emplacement
+            in: path
+            required: true
+            schema:
+              type: integer
+        responses:
+          '200':
+            description: "Emplacement récupéré avec succès"
+            content:
+              application/json:
+                schema:
+                  $ref: '#/components/schemas/Emplacements'
+
+
+
+#UTILISATEUR
+  /utilisateur/payeur/{id} :
+    get:
+      summary: "Récupère le payeur selon son id"
+      tags:
+          - Utilisateurs
+      parameters:
+          - name: id
+            in: path
+            required: true
+            schema:
+              type: integer
+      responses:
+          '200':
+            description: "Payeur récupéré avec succès"
+            content:
+              application/json:
+                schema:
+                  $ref: '#/components/schemas/Emplacements'
+# /utilisateur/users/reservations/add :
+
+
+
+  /utilisateur/users/reservations/delete/{id_reservations} :
+    delete:
+      summary: "Supprime une réservation selon son id"
+      tags:
+        - Utilisateurs
+      parameters:
+          - name: id_reservation
+            in: path
+            required: true
+            schema:
+              type: integer
+      responses:
+          '200':
+            description: "Réservation supprimée avec succès"
+            content:
+              application/json:
+                schema:
+                  $ref: '#/components/schemas/Success'
+          '400':
+            description: "Erreur lors de la suppression"
+            content : 
+              application/json:
+                schema:
+                  $ref: '#/components/schemas/Error'
+  /utilisateur/users/reservations/{id} :
+    get:
+      summary: "Récupère la réservation de l'utilisateur selon l'id de réservation"
+      tags:
+          - Utilisateurs
+      parameters:
+          - name: id
+            in: path
+            required: true
+            schema:
+              type: integer
+      responses:
+          '200':
+            description: "Réservation de l'utilisateur récupéré avec succès"
+            content:
+              application/json:
+                schema:
+                  $ref: '#/components/schemas/Emplacements'
+  /utilisateur/users/reservations :
+    get:
+      summary: "Récupération de toutes les réservations de l'utilisateurs"
+      tags:
+        - Utilisateurs
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: "Réservations récupérées avec succès"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Emplacements'
+  /utilisateur/users/{id_utilisateur} :
+    get:
+        summary: "Récupère un utilisayeur selon son id"
+        tags:
+          - Utilisateurs
+        parameters:
+          - name: id_utilisateur
+            in: path
+            required: true
+            schema:
+              type: integer
+        responses:
+          '200':
+            description: "Utilisateur récupéré avec succès"
+            content:
+              application/json:
+                schema:
+                  $ref: '#/components/schemas/Emplacements'
+  /utilisateur/users :
+    get:
+      summary: "Récupération de tous les utilisateurs"
+      tags:
+        - Utilisateurs
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: "Utilisateurs récupérés avec succès"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Emplacements'
+  /utilisateur/activites/with_reservations/{id}:
+    get:
+        summary: "Récupère les activités réservés par un utilisateur"
+        tags:
+          - Utilisateurs
+        parameters:
+          - name: id_utilisateur
+            in: path
+            required: true
+            schema:
+              type: integer
+        responses:
+          '200':
+            description: "Activité(s) récupéré avec succès"
+            content:
+              application/json:
+                schema:
+                  $ref: '#/components/schemas/Emplacements'
+  /utilisateur/activites/delete/{id_activite}:
+    delete:
+      summary: "Annule la réservation d'un utilisateur à une activité"
+      tags:
+        - Utilisateurs
+      parameters:
+          - name: id_activite
+            in: path
+            required: true
+            schema:
+              type: integer
+      responses:
+          '200':
+            description: "Réservation supprimée avec succès"
+            content:
+              application/json:
+                schema:
+                  $ref: '#/components/schemas/Success'
+          '400':
+            description: "Erreur lors de la suppression"
+            content : 
+              application/json:
+                schema:
+                  $ref: '#/components/schemas/Error'
+  /utilisateur/activites/{id_activite}:
+    get:
+        summary: "Récupère une activité par son id"
+        tags:
+          - Utilisateurs
+        parameters:
+          - name: id_activite
+            in: path
+            required: true
+            schema:
+              type: integer
+        responses:
+          '200':
+            description: "Activité récupéré avec succès"
+            content:
+              application/json:
+                schema:
+                  $ref: '#/components/schemas/Emplacements'
+  /utilisateur/activite:
+    get:
+      summary: "Récupération de toutes les activités"
+      tags:
+        - Utilisateurs
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: "Activité(s) récupérés avec succès"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Emplacements'
+  /utilisateur/emplacements/reservation/{id_reservation}:
+    get :
+      summary: "Récupère la réservation d'emplacement d'une famille via son id"
+      tags:
+          - Utilisateurs
+      parameters:
+          - name: id_reservation
+            in: path
+            required: true
+            schema:
+              type: integer
+      responses:
+          '200':
+            description: "Réservation récupéré avec succès"
+            content:
+              application/json:
+                schema:
+                  $ref: '#/components/schemas/Emplacements'
+  /utilisateur/emplacements/delete/{id_reservation}:
+    delete:
+      summary: "Supprime une réservation d'emplacement selon son id"
+      tags:
+        - Utilisateurs
+      parameters:
+          - name: id_rerservation
+            in: path
+            required: true
+            schema:
+              type: integer
+      responses:
+          '200':
+            description: "Réservation supprimée avec succès"
+            content:
+              application/json:
+                schema:
+                  $ref: '#/components/schemas/Success'
+          '400':
+            description: "Erreur lors de la suppression"
+            content : 
+              application/json:
+                schema:
+                  $ref: '#/components/schemas/Error' 
+
+
+  # /admin/activites/participants/{id}:
+  #     delete:
+  #       summary: "Supprimer un participant grâce à son id"
+  #       tags:
+  #         - Réservations & Attente
+  #       parameters:
+  #         - name: id
+  #           in: path
+  #           required: true
+  #           schema:
+  #             type: integer
+  #       responses:
+  #         '200':
+  #           description: "Données chargées avec succès"
+  #           content:
+  #             application/json:
+  #               schema:
+  #                 $ref: '#/components/schemas/Participant'
+
+
+
+
+
 
 
 
@@ -307,90 +822,6 @@ paths:
 
 
 
-  /admin/activites/reservations/{id_reservation_activite}:
-      get:
-        summary: "Supprimer famille grâce à son id"
-        parameters:
-          - name: id
-            in: path
-            required: true
-            schema:
-              type: integer
-        responses:
-          '200':
-            description: "Données chargées avec succès"
-            content:
-              application/json:
-                schema:
-                  $ref: '#/components/schemas/ReservationActivite'
-  /admin/familles/create:
-      post:
-        summary: "Supprimer famille grâce à son id"
-        tags:
-        - CREATE
-        requestBody:
-            required: true
-            content:
-              application/json:
-                schema:
-                  $ref: '#/components/schemas/createFamille'
-                  # type: object
-                    
-        responses:
-          '200':
-            description: "Données chargées avec succès"
-            content:
-              application/json:
-                schema:
-                  $ref: '#/components/schemas/Success'
-
-
-  /admin/activites/add:
-      post:
-        summary: "Supprimer famille grâce à son id"
-        tags:
-        - CREATE
-        requestBody:
-            required: true
-            content:
-              application/json:
-                schema:                    
-                    properties :
-                      id_famille : {type : int ,example : 4}
-                      id_activite : {type : int ,example : 4}
-                      nb_membre : {type : int ,example : 4}
-        responses:
-          '200':
-            description: "Données chargées avec succès"
-            content:
-              application/json:
-                schema:
-                  properties :
-                    status : {type : string,example : success}
-                    msg : {type : string ,example : Reservation AQJOUTE}
-  /admin/activites/fifo/accept:
-      post:
-        summary: "Accept File attente"
-        tags:
-        - FIFO
-        requestBody:
-            required: true
-            content:
-              application/json:
-                schema:                    
-                    properties :
-                      id_famille : {type : int ,example : 4}
-                      id_activite : {type : int ,example : 4}
-                      nb_membre : {type : int ,example : 4}
-                      id_attente : {type : int ,example : 4}
-        responses:
-          '200':
-            description: "Données chargées avec succès"
-            content:
-              application/json:
-                schema:
-                  properties :
-                    msg : {type : string ,example : impossible de supprimer l'élément de la file d'attente}
 
 
 
@@ -400,35 +831,29 @@ paths:
 
 
 
-
-
-
-
-
-
-
-
-
-
+# LOGIN
+ 
   /login/connected:
       post:
         summary: Connecte à la session famille
         tags:
-        - Login
+        - Authentification
         requestBody:
             required: true
             content:
               application/json:
-                schema:                    
+                schema:     
+                    type: object               
                     properties :
                       mail_saisi : {type : string ,example : maelgaborit1407@gmail.com }
-                      password_saisi : {type : int ,example : mdp}
+                      password_saisi : {type : integer ,example : mdp}
         responses:
           '200':
-            description: "Données chargées avec succès"
+            description: "Connexion réussie"
             content:
               application/json:
                 schema:
+                  type: object
                   properties :
                     status : {type : string ,example : connected}
                     msg : {type : string ,example : "Connecté avec success" }
@@ -438,13 +863,14 @@ paths:
       get:
         summary: Deconnecte Session
         tags:
-        - Login
+        - Authentification
         responses:
           '200':
-            description: "Données chargées avec succès"
+            description: "Déconnexion réussie"
             content:
               application/json:
                 schema:
+                  type: object
                   properties :
                     status : {type : string ,example : disconnected}
                     msg : {type : string ,example : Déconnecter avec success}
@@ -455,119 +881,25 @@ paths:
       get:
         summary: Verifie Connection Session et renvoit id si connecter
         tags:
-        - Login 
+        - Authentification 
   
         responses:
           '200':
-            description: "Données chargées avec succès"
+            description: "Statut de session récupéré"
             content:
               application/json:
                 schema:
+                  type: object
                   properties :
                     status : {type : string ,example : Connected }
                     role : {type : string ,example : Famille }
-                    id: {type : int ,example : 66}
+                    id: {type : integer ,example : 66}
 
 
 
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-  admin/activites/reservations:
-      get:
-        summary: "Supprimer famille grâce à son id"
-        tags:
-        - RESERVATIONS
-        responses:
-          '200':
-            description: "Données chargées avec succès"
-            content:
-              application/json:
-                schema:
-                  properties :
-                    id_famille : {type : int,example : 67}
-                    id_activite : {type : int ,example : 47}
-                    id_reservation_activite : {type : int ,example : 234}
-                    nb_membre : {type : int ,example : 10}
-  admin/activites/fifo:
-      get:
-        summary: "Supprimer famille grâce à son id"
-        tags:
-        - FIFO
-        responses:
-          '200':
-            description: "Données chargées avec succès"
-            content:
-              application/json:
-                schema:
-                  properties :
-                    id_famille : {type : int,example : 66}
-                    id_activite : {type : int ,example : 47}
-                    id_attente : {type : int ,example : 39}
-                    nom_activite : {type : int ,example : "AquaSplash"}
-                    prix: {type : int ,example : 47}
-                    cap_act : {type : int ,example : 47}
-                    date_inscription : {type : string ,example : "2026-04-21 13:14:38"}
-                    nb_membre : {type : int ,example : 10}
-                    id_payeur : {type : int ,example : 10}
-                    nom_payeur : {type : string ,example : "Gaborit"}
-                    prenom_payeur : {type : string ,example : Mael}
 
 # 2. Modèles de données réutilisables (La partie "Belle Doc")
 components:
@@ -582,28 +914,28 @@ components:
       type: object
       properties:
         prix:
-          type: int
+          type: integer
           example : 50
         nom :
           type : string
           example : AquaSplash
         cap_act :
-          type : int
+          type : integer
           example : 24
         description:
           type: string
           example : description de l'activité
         id:
-          type : int
+          type : integer
           example : 1
         lieu:
           type : string
           example : Arêches
         date_d:
-          type : datetime
+          type : string
           example: "2026-04-02 09:12:44"
         date_f:
-          type: datetime
+          type: string
           example : "2026-04-02 09:12:44"
     Familles:
       properties:
@@ -611,36 +943,36 @@ components:
           type : string
           example : 66
         mail :
-          type : email
+          type : string
           example : mail@mail.fr
         password : 
-          type : password
+          type : string
           example : password crypté
         adresse : 
           type : string
           example : 260 route du Chemin
         telephone : 
-          type  : tel
+          type  : string
           example : +33 58 55 68 58 56
         code_postal : 
-          type : int
+          type : integer
           example : 73290
         id_payeur : 
-          type : int
+          type : integer
           example : 179
         ville :
-          type : int
+          type : integer
           example : Chambery
     Emplacements : 
       properties : 
         num_emplacemnt:
-          type : int
+          type : integer
           example : 1
         capacite: 
-          type : int
+          type : integer
           example : 24
         prix : 
-          type : int
+          type : integer
           example : 45
         nom :
           type : string
@@ -650,7 +982,7 @@ components:
     Users : 
       properties : 
         id:
-          type : int
+          type : integer
           example : 45
         nom : 
           type : string
@@ -663,7 +995,7 @@ components:
           format : date
           example : "20006-07-14"
         id_famille : 
-          type : int
+          type : integer
           example : 66
 
 
@@ -694,13 +1026,13 @@ components:
     Participant:
       properties:
         id_activite : 
-          type : int
+          type : integer
           example : 47 
         nb_membre : 
-          type : int
+          type : integer
           example : 10
         id_famille : 
-          type : int
+          type : integer
           example : 67
         nom_payeur : 
           type : string
@@ -717,18 +1049,18 @@ components:
         id_famille: { type: integer, example: 67 }
         id_activite: { type: integer, example: 47 }
         nb_membre: { type: integer, example: 10 }
-        id_reservation_activite: { type: int, example: 234 }
+        id_reservation_activite: { type: integer, example: 234 }
     createFamille : 
       type : object
       properties:
         nom: { type: string, example: Gaborit }
         prenom: { type: string, example: Mael }
         date_n: { type: string, example: "2006-07-14"}
-        mail: { type: mail, example: mail@mail.fr }
-        tel: { type: int, example: 0707070707 }
+        mail: { type: string, example: mail@mail.fr }
+        tel: { type: integer, example: 0707070707 }
         adresse: { type: string, example: 260 route du chemin }
         ville: { type: string, example: Areches }
-        code_postal: { type: int, example: 7270 }
+        code_postal: { type: integer, example: 7270 }
         password: { type: string, example: mdpCrypte }
 
 
@@ -799,7 +1131,7 @@ components:
 #               schema:
 #                 $ref: '#/components/schemas/Activites'
 
-  # /admin/familles/NbMembre/{id}:
+  #   /NbMembre/{id}:
   #   get:
   #     summary: "Nombre de membres"
   #     tags: [Pages Web]
