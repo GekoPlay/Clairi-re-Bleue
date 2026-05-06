@@ -2,24 +2,6 @@ const { createApp, ref, onMounted } = Vue;
 
 createApp({
   setup() {
-    const age = ref(15);
-
-    const prenom = ref();
-
-
-    const ageplus = () =>{
-      console.log(age.value);
-      age.value = age.value +1;
-    }
-
-    const dico = ref({"nom" : "mael", "age" : 20});
-
-    const tab = ref([{"nom" : "mael", "age" : 20},{"nom" : prenom, "age" : 20}]);
-
-    
-
-
-
     const tab_res = ref([]);
 
 
@@ -38,11 +20,7 @@ createApp({
       get_activites();
     });
 
-    return { 
-        age,
-        ageplus,
-        tab,
-        dico,
+    return {
         tab_res,
     };
   }
