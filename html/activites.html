@@ -21,13 +21,30 @@
             <a id="logo-identification"  href="../html/utilisateur.html"><img src="../images/connexion.png" alt="" id="logo-id-img"></a>
         </nav>
     <h1 id="title">- Les Activités -</h1>
-    <select name="trier" id="ipt-trier">
-        <option disabled selected>Trier Par</option>
-        <option >Date (ordre croissant)</option>
-        <option >Date (ordre croissant)</option>
-        <option >Prix (ordre decroissant)</option>
-        <option >Prix (ordre decroissant)</option>
+
+
+
+<div id="app">
+    <select v-model="triSelectionne" id="ipt-trier">
+        <option value="" disabled selected>Trier Par</option>
+        <option value="date-asc">Date (ordre croissant)</option>
+        <option value="date-desc">Date (ordre décroissant)</option>
+        <option value="prix-asc">Prix (ordre croissant)</option>
+        <option value="prix-desc">Prix (ordre décroissant)</option>
     </select>
+
+    <!-- Remplace toute la div ci-dessous par TON ancienne structure de "boîte" -->
+    <div v-for="activite in activitesTriees" :key="activite.id" class="TA_CLASSE_DE_BOITE_ICI">
+        <!-- Remets ici tes images, titres et boutons originaux -->
+        <h3>{{ activite.nom }}</h3>
+        <span>{{ activite.prix }} €</span>
+        <p>{{ activite.date }}</p>
+    </div>
+</div>
+
+
+
+
     <div id="list-activites">
         <div v-for="tabl in tab_activite">
             <div class="activite">
