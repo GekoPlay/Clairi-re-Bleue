@@ -27,14 +27,10 @@
 
             <div id="left">
                 <div id="planning">
-                    <div class="activites">
-                        <p>Aya nous les brises</p>
+                    <div v-for="act in activites"  class="activites">
+                        <p>{{act.nom}}</p>
                         <button>Modifier</button>
                     </div>
-                    <div class="activites">Hey</div>
-                    <div class="activites">Hey</div>
-                    <div class="activites">Hey</div>
-                    <div class="activites">Hey</div>
                 </div>
                 <div id="activiteCRUD">
                     les activites

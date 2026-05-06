@@ -14,12 +14,11 @@ createApp({
     });
 
 
-    const tab_res = ref([]);
+    const activites = ref([]);
 
     const get_activites = () => {
       axios.get("../../php/admin/activites").then(response => {
-        
-        tab_res.value = response.data;
+        activites.value = response.data;
       });
     };
 
@@ -51,8 +50,8 @@ createApp({
     });
 
     return {
-      tab_res,
       activite,
+      activites,
       creation_activites
     };
   }
