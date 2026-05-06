@@ -54,7 +54,7 @@ switch ($entity) {
             }
             else {
                 $response = $id ? getUserById($conn, $id) : getUsers($conn);
-            }
+            }   //pas getUserById et pas getUsers
         }elseif($option === 'update'){
                 $res = updateFamily($conn,$data);
                 $response = [
@@ -63,7 +63,7 @@ switch ($entity) {
                 ];
         }else {
             $response = $id ? getUserById($conn, $id) : getUsers($conn);
-        }
+        }   
         break;
     case 'activites':
         if ($option === 'with_reservations' && $id) {

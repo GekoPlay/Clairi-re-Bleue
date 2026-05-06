@@ -1,12 +1,13 @@
 RewriteEngine On
 RewriteBase /php/
 
+# --- ADMIN
 # --- 1. ROUTES COMPLEXES (3 segments ou plus après l'entité) ---
 RewriteRule ^admin/activites/fifo/delete/([0-9]+)$ admin.php?entity=activites&option=fifo&secondOption=delete&id=$1 [L,QSA]
 RewriteRule ^admin/activites/reservations/delete/([0-9]+)$ admin.php?entity=activites&option=reservations&secondOption=delete&id=$1 [L,QSA]
 RewriteRule ^admin/emplacements/reservations/delete/([0-9]+)$ admin.php?entity=emplacements&option=reservations&secondOption=delete&id=$1 [L,QSA]
 RewriteRule ^admin/emplacements/reservations/BetweenDate/([^/]+)$ admin.php?entity=emplacements&option=reservations&secondOption=BetweenDate&today=$1 [L,QSA]
-
+ 
 # --- 2. ACTIONS FIXES ET OPTIONS SPÉCIFIQUES ---
 RewriteRule ^admin/activites/fifo/accept$ admin.php?entity=activites&option=fifo&secondOption=accept [L,QSA]
 RewriteRule ^admin/activites/fifo/add$ admin.php?entity=activites&option=fifo&secondOption=add [L,QSA]
@@ -28,10 +29,6 @@ RewriteRule ^admin/familles/delete/([0-9]+)$ admin.php?entity=family&option=dele
 RewriteRule ^admin/activites/fifo$ admin.php?entity=activites&option=fifo [L,QSA]
 RewriteRule ^admin/activites/reservations$ admin.php?entity=activites&option=reservations [L,QSA]
 
-# Puis les routes Utilisateur (Spécifiques d'abord)
-RewriteRule ^utilisateur/payeur/([0-9]+)$ utilisateur.php?entity=payeur&id=$1 [L,QSA]
-RewriteRule ^utilisateur/users$ utilisateur.php?entity=users [L,QSA]
-
 # Puis les IDs simples admin
 RewriteRule ^admin/familles/([0-9]+)$ admin.php?entity=family&id=$1 [L,QSA]
 RewriteRule ^admin/users/([0-9]+)$ admin.php?entity=users&id=$1 [L,QSA]
@@ -44,6 +41,26 @@ RewriteRule ^admin/users$ admin.php?entity=users [L,QSA]
 RewriteRule ^admin/emplacements$ admin.php?entity=emplacements [L,QSA]
 RewriteRule ^admin/activites$ admin.php?entity=activites [L,QSA]
 RewriteRule ^admin/activites/add$ admin.php?entity=activites&option=add [L,QSA]
+
+# --- UTILISATEUR 
+# --- 1. ROUTES COMPLEXES (3 segments ou plus après l'entité) ---
+RewriteRule ^utilisateur/users/reservations/delete/([0-9]+)$ utilisateur.php?entity=users&option=reservation&secondOption=delete&id=$1 [L,QSA]
+
+
+# --- 2. ACTIONS FIXES ET OPTIONS SPÉCIFIQUES ---
+
+# --- 3. OPTIONS AVEC ID (Routes à 2 segments + ID) ---
+RewriteRule ^utilisateur/users/reservations/([0-9]+)$ utilisateur.php?entity=users&option=reservations&id=$1 [L,QSA]
+
+# --- 4. LISTES ET ROUTES DE BASE (Le plus court en dernier) ---
+RewriteRule ^utilisateur/users/reservations$ utilisateur.php?entity=users&option=reservations [L,QSA]
+
+# Puis les IDs simples utilisateur
+RewriteRule ^utilisateur/payeur/([0-9]+)$ utilisateur.php?entity=payeur&id=$1 [L,QSA]
+RewriteRule ^utilisateur/users/([0-9]+)$ utilisateur.php?entity=users&id=$1 [L,QSA]
+
+# Enfin les listes globales admin
+RewriteRule ^utilisateur/users$ utilisateur.php?entity=users [L,QSA]
 
 # --- 5. AUTHENTIFICATION ---
 RewriteRule ^login/connected login.php?action=connected [L,QSA]
